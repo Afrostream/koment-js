@@ -44,6 +44,10 @@ class KomentDisplay extends Component {
       //    })
       //  });
       kommentsList = res.body || [];
+      kommentsList.push({
+        text: 'yes c\'est la fin',
+        timecode: 345
+      });
       kommentsList = sortBy(kommentsList, ['timecode']);
       this.createChilds(kommentsList);
     });
@@ -94,15 +98,26 @@ class KomentDisplay extends Component {
       this.show();
     }
 
-    this.on(this.player_, 'loadedmetadata', this.positionComments);
-    this.on(this.player_, 'pause', this.replaceTick);
-    this.on(this.player_, 'play', this.replaceTick);
-    this.on(this.player_, 'seeked', this.requestTick);
-    this.on(this.player_, 'timeupdate', this.requestTick);
+    switch (this.options_.template) {
+      case 'timeline':
+        this.showElements = this.showElementsTimeline;
+        this.on(this.player_, 'loadedmetadata', this.positionTimeline);
+        this.on(this.player_, 'pause', this.replaceTick);
+        this.on(this.player_, 'play', this.replaceTick);
+        this.on(this.player_, 'seeked', this.requestTick);
+        this.on(this.player_, 'timeupdate', this.requestTick);
+        break;
+      case 'viki':
+        this.showElements = this.showElementsViki;
+        this.on(this.player_, 'timeupdate', this.requestTick);
+        break;
+    }
+
+    this.addClass(this.options_.template);
   }
 
   replaceTick () {
-    this.moveTimeline();
+    this.showElements();
   }
 
   /**
@@ -111,12 +126,38 @@ class KomentDisplay extends Component {
    */
   requestTick () {
     if (!this.ticking) {
-      requestAnimationFrame(Fn.bind(this, this.moveTimeline));
+      requestAnimationFrame(Fn.bind(this, this.showElements));
       this.ticking = true;
     }
   }
 
-  moveTimeline () {
+  //VIKI MODE
+  showElementsViki () {
+    let className = this.pause ? 'koment-paused' : 'koment-show';
+    const currentTimecode = Math.round(this.player_.currentTime());
+    forEach(this.items, (item)=> {
+      const inTimeCodeRange = (Math.round(item.timecode) === currentTimecode);
+      if (inTimeCodeRange) {
+        if (!item.hasClass(className)) {
+          item.removeClass('koment-hidden');
+          item.removeClass('koment-show');
+          item.removeClass('koment-paused');
+          item.addClass(className);
+        }
+        this.setTimeout(()=> {
+          if (!item.hasClass('koment-hidden')) {
+            item.removeClass('koment-paused');
+            item.removeClass('koment-show');
+            item.addClass('koment-hidden');
+          }
+        }, 5000);
+      }
+    });
+    this.ticking = false;
+  }
+
+  //TIMELINE MODE
+  showElementsTimeline () {
     let className = this.pause ? 'koment-paused' : 'koment-show';
     const currentTimecode = this.player_.currentTime();
     const playerWidth = this.player_.width();
@@ -146,7 +187,7 @@ class KomentDisplay extends Component {
     this.ticking = false;
   }
 
-  positionComments () {
+  positionTimeline () {
     let leftItem = 0;
     const playerWidth = this.player_.width();
     forEach(this.items, (item, key)=> {
@@ -177,11 +218,12 @@ class KomentDisplay extends Component {
 
 }
 
+KomentDisplay.prototype.showElements = ()=> {
+}
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
-  itemsInSceen: 3,
-  itemGap: 10,
-  tte: 5
+  tte: 5,
+  template: 'viki'//'timeline'
 };
 
 Component.registerComponent('KomentDisplay', KomentDisplay);

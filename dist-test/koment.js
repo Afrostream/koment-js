@@ -21383,6 +21383,10 @@ var KomentDisplay = (function (_Component) {
       //    })
       //  });
       kommentsList = res.body || [];
+      kommentsList.push({
+        text: 'yes c\'est la fin',
+        timecode: 345
+      });
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
       _this.createChilds(kommentsList);
     });
@@ -21437,16 +21441,27 @@ var KomentDisplay = (function (_Component) {
         this.show();
       }
 
-      this.on(this.player_, 'loadedmetadata', this.positionComments);
-      this.on(this.player_, 'pause', this.replaceTick);
-      this.on(this.player_, 'play', this.replaceTick);
-      this.on(this.player_, 'seeked', this.requestTick);
-      this.on(this.player_, 'timeupdate', this.requestTick);
+      switch (this.options_.template) {
+        case 'timeline':
+          this.showElements = this.showElementsTimeline;
+          this.on(this.player_, 'loadedmetadata', this.positionTimeline);
+          this.on(this.player_, 'pause', this.replaceTick);
+          this.on(this.player_, 'play', this.replaceTick);
+          this.on(this.player_, 'seeked', this.requestTick);
+          this.on(this.player_, 'timeupdate', this.requestTick);
+          break;
+        case 'viki':
+          this.showElements = this.showElementsViki;
+          this.on(this.player_, 'timeupdate', this.requestTick);
+          break;
+      }
+
+      this.addClass(this.options_.template);
     }
   }, {
     key: 'replaceTick',
     value: function replaceTick() {
-      this.moveTimeline();
+      this.showElements();
     }
 
     /**
@@ -21457,14 +21472,45 @@ var KomentDisplay = (function (_Component) {
     key: 'requestTick',
     value: function requestTick() {
       if (!this.ticking) {
-        requestAnimationFrame(Fn.bind(this, this.moveTimeline));
+        requestAnimationFrame(Fn.bind(this, this.showElements));
         this.ticking = true;
       }
     }
+
+    //VIKI MODE
   }, {
-    key: 'moveTimeline',
-    value: function moveTimeline() {
+    key: 'showElementsViki',
+    value: function showElementsViki() {
       var _this2 = this;
+
+      var className = this.pause ? 'koment-paused' : 'koment-show';
+      var currentTimecode = Math.round(this.player_.currentTime());
+      (0, _lodash.forEach)(this.items, function (item) {
+        var inTimeCodeRange = Math.round(item.timecode) === currentTimecode;
+        if (inTimeCodeRange) {
+          if (!item.hasClass(className)) {
+            item.removeClass('koment-hidden');
+            item.removeClass('koment-show');
+            item.removeClass('koment-paused');
+            item.addClass(className);
+          }
+          _this2.setTimeout(function () {
+            if (!item.hasClass('koment-hidden')) {
+              item.removeClass('koment-paused');
+              item.removeClass('koment-show');
+              item.addClass('koment-hidden');
+            }
+          }, 5000);
+        }
+      });
+      this.ticking = false;
+    }
+
+    //TIMELINE MODE
+  }, {
+    key: 'showElementsTimeline',
+    value: function showElementsTimeline() {
+      var _this3 = this;
 
       var className = this.pause ? 'koment-paused' : 'koment-show';
       var currentTimecode = this.player_.currentTime();
@@ -21473,7 +21519,7 @@ var KomentDisplay = (function (_Component) {
       (0, _lodash.forEach)(this.items, function (item) {
         var inTimeCodeRange = item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
         if (inTimeCodeRange) {
-          var percent = (_this2.options_.tte - (currentTimecode - item.timecode)) / _this2.options_.tte;
+          var percent = (_this3.options_.tte - (currentTimecode - item.timecode)) / _this3.options_.tte;
           var position = percent * playerWidth - playerWidth;
           var _top = 0;
           if (!item.hasClass(className)) {
@@ -21494,15 +21540,15 @@ var KomentDisplay = (function (_Component) {
       this.ticking = false;
     }
   }, {
-    key: 'positionComments',
-    value: function positionComments() {
-      var _this3 = this;
+    key: 'positionTimeline',
+    value: function positionTimeline() {
+      var _this4 = this;
 
       var leftItem = 0;
       var playerWidth = this.player_.width();
       (0, _lodash.forEach)(this.items, function (item, key) {
-        var prevItem = _this3.items[key - 1];
-        var percent = (_this3.options_.tte - item.timecode) / _this3.options_.tte;
+        var prevItem = _this4.items[key - 1];
+        var percent = (_this4.options_.tte - item.timecode) / _this4.options_.tte;
         var position = playerWidth - percent * playerWidth;
         var top = 0;
 
@@ -21511,7 +21557,7 @@ var KomentDisplay = (function (_Component) {
           prevItemPos.width = prevItem.width();
           prevItemPos.height = prevItem.height();
 
-          var percentPrevItem = (_this3.options_.tte - prevItem.timecode) / _this3.options_.tte;
+          var percentPrevItem = (_this4.options_.tte - prevItem.timecode) / _this4.options_.tte;
           var positionPrevItem = playerWidth - percentPrevItem * playerWidth;
           if (positionPrevItem + prevItemPos.width > position) {
             top = prevItemPos.top + prevItemPos.height;
@@ -21530,11 +21576,11 @@ var KomentDisplay = (function (_Component) {
   return KomentDisplay;
 })(_component2['default']);
 
+KomentDisplay.prototype.showElements = function () {};
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
-  itemsInSceen: 3,
-  itemGap: 10,
-  tte: 5
+  tte: 5,
+  template: 'viki' //'timeline'
 };
 
 _component2['default'].registerComponent('KomentDisplay', KomentDisplay);

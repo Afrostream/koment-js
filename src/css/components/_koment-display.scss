@@ -11,43 +11,79 @@
   padding: $padding-global;
   .koment-item {
     cursor: pointer;
-    left: 100%;
-    position: absolute;
-    margin-top: 10px;
-    //display: none;
     font-size: 10px;
     color: #FFFFFF;
-    transition: transform 1.5s linear, opacity0 .3s linear;
+    transition: transform 1.5s linear, opacity 0.3s linear;
     &:hover {
       z-index: 2;
     }
-    &:before,
-    &:after {
-      content: '';
-      position: absolute;
-      border-style: solid;
-      left: 10px + $primary-border-radius;
-      bottom: -6px;
-      width: 0;
-      height: 0;
-      border-width: 6px 3px 0 3px;
-      border-color: $primary-foreground-color transparent transparent transparent;
-      transform: skewX(-20deg);
-    }
-    &:after {
-      left: 10px + $primary-border-radius +1px;
-      border-width: 4px 2px 4px 2px;
-      border-color: $primary-background-color transparent transparent transparent;
-    }
     .koment-item-display {
-      @include background-color-with-alpha($primary-background-color, $primary-background-transparency);
-      color: $primary-foreground-color;
-      max-width: 140px;
-      padding: 5px;
-      margin-left: 7px;
-      border-radius: $primary-border-radius;
-      border: 2px solid $primary-foreground-color;
       overflow: hidden;
+    }
+  }
+  //TIMELINE
+  &.timeline {
+    .koment-item {
+      position: absolute;
+      left: 100%;
+      margin-top: 10px;
+      &:before,
+      &:after {
+        content: '';
+        position: absolute;
+        border-style: solid;
+        left: 10px + $primary-border-radius;
+        bottom: -6px;
+        width: 0;
+        height: 0;
+        border-width: 6px 3px 0 3px;
+        border-color: $primary-foreground-color transparent transparent transparent;
+        transform: skewX(-20deg);
+      }
+      &:after {
+        left: 10px + $primary-border-radius +1px;
+        border-width: 4px 2px 4px 2px;
+        border-color: $primary-background-color transparent transparent transparent;
+      }
+      .koment-item-display {
+        max-width: 140px;
+        padding: 5px;
+        @include background-color-with-alpha($primary-background-color, $primary-background-transparency);
+        color: $primary-foreground-color;
+        margin-left: 7px;
+        border-radius: $primary-border-radius;
+        border: 2px solid $primary-foreground-color;
+      }
+    }
+  }
+  //VIKI
+  &.viki {
+    display: flex;
+    flex-direction: column;
+    .koment-item {
+      display: none;
+      left: 0;
+      font-size: 1em;
+      width: 50%;
+      margin-bottom: 5px;
+      .koment-item-display {
+        padding: 1em;
+        @include background-color-with-alpha($primary-background-color, 0.6);
+        color: $primary-foreground-color;
+        border-radius: 4px;
+      }
+      &.koment-show {
+        animation-name: viki-show;
+        animation-duration: 0.3s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-Out;
+      }
+      &.koment-hidden {
+        animation-name: viki-hidden;
+        animation-duration: 0.7s;
+        animation-iteration-count: 1;
+        animation-timing-function: ease-Out;
+      }
     }
   }
 
@@ -62,9 +98,6 @@
 
   .koment-item.koment-show {
     display: inline-block;
-    //animation-name: koment-show;
-    //animation-duration: 0.5s;
-    //animation-iteration-count: 1;
   }
   .koment-item.koment-bubble {
     display: inline-block;
@@ -92,8 +125,7 @@
 }
 
 .koment.koment-toggle-menu .koment-display {
-  display: block;
-  //pointer-events: all;
+  display: flex;
 }
 
 @keyframes bubbles-rise {
@@ -120,6 +152,26 @@
     opacity: 1;
   }
   100% {
+    transform: translate3d(-300px, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes viki-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes viki-hidden {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
     transform: translate3d(-300px, 0, 0);
     opacity: 0;
   }
