@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>videojs-koment Demo</title>
+  <link href="/dist/koment.css" rel="stylesheet">
+  <style>
+
+    button {
+      margin: 1em;
+      width: 10em;
+    }
+
+    .autoadvance-group {
+      margin: 1em;
+    }
+
+    .autoadvance-group label {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+<!--<video data-setup class="video-js vjs-default-skin" controls width="640px" height="360px" crossorigin="true">-->
+<!--<source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">-->
+<!--&lt;!&ndash;<track src="http://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/koment"&ndash;&gt;-->
+<!--&lt;!&ndash;kind="koment" srclang="fr" label="English">&ndash;&gt;-->
+<!--<track label="Live Captioning Example Captions" kind="captions" srclang="en"-->
+<!--src="http://ronallo.com/demos/webvtt-cue-settings/soybean-talk-clip.vtt" id="caption-change-track"-->
+<!--default="">-->
+<!--</video>-->
+<iframe width="640" data-setup='{"controls":1}' height="360"
+        src="https://www.youtube.com/embed/3YSWbm_lGBs?enablejsapi=1&origin=http://localhost:9999"
+        frameborder="0"
+        allowfullscreen></iframe>
+<ul>
+  <li><a href="/test/">Run unit tests in browser.</a></li>
+</ul>
+<script src="/dist/koment.js"></script>
+<script>
+
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+.koment .koment-control-bar {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.8em;
+
+  margin: 50px $padding-global $padding-global $padding-global;
+
+  border-radius: 4em;
+
+  @include background-color-with-alpha($primary-background-color, $primary-background-transparency);
+}
+
+// Video has started playing
+.koment-has-started .koment-control-bar {
+  @include display-flex;
+  visibility: visible;
+  opacity: 1;
+  flex-direction: column;
+
+  $trans: visibility 0.1s, opacity 0.1s, height 0.4s; // Var needed because of comma
+  @include transition($trans);
+}
+
+// IE 8 hack for media queries
+$ie8screen: "\\0screen";
+
+// Video has started playing AND user is inactive
+.koment-has-started.koment-user-inactive.koment-playing .koment-control-bar {
+  // Remain visible for screen reader and keyboard users
+  visibility: visible;
+  opacity: 0;
+
+  $trans: visibility 1.0s, opacity 1.0s, height 0.4s;
+  @include transition($trans);
+
+  // Make controls hidden in IE8 for now
+  @media #{$ie8screen} {
+    visibility: hidden;
+  }
+}
+
+.koment-controls-disabled .koment-control-bar,
+.koment-using-native-controls .koment-control-bar,
+.koment-error .koment-control-bar {
+  // !important is ok in this context.
+  display: none !important;
+}
+
+// Don't hide the control bar if it's audio
+.koment-audio.koment-has-started.koment-user-inactive.koment-playing .koment-control-bar {
+  opacity: 1;
+  visibility: visible;
+}
+
+// IE8 is flakey with fonts, and you have to change the actual content to force
+// fonts to show/hide properly.
+// - "\9" IE8 hack didn't work for this
+// Found in XP IE8 from http://modern.ie. Does not show up in "IE8 mode" in IE9
+.koment-user-inactive.koment-playing .koment-control-bar :before {
+  @media #{$ie8screen} {
+    content: "";
+  }
+}
+
+// IE 8 + 9 Support
+.koment-has-started.koment-no-flex .koment-control-bar {
+  display: table;
+}

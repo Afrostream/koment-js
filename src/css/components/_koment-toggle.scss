@@ -1,0 +1,16 @@
+.koment .koment-toggle {
+  cursor: pointer;
+
+  font-size: 0.7em;
+
+  @extend .koment-icon-toggle;
+
+  &:before {
+    line-height: 2.3;
+  }
+}
+
+// Switch to the exit icon when the player is in fullscreen
+.koment.koment-toggle-menu .koment-toggle {
+  @extend .koment-icon-exit;
+}

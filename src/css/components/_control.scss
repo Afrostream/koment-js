@@ -1,0 +1,38 @@
+// koment-control might be better named koment-button now.
+// It's used on both real buttons (play button)
+// and div buttons (menu buttons)
+.koment .koment-control {
+  outline: none;
+  position: relative;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  width: 4em;
+  height: 4em;
+  @include flex(none);
+
+  &:before {
+    font-size: 1.8em;
+    line-height: 1.67;
+
+    @extend %icon-default;
+  }
+}
+
+// Replacement for focus outline
+.koment .koment-control:focus:before,
+.koment .koment-control:hover:before,
+.koment .koment-control:focus {
+  //text-shadow: 0em 0em 1em rgba($primary-foreground-color, 1);
+}
+
+// Hide control text visually, but have it available for screenreaders
+.koment .koment-control-text {
+  @include hide-visually;
+}
+
+// IE 8 + 9 Support
+.koment-no-flex .koment-control {
+  display: table-cell;
+  vertical-align: middle;
+}
