@@ -31,7 +31,7 @@
     "prepublish": "npm run build",
     "prestart": "npm-run-all -p docs build",
     "dev": "echo 'requiring node v4.5.0' && . ~/.nvm/nvm.sh && nvm use 4.5.0 && npm-run-all -p start watch",
-    "start": "npm-run-all -p start:serve watch",
+    "start": "npm-run-all -p start:serve",
     "start:serve": "babel-node scripts/server.js",
     "pretest": "npm-run-all build:test",
     "test": "karma start test/karma/detected.js",
