@@ -21470,13 +21470,7 @@ var KomentDisplay = (function (_Component) {
       var currentTimecode = this.player_.currentTime();
       var playerWidth = this.player_.width();
       var positionGap = this.options_.tte + 5;
-      var prevItemPos = {
-        left: 0,
-        top: 0,
-        width: 0,
-        height: 0
-      };
-      (0, _lodash.forEach)(this.items, function (item, key) {
+      (0, _lodash.forEach)(this.items, function (item) {
         var inTimeCodeRange = item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
         if (inTimeCodeRange) {
           var percent = (_this2.options_.tte - (currentTimecode - item.timecode)) / _this2.options_.tte;

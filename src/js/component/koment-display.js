@@ -46,7 +46,7 @@ class KomentDisplay extends Component {
       kommentsList = res.body || [];
       kommentsList = sortBy(kommentsList, ['timecode']);
       this.createChilds(kommentsList);
-    })
+    });
     //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
     //for (let i = 0; i < 50; i++) {
     //  kommentsList.push({
@@ -121,13 +121,7 @@ class KomentDisplay extends Component {
     const currentTimecode = this.player_.currentTime();
     const playerWidth = this.player_.width();
     const positionGap = (this.options_.tte + 5);
-    let prevItemPos = {
-      left: 0,
-      top: 0,
-      width: 0,
-      height: 0
-    };
-    forEach(this.items, (item, key)=> {
+    forEach(this.items, (item)=> {
       const inTimeCodeRange = (item.timecode <= currentTimecode + positionGap) && (item.timecode >= currentTimecode - positionGap);
       if (inTimeCodeRange) {
         let percent = (this.options_.tte - (currentTimecode - item.timecode)) / (this.options_.tte);
