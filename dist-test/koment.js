@@ -19165,7 +19165,27 @@ module.exports={
     "src/",
     "test/"
   ],
-  "devDependencies": {
+  "devDependencies": {},
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "qunit": "global:QUnit",
+    "sinon": "global:sinon"
+  },
+  "vjsstandard": {
+    "ignore": [
+      "dist",
+      "dist-test",
+      "docs",
+      "es5",
+      "test/karma",
+      "scripts"
+    ]
+  },
+  "dependencies": {
     "babel": "^5.8.0",
     "babelify": "^6.0.0",
     "bannerize": "^1.0.0",
@@ -19193,28 +19213,7 @@ module.exports={
     "sinon": "1.14.1",
     "uglify-js": "^2.5.0",
     "watchify": "^3.6.0",
-    "xhr": "^2.2.0"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "qunit": "global:QUnit",
-    "sinon": "global:sinon"
-  },
-  "vjsstandard": {
-    "ignore": [
-      "dist",
-      "dist-test",
-      "docs",
-      "es5",
-      "test/karma",
-      "scripts"
-    ]
-  },
-  "dependencies": {
+    "xhr": "^2.2.0",
     "dom-select": "^1.1.1",
     "global": "^4.3.0",
     "lodash": "^4.15.0",
