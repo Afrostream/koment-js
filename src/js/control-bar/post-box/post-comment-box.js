@@ -20,7 +20,15 @@ import './post-comment-box';
 class PostCommentBox extends Component {
 
   constructor (player, options, ready) {
-    super(player, options, ready)
+    super(player, options, ready);
+    this.on(player, 'submit', this.onSubmit);
+  }
+
+  onSubmit () {
+    const text = this.el_.innerHTML;
+    const timecode = this.player_.currentTime();
+    this.el_.innerHTML = '';
+    this.player_.sendKoment({text, timecode})
   }
 
   createEl () {

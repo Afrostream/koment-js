@@ -51,6 +51,7 @@ class EditButton extends Button {
     this.addClass('active');
     this.setTimeout(this.disable, 300);
     this.player_.toggleEdit();
+    this.player_.pause();
   }
 
   disable () {

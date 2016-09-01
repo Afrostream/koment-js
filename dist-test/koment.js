@@ -22133,6 +22133,7 @@ var EditButton = (function (_Button) {
       this.addClass('active');
       this.setTimeout(this.disable, 300);
       this.player_.toggleEdit();
+      this.player_.pause();
     }
   }, {
     key: 'disable',
@@ -22470,9 +22471,18 @@ var PostCommentBox = (function (_Component) {
     _classCallCheck(this, PostCommentBox);
 
     _get(Object.getPrototypeOf(PostCommentBox.prototype), 'constructor', this).call(this, player, options, ready);
+    this.on(player, 'submit', this.onSubmit);
   }
 
   _createClass(PostCommentBox, [{
+    key: 'onSubmit',
+    value: function onSubmit() {
+      var text = this.el_.innerHTML;
+      var timecode = this.player_.currentTime();
+      this.el_.innerHTML = '';
+      this.player_.sendKoment({ text: text, timecode: timecode });
+    }
+  }, {
     key: 'createEl',
     value: function createEl() {
 
@@ -22567,6 +22577,7 @@ var PostSubmitButton = (function (_Button) {
     key: 'handleClick',
     value: function handleClick(event) {
       _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'handleClick', this).call(this, event);
+      this.player_.trigger('submit');
     }
   }]);
 
@@ -25876,6 +25887,12 @@ var Player = (function (_Component) {
       }
 
       return this;
+    }
+  }, {
+    key: 'sendKoment',
+    value: function sendKoment(koment) {
+      console.log('koment send ', koment);
+      this.toggleEdit(false);
     }
 
     /**

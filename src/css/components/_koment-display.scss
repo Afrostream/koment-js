@@ -156,6 +156,9 @@
   @include background-color-with-alpha($primary-foreground-color, 0.8);
   bottom: 0;
   pointer-events: all;
+  .koment-item {
+    display: none;
+  }
 }
 
 @keyframes bubbles-rise {

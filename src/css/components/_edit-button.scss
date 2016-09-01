@@ -30,6 +30,10 @@
   }
 }
 
+.koment.koment-toggle-edit .edit-button {
+  display: none;
+}
+
 @keyframes show {
   from {
     height: 0;

@@ -11,10 +11,9 @@
 
 .koment .kmt-post-submit-button {
   @extend .koment-icon-send;
-  font-size: 1.3em;
-  &:before {
-    top: 25%;
-  }
+  height: 3em;
+  font-size: 1.5em;
+  border: 2px solid $primary-foreground-color;
   &:hover {
     color: #9c9c9c;
   }
@@ -33,12 +32,13 @@
   .kmt-post-box-comments-input {
     height: 100%;
     width: 100%;
-    border-radius: 0.2em;
+    border-radius: $primary-border-radius / 2;
     padding: 0.5em;
     font-size: 1.3em;
     @include background-color-with-alpha($primary-foreground-color, 0.3);
     color: $primary-foreground-color;
     margin-right: 0.5em;
+    outline: none;
   }
 
   .kmt-message-length {

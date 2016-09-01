@@ -1290,6 +1290,11 @@ class Player extends Component {
     return this;
   }
 
+  sendKoment (koment) {
+    console.log('koment send ', koment);
+    this.toggleEdit(false);
+  }
+
   /**
    * Pause the video playback
    * ```js
