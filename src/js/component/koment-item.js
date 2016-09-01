@@ -26,7 +26,7 @@ class KomentItem extends Component {
   createEl () {
 
     const el = super.createEl('div', {
-      className: 'koment-item'
+      className: 'koment-item komment-mask'
     });
 
     this.contentEl_ = Dom.createEl('div', {
@@ -39,10 +39,6 @@ class KomentItem extends Component {
     el.appendChild(this.contentEl_);
     return el;
 
-  }
-
-  hide () {
-    this.addClass('koment-hidden')
   }
 }
 

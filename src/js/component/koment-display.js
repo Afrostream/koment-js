@@ -5,7 +5,7 @@ import Component from '../component';
 import * as Fn from '../utils/fn.js';
 import * as Dom from '../utils/dom'
 import xhr from 'xhr'
-import { filter, forEach, map, clone, sortBy } from 'lodash';
+import { filter, forEach, map, clone, sortBy, slice, difference } from 'lodash';
 import KomentItem from './koment-item';
 
 /**
@@ -34,6 +34,7 @@ class KomentDisplay extends Component {
       if (err) {
         throw new Error(err.message)
       }
+      kommentsList = res.body || [];
 
       //  forEach(res.body || [], (item)=> {
       //    forEach(res.body || [], ()=> {
@@ -43,7 +44,13 @@ class KomentDisplay extends Component {
       //      tc += 0.2
       //    })
       //  });
-      kommentsList = res.body || [];
+      const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
+      for (let i = 0; i < 50; i++) {
+        kommentsList.push({
+          text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
+          timecode: Math.round(Math.random() * (352 - 0) + 0)
+        });
+      }
       kommentsList.push({
         text: 'yes c\'est la fin',
         timecode: 345
@@ -51,17 +58,6 @@ class KomentDisplay extends Component {
       kommentsList = sortBy(kommentsList, ['timecode']);
       this.createChilds(kommentsList);
     });
-    //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-    //for (let i = 0; i < 50; i++) {
-    //  kommentsList.push({
-    //    text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-    //    timecode: tc
-    //  })
-    //
-    //  tc += 0.2;//Math.round(Math.random() * (352 - 0) + 0)
-    //}
-    //this.createChilds(kommentsList);
-
   }
 
   /**
@@ -92,10 +88,6 @@ class KomentDisplay extends Component {
       const mi = new KomentItem(this.player_, item);
       this.items.push(mi);
       this.addChild(mi);
-    }
-
-    if (items.length > 0) {
-      this.show();
     }
 
     switch (this.options_.template) {
@@ -134,25 +126,30 @@ class KomentDisplay extends Component {
   //VIKI MODE
   showElementsViki () {
     let className = this.pause ? 'koment-paused' : 'koment-show';
-    const currentTimecode = Math.round(this.player_.currentTime());
-    forEach(this.items, (item)=> {
-      const inTimeCodeRange = (Math.round(item.timecode) === currentTimecode);
-      if (inTimeCodeRange) {
-        if (!item.hasClass(className)) {
-          item.removeClass('koment-hidden');
-          item.removeClass('koment-show');
-          item.removeClass('koment-paused');
-          item.addClass(className);
-        }
-        this.setTimeout(()=> {
-          if (!item.hasClass('koment-hidden')) {
-            item.removeClass('koment-paused');
-            item.removeClass('koment-show');
-            item.addClass('koment-hidden');
-          }
-        }, 5000);
+    const currentTimecode = this.player_.currentTime();
+    const positionGap = this.options_.tte;
+    let filtereds = filter(this.items, (item)=> (item.timecode <= currentTimecode + positionGap) && (item.timecode >= currentTimecode - positionGap)).slice(3);
+
+    forEach(filtereds, (item)=> {
+      if (!item.hasClass(className)) {
+        item.show();
+        item.removeClass('koment-mask');
+        item.removeClass('koment-show');
+        item.removeClass('koment-paused');
+        item.addClass(className);
       }
     });
+    const nonVisible = difference(this.items, filtereds);
+    forEach(nonVisible, (item)=> {
+      if (!item.hasClass('koment-mask')) {
+        item.addClass('koment-mask');
+        item.removeClass('koment-paused');
+        item.removeClass('koment-show');
+        item.setTimeout(this.hide, 500);
+      }
+    });
+
+
     this.ticking = false;
   }
 
@@ -169,7 +166,7 @@ class KomentDisplay extends Component {
         let position = (percent * playerWidth) - playerWidth;
         let top = 0;
         if (!item.hasClass(className)) {
-          item.removeClass('koment-hidden');
+          item.removeClass('koment-mask');
           item.removeClass('koment-show');
           item.removeClass('koment-paused');
           item.addClass(className);
@@ -177,10 +174,10 @@ class KomentDisplay extends Component {
         item.el_.style.webkitTransform = `translate3d(${position}px, ${top}px, 0)`;
       }
       else {
-        if (!item.hasClass('koment-hidden')) {
+        if (!item.hasClass('koment-mask')) {
           item.removeClass('koment-paused');
           item.removeClass('koment-show');
-          item.addClass('koment-hidden');
+          item.addClass('koment-mask');
         }
       }
     });

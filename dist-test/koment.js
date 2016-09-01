@@ -21373,6 +21373,7 @@ var KomentDisplay = (function (_Component) {
       if (err) {
         throw new Error(err.message);
       }
+      kommentsList = res.body || [];
 
       //  forEach(res.body || [], (item)=> {
       //    forEach(res.body || [], ()=> {
@@ -21382,7 +21383,13 @@ var KomentDisplay = (function (_Component) {
       //      tc += 0.2
       //    })
       //  });
-      kommentsList = res.body || [];
+      var dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
+      for (var i = 0; i < 50; i++) {
+        kommentsList.push({
+          text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
+          timecode: Math.round(Math.random() * (352 - 0) + 0)
+        });
+      }
       kommentsList.push({
         text: 'yes c\'est la fin',
         timecode: 345
@@ -21390,16 +21397,6 @@ var KomentDisplay = (function (_Component) {
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
       _this.createChilds(kommentsList);
     });
-    //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-    //for (let i = 0; i < 50; i++) {
-    //  kommentsList.push({
-    //    text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-    //    timecode: tc
-    //  })
-    //
-    //  tc += 0.2;//Math.round(Math.random() * (352 - 0) + 0)
-    //}
-    //this.createChilds(kommentsList);
   }
 
   /**
@@ -21435,10 +21432,6 @@ var KomentDisplay = (function (_Component) {
         var mi = new _komentItem2['default'](this.player_, item);
         this.items.push(mi);
         this.addChild(mi);
-      }
-
-      if (items.length > 0) {
-        this.show();
       }
 
       switch (this.options_.template) {
@@ -21484,25 +21477,31 @@ var KomentDisplay = (function (_Component) {
       var _this2 = this;
 
       var className = this.pause ? 'koment-paused' : 'koment-show';
-      var currentTimecode = Math.round(this.player_.currentTime());
-      (0, _lodash.forEach)(this.items, function (item) {
-        var inTimeCodeRange = Math.round(item.timecode) === currentTimecode;
-        if (inTimeCodeRange) {
-          if (!item.hasClass(className)) {
-            item.removeClass('koment-hidden');
-            item.removeClass('koment-show');
-            item.removeClass('koment-paused');
-            item.addClass(className);
-          }
-          _this2.setTimeout(function () {
-            if (!item.hasClass('koment-hidden')) {
-              item.removeClass('koment-paused');
-              item.removeClass('koment-show');
-              item.addClass('koment-hidden');
-            }
-          }, 5000);
+      var currentTimecode = this.player_.currentTime();
+      var positionGap = this.options_.tte;
+      var filtereds = (0, _lodash.filter)(this.items, function (item) {
+        return item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
+      }).slice(3);
+
+      (0, _lodash.forEach)(filtereds, function (item) {
+        if (!item.hasClass(className)) {
+          item.show();
+          item.removeClass('koment-mask');
+          item.removeClass('koment-show');
+          item.removeClass('koment-paused');
+          item.addClass(className);
         }
       });
+      var nonVisible = (0, _lodash.difference)(this.items, filtereds);
+      (0, _lodash.forEach)(nonVisible, function (item) {
+        if (!item.hasClass('koment-mask')) {
+          item.addClass('koment-mask');
+          item.removeClass('koment-paused');
+          item.removeClass('koment-show');
+          item.setTimeout(_this2.hide, 500);
+        }
+      });
+
       this.ticking = false;
     }
 
@@ -21523,17 +21522,17 @@ var KomentDisplay = (function (_Component) {
           var position = percent * playerWidth - playerWidth;
           var _top = 0;
           if (!item.hasClass(className)) {
-            item.removeClass('koment-hidden');
+            item.removeClass('koment-mask');
             item.removeClass('koment-show');
             item.removeClass('koment-paused');
             item.addClass(className);
           }
           item.el_.style.webkitTransform = 'translate3d(' + position + 'px, ' + _top + 'px, 0)';
         } else {
-          if (!item.hasClass('koment-hidden')) {
+          if (!item.hasClass('koment-mask')) {
             item.removeClass('koment-paused');
             item.removeClass('koment-show');
-            item.addClass('koment-hidden');
+            item.addClass('koment-mask');
           }
         }
       });
@@ -21647,7 +21646,7 @@ var KomentItem = (function (_Component) {
     value: function createEl() {
 
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-item'
+        className: 'koment-item komment-mask'
       });
 
       this.contentEl_ = Dom.createEl('div', {
@@ -21659,11 +21658,6 @@ var KomentItem = (function (_Component) {
 
       el.appendChild(this.contentEl_);
       return el;
-    }
-  }, {
-    key: 'hide',
-    value: function hide() {
-      this.addClass('koment-hidden');
     }
   }]);
 
