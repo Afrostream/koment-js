@@ -27,8 +27,6 @@ var _componentJs = require('../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
 
-var _gsap = require('gsap');
-
 /**
  * Container of main controls
  *
@@ -45,10 +43,6 @@ var KomentItem = (function (_Component) {
     _get(Object.getPrototypeOf(KomentItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
-    this.on(this.player_, 'timeupdate', this.update);
-    //this.on(this.player_, 'seeked', this.replace);
-    //this.on(this.player_, 'play', this.replace);
-    //this.on(this.player_, 'pause', this.pause);
   }
 
   /**
@@ -63,7 +57,7 @@ var KomentItem = (function (_Component) {
     value: function createEl() {
 
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-item'
+        className: 'koment-item komment-mask'
       });
 
       this.contentEl_ = Dom.createEl('div', {
@@ -76,59 +70,13 @@ var KomentItem = (function (_Component) {
       el.appendChild(this.contentEl_);
       return el;
     }
-  }, {
-    key: 'hide',
-    value: function hide() {
-      this.addClass('koment-hidden');
-    }
-
-    /**
-     * Get percentage
-     *
-     * @return {Number} Percentage
-     * @method getPercent
-     */
-  }, {
-    key: 'getPercent',
-    value: function getPercent() {
-      var percent = this.timecode / this.player_.duration();
-
-      return percent >= 1 ? 1 : percent;
-    }
-  }, {
-    key: 'pause',
-    value: function pause() {
-      //TweenMax.pauseAll(true, true)
-    }
-  }, {
-    key: 'replace',
-    value: function replace() {
-      var currentTimecode = Math.round(this.player_.currentTime());
-      var playerWidth = this.player_.width();
-      var percent = (this.options_.tte - (currentTimecode - this.timecode)) / this.options_.tte;
-      var position = Math.round(percent * playerWidth) - playerWidth;
-      _gsap.TweenLite.to(this.el_, 0.5, { x: position, ease: _gsap.Linear.easeIn });
-      //TweenMax.resumeAll(true, true)
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-      var currentTimecode = Math.round(this.player_.currentTime());
-      var playerWidth = this.player_.width();
-      var elWidth = this.width();
-      if (currentTimecode > this.timecode) {
-        _gsap.TweenLite.to(this.el_, 1.5, { x: -(playerWidth + elWidth * 2), ease: _gsap.Linear.easeIn });
-      }
-    }
   }]);
 
   return KomentItem;
 })(_componentJs2['default']);
 
 KomentItem.prototype.timecode = 0;
-KomentItem.prototype.options_ = {
-  tte: 10
-};
+KomentItem.prototype.options_ = {};
 
 _componentJs2['default'].registerComponent('KomentItem', KomentItem);
 exports['default'] = KomentItem;

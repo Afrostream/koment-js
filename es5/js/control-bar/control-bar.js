@@ -17,13 +17,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../component.js');
+var _component = require('../component');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _component2 = _interopRequireDefault(_component);
 
 // Required children
 
-require('./koment-toggle.js');
+require('./koment-toggle');
+
+require('./like-button');
+
+require('./edit-button');
 
 /**
  * Container of main controls
@@ -62,12 +66,12 @@ var ControlBar = (function (_Component) {
   }]);
 
   return ControlBar;
-})(_componentJs2['default']);
+})(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle']
+  children: ['komentToggle', 'likeButton', 'editButton']
 };
 
-_componentJs2['default'].registerComponent('ControlBar', ControlBar);
+_component2['default'].registerComponent('ControlBar', ControlBar);
 exports['default'] = ControlBar;
 module.exports = exports['default'];

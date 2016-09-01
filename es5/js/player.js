@@ -96,6 +96,8 @@ var _techTech2 = _interopRequireDefault(_techTech);
 
 require('./control-bar/control-bar');
 
+require('./control-bar/progress-control/progress-control');
+
 require('./component/koment-display');
 
 require('./tech/youtube');
@@ -1607,6 +1609,88 @@ var Player = (function (_Component) {
       return this.duration() - this.currentTime();
     }
 
+    // http://dev.w3.org/html5/spec/video.html#dom-media-buffered
+    // Buffered returns a timerange object.
+    // Kind of like an array of portions of the video that have been downloaded.
+
+    /**
+     * Get a TimeRange object with the times of the video that have been downloaded
+     * If you just want the percent of the video that's been downloaded,
+     * use bufferedPercent.
+     * ```js
+     *     // Number of different ranges of time have been buffered. Usually 1.
+     *     numberOfRanges = bufferedTimeRange.length,
+     *     // Time in seconds when the first range starts. Usually 0.
+     *     firstRangeStart = bufferedTimeRange.start(0),
+     *     // Time in seconds when the first range ends
+     *     firstRangeEnd = bufferedTimeRange.end(0),
+     *     // Length in seconds of the first time range
+     *     firstRangeLength = firstRangeEnd - firstRangeStart;
+     * ```
+     *
+     * @return {Object} A mock TimeRange object (following HTML spec)
+     * @method buffered
+     */
+  }, {
+    key: 'buffered',
+    value: function buffered() {
+      var buffered = this.techGet_('buffered');
+
+      if (!buffered || !buffered.length) {
+        buffered = createTimeRange(0, 0);
+      }
+
+      return buffered;
+    }
+
+    /**
+     * Get the percent (as a decimal) of the video that's been downloaded
+     * ```js
+     *     var howMuchIsDownloaded = myPlayer.bufferedPercent();
+     * ```
+     * 0 means none, 1 means all.
+     * (This method isn't in the HTML5 spec, but it's very convenient)
+     *
+     * @return {Number} A decimal between 0 and 1 representing the percent
+     * @method bufferedPercent
+     */
+  }, {
+    key: 'bufferedPercent',
+    value: (function (_bufferedPercent) {
+      function bufferedPercent() {
+        return _bufferedPercent.apply(this, arguments);
+      }
+
+      bufferedPercent.toString = function () {
+        return _bufferedPercent.toString();
+      };
+
+      return bufferedPercent;
+    })(function () {
+      return bufferedPercent(this.buffered(), this.duration());
+    })
+
+    /**
+     * Get the ending time of the last buffered time range
+     * This is used in the progress bar to encapsulate all time ranges.
+     *
+     * @return {Number} The end of the last buffered time range
+     * @method bufferedEnd
+     */
+  }, {
+    key: 'bufferedEnd',
+    value: function bufferedEnd() {
+      var buffered = this.buffered();
+      var duration = this.duration();
+      var end = buffered.end(buffered.length - 1);
+
+      if (end > duration) {
+        end = duration;
+      }
+
+      return end;
+    }
+
     // Check if current tech can support native fullscreen
     // (e.g. with built in controls like iOS, so not our flash swf)
     /**
@@ -2394,7 +2478,7 @@ var navigator = _globalWindow2['default'].navigator;
 Player.prototype.options_ = {
   // default inactivity timeout
   inactivityTimeout: 2000,
-  children: ['controlBar', 'komentDisplay'],
+  children: ['komentDisplay', 'progressControl', 'controlBar'],
 
   language: navigator && (navigator.languages && navigator.languages[0] || navigator.userLanguage || navigator.language) || 'en',
 

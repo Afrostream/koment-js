@@ -1,5 +1,5 @@
 /**
- * @file koment-toggle.js
+ * @file play-progress-bar.js
  */
 'use strict';
 
@@ -19,74 +19,72 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _utilsToTitleCase = require('../utils/to-title-case');
-
-var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
-
-var _utilsDom = require('../utils/dom');
-
-var Dom = _interopRequireWildcard(_utilsDom);
-
-var _componentJs = require('../component.js');
+var _componentJs = require('../../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
 
-var _buttonJs = require('../button.js');
+var _utilsFnJs = require('../../utils/fn.js');
 
-var _buttonJs2 = _interopRequireDefault(_buttonJs);
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsFormatTimeJs = require('../../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
 
 /**
- * The button component for toggling and selecting koment
- * Chapters act much differently than other text tracks
- * Cues are navigation vs. other tracks of alternative languages
+ * Shows play progress
  *
- * @param {Object} player  Player object
- * @param {Object=} options Object of option names and values
- * @param {Function=} ready    Ready callback function
- * @extends Button
- * @class KomentToggle
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class PlayProgressBar
  */
 
-var KomentToggle = (function (_Button) {
-  _inherits(KomentToggle, _Button);
+var TooltipProgressBar = (function (_Component) {
+  _inherits(TooltipProgressBar, _Component);
 
-  function KomentToggle(player, options, ready) {
-    _classCallCheck(this, KomentToggle);
+  function TooltipProgressBar(player, options) {
+    _classCallCheck(this, TooltipProgressBar);
 
-    _get(Object.getPrototypeOf(KomentToggle.prototype), 'constructor', this).call(this, player, options, ready);
+    _get(Object.getPrototypeOf(TooltipProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.updateDataAttr();
+    this.on(player, 'timeupdate', this.updateDataAttr);
+    player.ready(Fn.bind(this, this.updateDataAttr));
   }
 
   /**
-   * Allow sub components to stack CSS class names
+   * Create the component's DOM element
    *
-   * @return {String} The constructed class name
-   * @method buildCSSClass
+   * @return {Element}
+   * @method createEl
    */
 
-  _createClass(KomentToggle, [{
-    key: 'buildCSSClass',
-    value: function buildCSSClass() {
-      return 'koment-toggle ' + _get(Object.getPrototypeOf(KomentToggle.prototype), 'buildCSSClass', this).call(this);
-    }
+  _createClass(TooltipProgressBar, [{
+    key: 'createEl',
+    value: function createEl() {
+      var el = _get(Object.getPrototypeOf(TooltipProgressBar.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-tooltip-progress-bar koment-slider-bar',
+        innerHTML: '<div class="koment-time-tooltip"></div>\n        <span class="koment-control-text"><span>' + this.localize('Progress') + '</span>: 0%</span>'
+      });
 
-    /**
-     * Handle click on text track
-     *
-     * @method handleClick
-     */
+      this.tooltip = el.querySelector('.koment-time-tooltip');
+
+      return el;
+    }
   }, {
-    key: 'handleClick',
-    value: function handleClick(event) {
-      _get(Object.getPrototypeOf(KomentToggle.prototype), 'handleClick', this).call(this, event);
-      this.player_.toggleMenu();
+    key: 'updateDataAttr',
+    value: function updateDataAttr() {
+      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+      var formattedTime = (0, _utilsFormatTimeJs2['default'])(time, this.player_.duration());
+
+      this.el_.setAttribute('data-current-time', formattedTime);
+      this.tooltip.innerHTML = formattedTime;
     }
   }]);
 
-  return KomentToggle;
-})(_buttonJs2['default']);
+  return TooltipProgressBar;
+})(_componentJs2['default']);
 
-KomentToggle.prototype.controlText_ = 'Koment';
-
-_componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
-exports['default'] = KomentToggle;
+_componentJs2['default'].registerComponent('TooltipProgressBar', TooltipProgressBar);
+exports['default'] = TooltipProgressBar;
 module.exports = exports['default'];

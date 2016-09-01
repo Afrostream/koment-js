@@ -11,6 +11,8 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
@@ -21,6 +23,14 @@ var _component = require('../component');
 
 var _component2 = _interopRequireDefault(_component);
 
+var _utilsFnJs = require('../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsDom = require('../utils/dom');
+
+var Dom = _interopRequireWildcard(_utilsDom);
+
 var _xhr = require('xhr');
 
 var _xhr2 = _interopRequireDefault(_xhr);
@@ -30,8 +40,6 @@ var _lodash = require('lodash');
 var _komentItem = require('./koment-item');
 
 var _komentItem2 = _interopRequireDefault(_komentItem);
-
-var _gsap = require('gsap');
 
 /**
  * Container of comment list
@@ -59,20 +67,34 @@ var KomentDisplay = (function (_Component) {
       }
     };
 
+    var kommentsList = [];
+    var tc = 0;
     (0, _xhr2['default'])(data, function (err, res) {
       if (err) {
         throw new Error(err.message);
       }
+      kommentsList = res.body || [];
 
-      var kommentsList = res.body || [];
-      //forEach(res.body || [], (item)=> {
-      //  forEach(res.body || [], ()=> {
-      //    let copyItem = clone(item)
-      //    copyItem.timecode = Math.round(Math.random() * (352 - 0) + 0);
-      //    kommentsList.push(copyItem)
-      //  })
-      //})
-
+      //  forEach(res.body || [], (item)=> {
+      //    forEach(res.body || [], ()=> {
+      //      let copyItem = clone(item)
+      //      copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
+      //      kommentsList.push(copyItem)
+      //      tc += 0.2
+      //    })
+      //  });
+      var dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
+      for (var i = 0; i < 50; i++) {
+        kommentsList.push({
+          text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
+          timecode: Math.round(Math.random() * (352 - 0) + 0)
+        });
+      }
+      kommentsList.push({
+        text: 'yes c\'est la fin',
+        timecode: 345
+      });
+      kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
       _this.createChilds(kommentsList);
     });
   }
@@ -112,68 +134,140 @@ var KomentDisplay = (function (_Component) {
         this.addChild(mi);
       }
 
-      if (items.length > 0) {
-        this.show();
+      switch (this.options_.template) {
+        case 'timeline':
+          this.showElements = this.showElementsTimeline;
+          this.on(this.player_, 'loadedmetadata', this.positionTimeline);
+          this.on(this.player_, 'pause', this.replaceTick);
+          this.on(this.player_, 'play', this.replaceTick);
+          this.on(this.player_, 'seeked', this.requestTick);
+          this.on(this.player_, 'timeupdate', this.requestTick);
+          break;
+        case 'viki':
+          this.showElements = this.showElementsViki;
+          this.on(this.player_, 'timeupdate', this.requestTick);
+          break;
       }
 
-      //this.on(this.player_, 'timeupdate', this.showTimedItems);
-      //this.on(this.player_, 'loadedmetadata', this.positionComments);
-      //this.on(this.player_, 'timeupdate', this.moveTimeline);
-      this.on(this.player_, 'loadedmetadata', this.positionTopComments);
+      this.addClass(this.options_.template);
     }
   }, {
-    key: 'positionComments',
-    value: function positionComments() {
+    key: 'replaceTick',
+    value: function replaceTick() {
+      this.showElements();
+    }
+
+    /**
+     * Calls rAF if it's not already
+     * been done already
+     */
+  }, {
+    key: 'requestTick',
+    value: function requestTick() {
+      if (!this.ticking) {
+        requestAnimationFrame(Fn.bind(this, this.showElements));
+        this.ticking = true;
+      }
+    }
+
+    //VIKI MODE
+  }, {
+    key: 'showElementsViki',
+    value: function showElementsViki() {
       var _this2 = this;
 
-      var playerWidth = this.player_.width();
-      var duration = this.player_.duration();
-      var topItem = 0;
-      (0, _lodash.forEach)(this.items, function (item, key) {
-        item.addClass('koment-position');
+      var className = this.pause ? 'koment-paused' : 'koment-show';
+      var currentTimecode = this.player_.currentTime();
+      var positionGap = this.options_.tte;
+      var filtereds = (0, _lodash.filter)(this.items, function (item) {
+        return item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
+      }).slice(3);
 
-        var percent = (duration - item.timecode) / duration;
-        var position = _this2.options_.speed - Math.round(percent * _this2.options_.speed) + playerWidth;
-
-        item.el_.style.top = topItem + 'px';
-        item.el_.style.left = position + 'px';
-        topItem += item.height() + _this2.options_.itemGap;
-
-        if (key % _this2.options_.itemsInSceen === 0) {
-          topItem = 0;
+      (0, _lodash.forEach)(filtereds, function (item) {
+        if (!item.hasClass(className)) {
+          item.show();
+          item.removeClass('koment-mask');
+          item.removeClass('koment-show');
+          item.removeClass('koment-paused');
+          item.addClass(className);
+        }
+      });
+      var nonVisible = (0, _lodash.difference)(this.items, filtereds);
+      (0, _lodash.forEach)(nonVisible, function (item) {
+        if (!item.hasClass('koment-mask')) {
+          item.addClass('koment-mask');
+          item.removeClass('koment-paused');
+          item.removeClass('koment-show');
+          item.setTimeout(_this2.hide, 500);
         }
       });
 
-      this.el_.style.offsetWidth = this.options_.speed + playerWidth + 'px';
+      this.ticking = false;
     }
+
+    //TIMELINE MODE
   }, {
-    key: 'moveTimeline',
-    value: function moveTimeline() {
-      var currentTime = Math.round(this.player_.currentTime());
-      var duration = this.player_.duration();
-      var position = this.options_.speed * currentTime / duration;
-      _gsap.TweenLite.to(this.el_, 0.5, { scrollLeft: position, ease: _gsap.Linear.easeInOut });
-    }
-  }, {
-    key: 'positionTopComments',
-    value: function positionTopComments() {
+    key: 'showElementsTimeline',
+    value: function showElementsTimeline() {
       var _this3 = this;
 
-      var timecode = Math.round(this.player_.currentTime());
-      var topItem = 0;
+      var className = this.pause ? 'koment-paused' : 'koment-show';
+      var currentTimecode = this.player_.currentTime();
+      var playerWidth = this.player_.width();
+      var positionGap = this.options_.tte + 5;
+      (0, _lodash.forEach)(this.items, function (item) {
+        var inTimeCodeRange = item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
+        if (inTimeCodeRange) {
+          var percent = (_this3.options_.tte - (currentTimecode - item.timecode)) / _this3.options_.tte;
+          var position = percent * playerWidth - playerWidth;
+          var _top = 0;
+          if (!item.hasClass(className)) {
+            item.removeClass('koment-mask');
+            item.removeClass('koment-show');
+            item.removeClass('koment-paused');
+            item.addClass(className);
+          }
+          item.el_.style.webkitTransform = 'translate3d(' + position + 'px, ' + _top + 'px, 0)';
+        } else {
+          if (!item.hasClass('koment-mask')) {
+            item.removeClass('koment-paused');
+            item.removeClass('koment-show');
+            item.addClass('koment-mask');
+          }
+        }
+      });
+      this.ticking = false;
+    }
+  }, {
+    key: 'positionTimeline',
+    value: function positionTimeline() {
+      var _this4 = this;
 
+      var leftItem = 0;
+      var playerWidth = this.player_.width();
       (0, _lodash.forEach)(this.items, function (item, key) {
-        var inTimeCodeRange = item.timecode === timecode && item.timecode <= timecode + 10;
-        //if (inTimeCodeRange && !item.hasClass('koment-show')) {
-        item.addClass('koment-show');
-        item.el_.style.right = -item.width() + 'px';
-        item.el_.style.top = topItem + 'px';
-        topItem += item.height() + _this3.options_.itemGap;
-        if (key % _this3.options_.itemsInSceen === 0) {
-          topItem = 0;
+        var prevItem = _this4.items[key - 1];
+        var percent = (_this4.options_.tte - item.timecode) / _this4.options_.tte;
+        var position = playerWidth - percent * playerWidth;
+        var top = 0;
+
+        if (prevItem) {
+          var prevItemPos = Dom.findElPosition(prevItem.el_);
+          prevItemPos.width = prevItem.width();
+          prevItemPos.height = prevItem.height();
+
+          var percentPrevItem = (_this4.options_.tte - prevItem.timecode) / _this4.options_.tte;
+          var positionPrevItem = playerWidth - percentPrevItem * playerWidth;
+          if (positionPrevItem + prevItemPos.width > position) {
+            top = prevItemPos.top + prevItemPos.height;
+            if (top > 150) {
+              top = 0;
+            }
+          }
         }
 
-        //}
+        item.el_.style.left = playerWidth + leftItem + 'px';
+        item.el_.style.top = top + 'px';
       });
     }
   }]);
@@ -181,11 +275,12 @@ var KomentDisplay = (function (_Component) {
   return KomentDisplay;
 })(_component2['default']);
 
+KomentDisplay.prototype.showElements = function () {};
+
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
-  itemsInSceen: 3,
-  itemGap: 20,
-  speed: 5000
+  tte: 5,
+  template: 'viki' //'timeline'
 };
 
 _component2['default'].registerComponent('KomentDisplay', KomentDisplay);

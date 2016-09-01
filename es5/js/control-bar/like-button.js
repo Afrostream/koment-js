@@ -44,16 +44,16 @@ var _buttonJs2 = _interopRequireDefault(_buttonJs);
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class KomentToggle
+ * @class LikeButton
  */
 
-var KomentToggle = (function (_Button) {
-  _inherits(KomentToggle, _Button);
+var LikeButton = (function (_Button) {
+  _inherits(LikeButton, _Button);
 
-  function KomentToggle(player, options, ready) {
-    _classCallCheck(this, KomentToggle);
+  function LikeButton(player, options, ready) {
+    _classCallCheck(this, LikeButton);
 
-    _get(Object.getPrototypeOf(KomentToggle.prototype), 'constructor', this).call(this, player, options, ready);
+    _get(Object.getPrototypeOf(LikeButton.prototype), 'constructor', this).call(this, player, options, ready);
   }
 
   /**
@@ -63,10 +63,17 @@ var KomentToggle = (function (_Button) {
    * @method buildCSSClass
    */
 
-  _createClass(KomentToggle, [{
+  _createClass(LikeButton, [{
     key: 'buildCSSClass',
     value: function buildCSSClass() {
-      return 'koment-toggle ' + _get(Object.getPrototypeOf(KomentToggle.prototype), 'buildCSSClass', this).call(this);
+      return 'like-button ' + _get(Object.getPrototypeOf(LikeButton.prototype), 'buildCSSClass', this).call(this);
+    }
+  }, {
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(LikeButton.prototype), 'createEl', this).call(this, 'button', {
+        innerHTML: '<div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div>'
+      });
     }
 
     /**
@@ -77,16 +84,22 @@ var KomentToggle = (function (_Button) {
   }, {
     key: 'handleClick',
     value: function handleClick(event) {
-      _get(Object.getPrototypeOf(KomentToggle.prototype), 'handleClick', this).call(this, event);
-      this.player_.toggleMenu();
+      _get(Object.getPrototypeOf(LikeButton.prototype), 'handleClick', this).call(this, event);
+      this.addClass('active');
+      this.setTimeout(this.disable, 300);
+    }
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.removeClass('active');
     }
   }]);
 
-  return KomentToggle;
+  return LikeButton;
 })(_buttonJs2['default']);
 
-KomentToggle.prototype.controlText_ = 'Koment';
+LikeButton.prototype.controlText_ = 'Like';
 
-_componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
-exports['default'] = KomentToggle;
+_componentJs2['default'].registerComponent('LikeButton', LikeButton);
+exports['default'] = LikeButton;
 module.exports = exports['default'];

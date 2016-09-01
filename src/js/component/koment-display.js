@@ -216,7 +216,8 @@ class KomentDisplay extends Component {
 }
 
 KomentDisplay.prototype.showElements = ()=> {
-}
+};
+
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,

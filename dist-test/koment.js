@@ -58,7 +58,7 @@ defineProperties.supportsDescriptors = !!supportsDescriptors;
 
 module.exports = defineProperties;
 
-},{"foreach":4,"object-keys":47}],3:[function(require,module,exports){
+},{"foreach":4,"object-keys":50}],3:[function(require,module,exports){
 var isFunction = require('is-function')
 
 module.exports = forEach
@@ -235,6 +235,215 @@ function isFunction (fn) {
 };
 
 },{}],10:[function(require,module,exports){
+var getNative = require('../internal/getNative');
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeNow = getNative(Date, 'now');
+
+/**
+ * Gets the number of milliseconds that have elapsed since the Unix epoch
+ * (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @category Date
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => logs the number of milliseconds it took for the deferred function to be invoked
+ */
+var now = nativeNow || function() {
+  return new Date().getTime();
+};
+
+module.exports = now;
+
+},{"../internal/getNative":26}],11:[function(require,module,exports){
+var isObject = require('../lang/isObject'),
+    now = require('../date/now');
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed invocations. Provide an options object to indicate that `func`
+ * should be invoked on the leading and/or trailing edge of the `wait` timeout.
+ * Subsequent calls to the debounced function return the result of the last
+ * `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+ * on the trailing edge of the timeout only if the the debounced function is
+ * invoked more than once during the `wait` timeout.
+ *
+ * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options] The options object.
+ * @param {boolean} [options.leading=false] Specify invoking on the leading
+ *  edge of the timeout.
+ * @param {number} [options.maxWait] The maximum time `func` is allowed to be
+ *  delayed before it's invoked.
+ * @param {boolean} [options.trailing=true] Specify invoking on the trailing
+ *  edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // avoid costly calculations while the window size is in flux
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // invoke `sendMail` when the click event is fired, debouncing subsequent calls
+ * jQuery('#postbox').on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // ensure `batchLog` is invoked once after 1 second of debounced calls
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', _.debounce(batchLog, 250, {
+ *   'maxWait': 1000
+ * }));
+ *
+ * // cancel a debounced call
+ * var todoChanges = _.debounce(batchLog, 1000);
+ * Object.observe(models.todo, todoChanges);
+ *
+ * Object.observe(models, function(changes) {
+ *   if (_.find(changes, { 'user': 'todo', 'type': 'delete'})) {
+ *     todoChanges.cancel();
+ *   }
+ * }, ['delete']);
+ *
+ * // ...at some point `models.todo` is changed
+ * models.todo.completed = true;
+ *
+ * // ...before 1 second has passed `models.todo` is deleted
+ * // which cancels the debounced `todoChanges` call
+ * delete models.todo;
+ */
+function debounce(func, wait, options) {
+  var args,
+      maxTimeoutId,
+      result,
+      stamp,
+      thisArg,
+      timeoutId,
+      trailingCall,
+      lastCalled = 0,
+      maxWait = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = wait < 0 ? 0 : (+wait || 0);
+  if (options === true) {
+    var leading = true;
+    trailing = false;
+  } else if (isObject(options)) {
+    leading = !!options.leading;
+    maxWait = 'maxWait' in options && nativeMax(+options.maxWait || 0, wait);
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function cancel() {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    if (maxTimeoutId) {
+      clearTimeout(maxTimeoutId);
+    }
+    lastCalled = 0;
+    maxTimeoutId = timeoutId = trailingCall = undefined;
+  }
+
+  function complete(isCalled, id) {
+    if (id) {
+      clearTimeout(id);
+    }
+    maxTimeoutId = timeoutId = trailingCall = undefined;
+    if (isCalled) {
+      lastCalled = now();
+      result = func.apply(thisArg, args);
+      if (!timeoutId && !maxTimeoutId) {
+        args = thisArg = undefined;
+      }
+    }
+  }
+
+  function delayed() {
+    var remaining = wait - (now() - stamp);
+    if (remaining <= 0 || remaining > wait) {
+      complete(trailingCall, maxTimeoutId);
+    } else {
+      timeoutId = setTimeout(delayed, remaining);
+    }
+  }
+
+  function maxDelayed() {
+    complete(trailing, timeoutId);
+  }
+
+  function debounced() {
+    args = arguments;
+    stamp = now();
+    thisArg = this;
+    trailingCall = trailing && (timeoutId || !leading);
+
+    if (maxWait === false) {
+      var leadingCall = leading && !timeoutId;
+    } else {
+      if (!maxTimeoutId && !leading) {
+        lastCalled = stamp;
+      }
+      var remaining = maxWait - (stamp - lastCalled),
+          isCalled = remaining <= 0 || remaining > maxWait;
+
+      if (isCalled) {
+        if (maxTimeoutId) {
+          maxTimeoutId = clearTimeout(maxTimeoutId);
+        }
+        lastCalled = stamp;
+        result = func.apply(thisArg, args);
+      }
+      else if (!maxTimeoutId) {
+        maxTimeoutId = setTimeout(maxDelayed, remaining);
+      }
+    }
+    if (isCalled && timeoutId) {
+      timeoutId = clearTimeout(timeoutId);
+    }
+    else if (!timeoutId && wait !== maxWait) {
+      timeoutId = setTimeout(delayed, wait);
+    }
+    if (leadingCall) {
+      isCalled = true;
+      result = func.apply(thisArg, args);
+    }
+    if (isCalled && !timeoutId && !maxTimeoutId) {
+      args = thisArg = undefined;
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  return debounced;
+}
+
+module.exports = debounce;
+
+},{"../date/now":10,"../lang/isObject":39}],12:[function(require,module,exports){
 /** Used as the `TypeError` message for "Functions" methods. */
 var FUNC_ERROR_TEXT = 'Expected a function';
 
@@ -294,7 +503,71 @@ function restParam(func, start) {
 
 module.exports = restParam;
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+var debounce = require('./debounce'),
+    isObject = require('../lang/isObject');
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/**
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `wait` milliseconds. The throttled function comes with a `cancel`
+ * method to cancel delayed invocations. Provide an options object to indicate
+ * that `func` should be invoked on the leading and/or trailing edge of the
+ * `wait` timeout. Subsequent calls to the throttled function return the
+ * result of the last `func` call.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+ * on the trailing edge of the timeout only if the the throttled function is
+ * invoked more than once during the `wait` timeout.
+ *
+ * See [David Corbacho's article](http://drupalmotion.com/article/debounce-and-throttle-visual-explanation)
+ * for details over the differences between `_.throttle` and `_.debounce`.
+ *
+ * @static
+ * @memberOf _
+ * @category Function
+ * @param {Function} func The function to throttle.
+ * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+ * @param {Object} [options] The options object.
+ * @param {boolean} [options.leading=true] Specify invoking on the leading
+ *  edge of the timeout.
+ * @param {boolean} [options.trailing=true] Specify invoking on the trailing
+ *  edge of the timeout.
+ * @returns {Function} Returns the new throttled function.
+ * @example
+ *
+ * // avoid excessively updating the position while scrolling
+ * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+ *
+ * // invoke `renewToken` when the click event is fired, but not more than once every 5 minutes
+ * jQuery('.interactive').on('click', _.throttle(renewToken, 300000, {
+ *   'trailing': false
+ * }));
+ *
+ * // cancel a trailing throttled call
+ * jQuery(window).on('popstate', throttled.cancel);
+ */
+function throttle(func, wait, options) {
+  var leading = true,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  if (options === false) {
+    leading = false;
+  } else if (isObject(options)) {
+    leading = 'leading' in options ? !!options.leading : leading;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+  return debounce(func, wait, { 'leading': leading, 'maxWait': +wait, 'trailing': trailing });
+}
+
+module.exports = throttle;
+
+},{"../lang/isObject":39,"./debounce":11}],14:[function(require,module,exports){
 /**
  * Copies the values of `source` to `array`.
  *
@@ -316,7 +589,7 @@ function arrayCopy(source, array) {
 
 module.exports = arrayCopy;
 
-},{}],12:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * A specialized version of `_.forEach` for arrays without support for callback
  * shorthands and `this` binding.
@@ -340,7 +613,7 @@ function arrayEach(array, iteratee) {
 
 module.exports = arrayEach;
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * Copies properties of `source` to `object`.
  *
@@ -365,7 +638,7 @@ function baseCopy(source, props, object) {
 
 module.exports = baseCopy;
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var createBaseFor = require('./createBaseFor');
 
 /**
@@ -384,7 +657,7 @@ var baseFor = createBaseFor();
 
 module.exports = baseFor;
 
-},{"./createBaseFor":21}],15:[function(require,module,exports){
+},{"./createBaseFor":24}],18:[function(require,module,exports){
 var baseFor = require('./baseFor'),
     keysIn = require('../object/keysIn');
 
@@ -403,7 +676,7 @@ function baseForIn(object, iteratee) {
 
 module.exports = baseForIn;
 
-},{"../object/keysIn":42,"./baseFor":14}],16:[function(require,module,exports){
+},{"../object/keysIn":45,"./baseFor":17}],19:[function(require,module,exports){
 var arrayEach = require('./arrayEach'),
     baseMergeDeep = require('./baseMergeDeep'),
     isArray = require('../lang/isArray'),
@@ -461,7 +734,7 @@ function baseMerge(object, source, customizer, stackA, stackB) {
 
 module.exports = baseMerge;
 
-},{"../lang/isArray":33,"../lang/isObject":36,"../lang/isTypedArray":39,"../object/keys":41,"./arrayEach":12,"./baseMergeDeep":17,"./isArrayLike":24,"./isObjectLike":29}],17:[function(require,module,exports){
+},{"../lang/isArray":36,"../lang/isObject":39,"../lang/isTypedArray":42,"../object/keys":44,"./arrayEach":15,"./baseMergeDeep":20,"./isArrayLike":27,"./isObjectLike":32}],20:[function(require,module,exports){
 var arrayCopy = require('./arrayCopy'),
     isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
@@ -530,7 +803,7 @@ function baseMergeDeep(object, source, key, mergeFunc, customizer, stackA, stack
 
 module.exports = baseMergeDeep;
 
-},{"../lang/isArguments":32,"../lang/isArray":33,"../lang/isPlainObject":37,"../lang/isTypedArray":39,"../lang/toPlainObject":40,"./arrayCopy":11,"./isArrayLike":24}],18:[function(require,module,exports){
+},{"../lang/isArguments":35,"../lang/isArray":36,"../lang/isPlainObject":40,"../lang/isTypedArray":42,"../lang/toPlainObject":43,"./arrayCopy":14,"./isArrayLike":27}],21:[function(require,module,exports){
 var toObject = require('./toObject');
 
 /**
@@ -548,7 +821,7 @@ function baseProperty(key) {
 
 module.exports = baseProperty;
 
-},{"./toObject":31}],19:[function(require,module,exports){
+},{"./toObject":34}],22:[function(require,module,exports){
 var identity = require('../utility/identity');
 
 /**
@@ -589,7 +862,7 @@ function bindCallback(func, thisArg, argCount) {
 
 module.exports = bindCallback;
 
-},{"../utility/identity":45}],20:[function(require,module,exports){
+},{"../utility/identity":48}],23:[function(require,module,exports){
 var bindCallback = require('./bindCallback'),
     isIterateeCall = require('./isIterateeCall'),
     restParam = require('../function/restParam');
@@ -632,7 +905,7 @@ function createAssigner(assigner) {
 
 module.exports = createAssigner;
 
-},{"../function/restParam":10,"./bindCallback":19,"./isIterateeCall":27}],21:[function(require,module,exports){
+},{"../function/restParam":12,"./bindCallback":22,"./isIterateeCall":30}],24:[function(require,module,exports){
 var toObject = require('./toObject');
 
 /**
@@ -661,7 +934,7 @@ function createBaseFor(fromRight) {
 
 module.exports = createBaseFor;
 
-},{"./toObject":31}],22:[function(require,module,exports){
+},{"./toObject":34}],25:[function(require,module,exports){
 var baseProperty = require('./baseProperty');
 
 /**
@@ -678,7 +951,7 @@ var getLength = baseProperty('length');
 
 module.exports = getLength;
 
-},{"./baseProperty":18}],23:[function(require,module,exports){
+},{"./baseProperty":21}],26:[function(require,module,exports){
 var isNative = require('../lang/isNative');
 
 /**
@@ -696,7 +969,7 @@ function getNative(object, key) {
 
 module.exports = getNative;
 
-},{"../lang/isNative":35}],24:[function(require,module,exports){
+},{"../lang/isNative":38}],27:[function(require,module,exports){
 var getLength = require('./getLength'),
     isLength = require('./isLength');
 
@@ -713,7 +986,7 @@ function isArrayLike(value) {
 
 module.exports = isArrayLike;
 
-},{"./getLength":22,"./isLength":28}],25:[function(require,module,exports){
+},{"./getLength":25,"./isLength":31}],28:[function(require,module,exports){
 /**
  * Checks if `value` is a host object in IE < 9.
  *
@@ -736,7 +1009,7 @@ var isHostObject = (function() {
 
 module.exports = isHostObject;
 
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /** Used to detect unsigned integer values. */
 var reIsUint = /^\d+$/;
 
@@ -762,7 +1035,7 @@ function isIndex(value, length) {
 
 module.exports = isIndex;
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var isArrayLike = require('./isArrayLike'),
     isIndex = require('./isIndex'),
     isObject = require('../lang/isObject');
@@ -792,7 +1065,7 @@ function isIterateeCall(value, index, object) {
 
 module.exports = isIterateeCall;
 
-},{"../lang/isObject":36,"./isArrayLike":24,"./isIndex":26}],28:[function(require,module,exports){
+},{"../lang/isObject":39,"./isArrayLike":27,"./isIndex":29}],31:[function(require,module,exports){
 /**
  * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
  * of an array-like value.
@@ -814,7 +1087,7 @@ function isLength(value) {
 
 module.exports = isLength;
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * Checks if `value` is object-like.
  *
@@ -828,7 +1101,7 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
     isIndex = require('./isIndex'),
@@ -872,7 +1145,7 @@ function shimKeys(object) {
 
 module.exports = shimKeys;
 
-},{"../lang/isArguments":32,"../lang/isArray":33,"../lang/isString":38,"../object/keysIn":42,"./isIndex":26,"./isLength":28}],31:[function(require,module,exports){
+},{"../lang/isArguments":35,"../lang/isArray":36,"../lang/isString":41,"../object/keysIn":45,"./isIndex":29,"./isLength":31}],34:[function(require,module,exports){
 var isObject = require('../lang/isObject'),
     isString = require('../lang/isString'),
     support = require('../support');
@@ -900,7 +1173,7 @@ function toObject(value) {
 
 module.exports = toObject;
 
-},{"../lang/isObject":36,"../lang/isString":38,"../support":44}],32:[function(require,module,exports){
+},{"../lang/isObject":39,"../lang/isString":41,"../support":47}],35:[function(require,module,exports){
 var isArrayLike = require('../internal/isArrayLike'),
     isObjectLike = require('../internal/isObjectLike');
 
@@ -936,7 +1209,7 @@ function isArguments(value) {
 
 module.exports = isArguments;
 
-},{"../internal/isArrayLike":24,"../internal/isObjectLike":29}],33:[function(require,module,exports){
+},{"../internal/isArrayLike":27,"../internal/isObjectLike":32}],36:[function(require,module,exports){
 var getNative = require('../internal/getNative'),
     isLength = require('../internal/isLength'),
     isObjectLike = require('../internal/isObjectLike');
@@ -978,7 +1251,7 @@ var isArray = nativeIsArray || function(value) {
 
 module.exports = isArray;
 
-},{"../internal/getNative":23,"../internal/isLength":28,"../internal/isObjectLike":29}],34:[function(require,module,exports){
+},{"../internal/getNative":26,"../internal/isLength":31,"../internal/isObjectLike":32}],37:[function(require,module,exports){
 var isObject = require('./isObject');
 
 /** `Object#toString` result references. */
@@ -1018,7 +1291,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{"./isObject":36}],35:[function(require,module,exports){
+},{"./isObject":39}],38:[function(require,module,exports){
 var isFunction = require('./isFunction'),
     isHostObject = require('../internal/isHostObject'),
     isObjectLike = require('../internal/isObjectLike');
@@ -1069,7 +1342,7 @@ function isNative(value) {
 
 module.exports = isNative;
 
-},{"../internal/isHostObject":25,"../internal/isObjectLike":29,"./isFunction":34}],36:[function(require,module,exports){
+},{"../internal/isHostObject":28,"../internal/isObjectLike":32,"./isFunction":37}],39:[function(require,module,exports){
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -1099,7 +1372,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],37:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var baseForIn = require('../internal/baseForIn'),
     isArguments = require('./isArguments'),
     isHostObject = require('../internal/isHostObject'),
@@ -1181,7 +1454,7 @@ function isPlainObject(value) {
 
 module.exports = isPlainObject;
 
-},{"../internal/baseForIn":15,"../internal/isHostObject":25,"../internal/isObjectLike":29,"../support":44,"./isArguments":32}],38:[function(require,module,exports){
+},{"../internal/baseForIn":18,"../internal/isHostObject":28,"../internal/isObjectLike":32,"../support":47,"./isArguments":35}],41:[function(require,module,exports){
 var isObjectLike = require('../internal/isObjectLike');
 
 /** `Object#toString` result references. */
@@ -1218,7 +1491,7 @@ function isString(value) {
 
 module.exports = isString;
 
-},{"../internal/isObjectLike":29}],39:[function(require,module,exports){
+},{"../internal/isObjectLike":32}],42:[function(require,module,exports){
 var isLength = require('../internal/isLength'),
     isObjectLike = require('../internal/isObjectLike');
 
@@ -1294,7 +1567,7 @@ function isTypedArray(value) {
 
 module.exports = isTypedArray;
 
-},{"../internal/isLength":28,"../internal/isObjectLike":29}],40:[function(require,module,exports){
+},{"../internal/isLength":31,"../internal/isObjectLike":32}],43:[function(require,module,exports){
 var baseCopy = require('../internal/baseCopy'),
     keysIn = require('../object/keysIn');
 
@@ -1327,7 +1600,7 @@ function toPlainObject(value) {
 
 module.exports = toPlainObject;
 
-},{"../internal/baseCopy":13,"../object/keysIn":42}],41:[function(require,module,exports){
+},{"../internal/baseCopy":16,"../object/keysIn":45}],44:[function(require,module,exports){
 var getNative = require('../internal/getNative'),
     isArrayLike = require('../internal/isArrayLike'),
     isObject = require('../lang/isObject'),
@@ -1375,7 +1648,7 @@ var keys = !nativeKeys ? shimKeys : function(object) {
 
 module.exports = keys;
 
-},{"../internal/getNative":23,"../internal/isArrayLike":24,"../internal/shimKeys":30,"../lang/isObject":36,"../support":44}],42:[function(require,module,exports){
+},{"../internal/getNative":26,"../internal/isArrayLike":27,"../internal/shimKeys":33,"../lang/isObject":39,"../support":47}],45:[function(require,module,exports){
 var arrayEach = require('../internal/arrayEach'),
     isArguments = require('../lang/isArguments'),
     isArray = require('../lang/isArray'),
@@ -1513,7 +1786,7 @@ function keysIn(object) {
 
 module.exports = keysIn;
 
-},{"../internal/arrayEach":12,"../internal/isIndex":26,"../internal/isLength":28,"../lang/isArguments":32,"../lang/isArray":33,"../lang/isFunction":34,"../lang/isObject":36,"../lang/isString":38,"../support":44}],43:[function(require,module,exports){
+},{"../internal/arrayEach":15,"../internal/isIndex":29,"../internal/isLength":31,"../lang/isArguments":35,"../lang/isArray":36,"../lang/isFunction":37,"../lang/isObject":39,"../lang/isString":41,"../support":47}],46:[function(require,module,exports){
 var baseMerge = require('../internal/baseMerge'),
     createAssigner = require('../internal/createAssigner');
 
@@ -1569,7 +1842,7 @@ var merge = createAssigner(baseMerge);
 
 module.exports = merge;
 
-},{"../internal/baseMerge":16,"../internal/createAssigner":20}],44:[function(require,module,exports){
+},{"../internal/baseMerge":19,"../internal/createAssigner":23}],47:[function(require,module,exports){
 /** Used for native method references. */
 var arrayProto = Array.prototype,
     errorProto = Error.prototype,
@@ -1667,7 +1940,7 @@ var support = {};
 
 module.exports = support;
 
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 /**
  * This method returns the first argument provided to it.
  *
@@ -1689,7 +1962,7 @@ function identity(value) {
 
 module.exports = identity;
 
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -18426,7 +18699,7 @@ module.exports = identity;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],47:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 // modified from https://github.com/es-shims/es5-shim
@@ -18568,7 +18841,7 @@ keysShim.shim = function shimObjectKeys() {
 
 module.exports = keysShim;
 
-},{"./isArguments":48}],48:[function(require,module,exports){
+},{"./isArguments":51}],51:[function(require,module,exports){
 'use strict';
 
 var toStr = Object.prototype.toString;
@@ -18587,7 +18860,7 @@ module.exports = function isArguments(value) {
 	return isArgs;
 };
 
-},{}],49:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 
 var keys = require('object-keys');
@@ -18630,7 +18903,7 @@ module.exports = function hasSymbols() {
 	return true;
 };
 
-},{"object-keys":47}],50:[function(require,module,exports){
+},{"object-keys":50}],53:[function(require,module,exports){
 'use strict';
 
 // modified from https://github.com/es-shims/es6-shim
@@ -18673,7 +18946,7 @@ module.exports = function assign(target, source1) {
 	return objTarget;
 };
 
-},{"./hasSymbols":49,"function-bind":6,"object-keys":47}],51:[function(require,module,exports){
+},{"./hasSymbols":52,"function-bind":6,"object-keys":50}],54:[function(require,module,exports){
 'use strict';
 
 var defineProperties = require('define-properties');
@@ -18692,7 +18965,7 @@ defineProperties(polyfill, {
 
 module.exports = polyfill;
 
-},{"./implementation":50,"./polyfill":52,"./shim":53,"define-properties":2}],52:[function(require,module,exports){
+},{"./implementation":53,"./polyfill":55,"./shim":56,"define-properties":2}],55:[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -18745,7 +19018,7 @@ module.exports = function getPolyfill() {
 	return Object.assign;
 };
 
-},{"./implementation":50}],53:[function(require,module,exports){
+},{"./implementation":53}],56:[function(require,module,exports){
 'use strict';
 
 var define = require('define-properties');
@@ -18761,7 +19034,7 @@ module.exports = function shimAssign() {
 	return polyfill;
 };
 
-},{"./polyfill":52,"define-properties":2}],54:[function(require,module,exports){
+},{"./polyfill":55,"define-properties":2}],57:[function(require,module,exports){
 var trim = require('trim')
   , forEach = require('for-each')
   , isArray = function(arg) {
@@ -18793,7 +19066,7 @@ module.exports = function (headers) {
 
   return result
 }
-},{"for-each":3,"trim":56}],55:[function(require,module,exports){
+},{"for-each":3,"trim":59}],58:[function(require,module,exports){
 module.exports = SafeParseTuple
 
 function SafeParseTuple(obj, reviver) {
@@ -18809,7 +19082,7 @@ function SafeParseTuple(obj, reviver) {
     return [error, json]
 }
 
-},{}],56:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 
 exports = module.exports = trim;
 
@@ -18825,7 +19098,7 @@ exports.right = function(str){
   return str.replace(/\s*$/, '');
 };
 
-},{}],57:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 function clean (s) {
   return s.replace(/\n\r?\s*/g, '')
 }
@@ -18840,7 +19113,7 @@ module.exports = function tsml (sa) {
 
   return s
 }
-},{}],58:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 "use strict";
 var window = require("global/window")
 var isFunction = require("is-function")
@@ -19077,7 +19350,7 @@ function getXml(xhr) {
 
 function noop() {}
 
-},{"global/window":8,"is-function":9,"parse-headers":54,"xtend":59}],59:[function(require,module,exports){
+},{"global/window":8,"is-function":9,"parse-headers":57,"xtend":62}],62:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -19098,7 +19371,7 @@ function extend() {
     return target
 }
 
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 module.exports={
   "private": true,
   "name": "koment-js",
@@ -19228,7 +19501,7 @@ module.exports={
   }
 }
 
-},{}],61:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /**
  * @file button.js
  */
@@ -19382,7 +19655,7 @@ _component2['default'].registerComponent('Button', Button);
 exports['default'] = Button;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":62,"./component":63,"./utils/log.js":83,"object.assign":51}],62:[function(require,module,exports){
+},{"./clickable-component.js":65,"./component":66,"./utils/log.js":96,"object.assign":54}],65:[function(require,module,exports){
 /**
  * @file button.js
  */
@@ -19670,7 +19943,7 @@ _component2['default'].registerComponent('ClickableComponent', ClickableComponen
 exports['default'] = ClickableComponent;
 module.exports = exports['default'];
 
-},{"./component":63,"./utils/dom.js":79,"./utils/events.js":80,"./utils/fn.js":81,"./utils/log.js":83,"global/document":7,"object.assign":51}],63:[function(require,module,exports){
+},{"./component":66,"./utils/dom.js":91,"./utils/events.js":92,"./utils/fn.js":93,"./utils/log.js":96,"global/document":7,"object.assign":54}],66:[function(require,module,exports){
 /**
  * @file component.js
  *
@@ -21297,7 +21570,7 @@ Component.registerComponent('Component', Component);
 exports['default'] = Component;
 module.exports = exports['default'];
 
-},{"./utils/dom.js":79,"./utils/events.js":80,"./utils/fn.js":81,"./utils/guid.js":82,"./utils/log.js":83,"./utils/merge-options.js":84,"./utils/to-title-case.js":87,"global/window":8}],64:[function(require,module,exports){
+},{"./utils/dom.js":91,"./utils/events.js":92,"./utils/fn.js":93,"./utils/guid.js":95,"./utils/log.js":96,"./utils/merge-options.js":97,"./utils/to-title-case.js":100,"global/window":8}],67:[function(require,module,exports){
 /**
  * @file koment-display.js
  **/
@@ -21576,6 +21849,7 @@ var KomentDisplay = (function (_Component) {
 })(_component2['default']);
 
 KomentDisplay.prototype.showElements = function () {};
+
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,
@@ -21586,7 +21860,7 @@ _component2['default'].registerComponent('KomentDisplay', KomentDisplay);
 exports['default'] = KomentDisplay;
 module.exports = exports['default'];
 
-},{"../component":63,"../utils/dom":79,"../utils/fn.js":81,"./koment-item":65,"lodash":46,"xhr":58}],65:[function(require,module,exports){
+},{"../component":66,"../utils/dom":91,"../utils/fn.js":93,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
 /**
  * @file koment-item.js
  **/
@@ -21671,7 +21945,7 @@ _componentJs2['default'].registerComponent('KomentItem', KomentItem);
 exports['default'] = KomentItem;
 module.exports = exports['default'];
 
-},{"../component.js":63,"../utils/dom":79}],66:[function(require,module,exports){
+},{"../component.js":66,"../utils/dom":91}],69:[function(require,module,exports){
 /**
  * @file control-bar.js
  */
@@ -21700,6 +21974,8 @@ var _component2 = _interopRequireDefault(_component);
 require('./koment-toggle');
 
 require('./like-button');
+
+require('./edit-button');
 
 /**
  * Container of main controls
@@ -21741,14 +22017,121 @@ var ControlBar = (function (_Component) {
 })(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'likeButton']
+  children: ['komentToggle', 'likeButton', 'editButton']
 };
 
 _component2['default'].registerComponent('ControlBar', ControlBar);
 exports['default'] = ControlBar;
 module.exports = exports['default'];
 
-},{"../component":63,"./koment-toggle":67,"./like-button":68}],67:[function(require,module,exports){
+},{"../component":66,"./edit-button":70,"./koment-toggle":71,"./like-button":72}],70:[function(require,module,exports){
+/**
+ * @file koment-toggle.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _utilsToTitleCase = require('../utils/to-title-case');
+
+var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
+
+var _utilsDom = require('../utils/dom');
+
+var Dom = _interopRequireWildcard(_utilsDom);
+
+var _componentJs = require('../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _buttonJs = require('../button.js');
+
+var _buttonJs2 = _interopRequireDefault(_buttonJs);
+
+/**
+ * The button component for toggling and selecting koment
+ * Chapters act much differently than other text tracks
+ * Cues are navigation vs. other tracks of alternative languages
+ *
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends Button
+ * @class EditButton
+ */
+
+var EditButton = (function (_Button) {
+  _inherits(EditButton, _Button);
+
+  function EditButton(player, options, ready) {
+    _classCallCheck(this, EditButton);
+
+    _get(Object.getPrototypeOf(EditButton.prototype), 'constructor', this).call(this, player, options, ready);
+  }
+
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+  _createClass(EditButton, [{
+    key: 'buildCSSClass',
+    value: function buildCSSClass() {
+      return 'edit-button ' + _get(Object.getPrototypeOf(EditButton.prototype), 'buildCSSClass', this).call(this);
+    }
+  }, {
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(EditButton.prototype), 'createEl', this).call(this, 'button', {
+        innerHTML: '<div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div>'
+      });
+    }
+
+    /**
+     * Handle click on text track
+     *
+     * @method handleClick
+     */
+  }, {
+    key: 'handleClick',
+    value: function handleClick(event) {
+      _get(Object.getPrototypeOf(EditButton.prototype), 'handleClick', this).call(this, event);
+      this.addClass('active');
+      this.setTimeout(this.disable, 300);
+    }
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.removeClass('active');
+    }
+  }]);
+
+  return EditButton;
+})(_buttonJs2['default']);
+
+EditButton.prototype.controlText_ = 'Edit';
+
+_componentJs2['default'].registerComponent('EditButton', EditButton);
+exports['default'] = EditButton;
+module.exports = exports['default'];
+
+},{"../button.js":64,"../component.js":66,"../utils/dom":91,"../utils/to-title-case":100}],71:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -21842,7 +22225,7 @@ _componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
 exports['default'] = KomentToggle;
 module.exports = exports['default'];
 
-},{"../button.js":61,"../component.js":63,"../utils/dom":79,"../utils/to-title-case":87}],68:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":91,"../utils/to-title-case":100}],72:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -21949,7 +22332,909 @@ _componentJs2['default'].registerComponent('LikeButton', LikeButton);
 exports['default'] = LikeButton;
 module.exports = exports['default'];
 
-},{"../button.js":61,"../component.js":63,"../utils/dom":79,"../utils/to-title-case":87}],69:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":91,"../utils/to-title-case":100}],73:[function(require,module,exports){
+/**
+ * @file load-progress-bar.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsDomJs = require('../../utils/dom.js');
+
+var Dom = _interopRequireWildcard(_utilsDomJs);
+
+/**
+ * Shows load progress
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class LoadProgressBar
+ */
+
+var LoadProgressBar = (function (_Component) {
+  _inherits(LoadProgressBar, _Component);
+
+  function LoadProgressBar(player, options) {
+    _classCallCheck(this, LoadProgressBar);
+
+    _get(Object.getPrototypeOf(LoadProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.on(player, 'progress', this.update);
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(LoadProgressBar, [{
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(LoadProgressBar.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-load-progress',
+        innerHTML: '<span class="koment-control-text"><span>' + this.localize('Loaded') + '</span>: 0%</span>'
+      });
+    }
+
+    /**
+     * Update progress bar
+     *
+     * @method update
+     */
+  }, {
+    key: 'update',
+    value: function update() {
+      var buffered = this.player_.buffered();
+      var duration = this.player_.duration();
+      var bufferedEnd = this.player_.bufferedEnd();
+      var children = this.el_.children;
+
+      // get the percent width of a time compared to the total end
+      var percentify = function percentify(time, end) {
+        // no NaN
+        var percent = time / end || 0;
+
+        return (percent >= 1 ? 1 : percent) * 100 + '%';
+      };
+
+      // update the width of the progress bar
+      this.el_.style.width = percentify(bufferedEnd, duration);
+
+      // add child elements to represent the individual buffered time ranges
+      for (var i = 0; i < buffered.length; i++) {
+        var start = buffered.start(i);
+        var end = buffered.end(i);
+        var part = children[i];
+
+        if (!part) {
+          part = this.el_.appendChild(Dom.createEl());
+        }
+
+        // set the percent based on the width of the progress bar (bufferedEnd)
+        part.style.left = percentify(start, bufferedEnd);
+        part.style.width = percentify(end - start, bufferedEnd);
+      }
+
+      // remove unused buffered range elements
+      for (var i = children.length; i > buffered.length; i--) {
+        this.el_.removeChild(children[i - 1]);
+      }
+    }
+  }]);
+
+  return LoadProgressBar;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('LoadProgressBar', LoadProgressBar);
+exports['default'] = LoadProgressBar;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../utils/dom.js":91}],74:[function(require,module,exports){
+/**
+ * @file mouse-time-display.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _globalWindow = require('global/window');
+
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsDomJs = require('../../utils/dom.js');
+
+var Dom = _interopRequireWildcard(_utilsDomJs);
+
+var _utilsFnJs = require('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsFormatTimeJs = require('../../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
+
+var _lodashCompatFunctionThrottle = require('lodash-compat/function/throttle');
+
+var _lodashCompatFunctionThrottle2 = _interopRequireDefault(_lodashCompatFunctionThrottle);
+
+/**
+ * The Mouse Time Display component shows the time you will seek to
+ * when hovering over the progress bar
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class MouseTimeDisplay
+ */
+
+var MouseTimeDisplay = (function (_Component) {
+  _inherits(MouseTimeDisplay, _Component);
+
+  function MouseTimeDisplay(player, options) {
+    var _this = this;
+
+    _classCallCheck(this, MouseTimeDisplay);
+
+    _get(Object.getPrototypeOf(MouseTimeDisplay.prototype), 'constructor', this).call(this, player, options);
+
+    if (options.playerOptions && options.playerOptions.progressControl && options.playerOptions.progressControl.keepTooltipsInside) {
+      this.keepTooltipsInside = options.playerOptions.progressControl.keepTooltipsInside;
+    }
+
+    if (this.keepTooltipsInside) {
+      this.tooltip = Dom.createEl('div', { className: 'koment-time-tooltip' });
+      this.el().appendChild(this.tooltip);
+      this.addClass('koment-keep-tooltips-inside');
+    }
+
+    this.update(0, 0);
+
+    player.on('ready', function () {
+      _this.on(player.progressControl.el(), 'mousemove', (0, _lodashCompatFunctionThrottle2['default'])(Fn.bind(_this, _this.handleMouseMove), 25));
+    });
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(MouseTimeDisplay, [{
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(MouseTimeDisplay.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-mouse-display'
+      });
+    }
+  }, {
+    key: 'handleMouseMove',
+    value: function handleMouseMove(event) {
+      var duration = this.player_.duration();
+      var newTime = this.calculateDistance(event) * duration;
+      var position = event.pageX - Dom.findElPosition(this.el().parentNode).left;
+
+      this.update(newTime, position);
+    }
+  }, {
+    key: 'update',
+    value: function update(newTime, position) {
+      var time = (0, _utilsFormatTimeJs2['default'])(newTime, this.player_.duration());
+
+      this.el().style.left = position + 'px';
+      this.el().setAttribute('data-current-time', time);
+
+      if (this.keepTooltipsInside) {
+        var clampedPosition = this.clampPosition_(position);
+        var difference = position - clampedPosition + 1;
+        var tooltipWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.tooltip).width);
+        var tooltipWidthHalf = tooltipWidth / 2;
+
+        this.tooltip.innerHTML = time;
+        this.tooltip.style.right = '-' + (tooltipWidthHalf - difference) + 'px';
+      }
+    }
+  }, {
+    key: 'calculateDistance',
+    value: function calculateDistance(event) {
+      return Dom.getPointerPosition(this.el().parentNode, event).x;
+    }
+
+    /**
+     * This takes in a horizontal position for the bar and returns a clamped position.
+     * Clamped position means that it will keep the position greater than half the width
+     * of the tooltip and smaller than the player width minus half the width o the tooltip.
+     * It will only clamp the position if `keepTooltipsInside` option is set.
+     *
+     * @param {Number} position the position the bar wants to be
+     * @return {Number} newPosition the (potentially) clamped position
+     * @method clampPosition_
+     */
+  }, {
+    key: 'clampPosition_',
+    value: function clampPosition_(position) {
+      if (!this.keepTooltipsInside) {
+        return position;
+      }
+
+      var playerWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.player().el()).width);
+      var tooltipWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.tooltip).width);
+      var tooltipWidthHalf = tooltipWidth / 2;
+      var actualPosition = position;
+
+      if (position < tooltipWidthHalf) {
+        actualPosition = Math.ceil(tooltipWidthHalf);
+      } else if (position > playerWidth - tooltipWidthHalf) {
+        actualPosition = Math.floor(playerWidth - tooltipWidthHalf);
+      }
+
+      return actualPosition;
+    }
+  }]);
+
+  return MouseTimeDisplay;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('MouseTimeDisplay', MouseTimeDisplay);
+exports['default'] = MouseTimeDisplay;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../utils/dom.js":91,"../../utils/fn.js":93,"../../utils/format-time.js":94,"global/window":8,"lodash-compat/function/throttle":13}],75:[function(require,module,exports){
+/**
+ * @file play-progress-bar.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = require('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsFormatTimeJs = require('../../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
+
+/**
+ * Shows play progress
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class PlayProgressBar
+ */
+
+var PlayProgressBar = (function (_Component) {
+  _inherits(PlayProgressBar, _Component);
+
+  function PlayProgressBar(player, options) {
+    _classCallCheck(this, PlayProgressBar);
+
+    _get(Object.getPrototypeOf(PlayProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.updateDataAttr();
+    this.on(player, 'timeupdate', this.updateDataAttr);
+    player.ready(Fn.bind(this, this.updateDataAttr));
+
+    if (options.playerOptions && options.playerOptions.controlBar && options.playerOptions.controlBar.progressControl && options.playerOptions.controlBar.progressControl.keepTooltipsInside) {
+      this.keepTooltipsInside = options.playerOptions.controlBar.progressControl.keepTooltipsInside;
+    }
+
+    if (this.keepTooltipsInside) {
+      this.addClass('koment-keep-tooltips-inside');
+    }
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(PlayProgressBar, [{
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(PlayProgressBar.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-play-progress koment-slider-bar',
+        innerHTML: '<span class="koment-control-text"><span>' + this.localize('Progress') + '</span>: 0%</span>'
+      });
+    }
+  }, {
+    key: 'updateDataAttr',
+    value: function updateDataAttr() {
+      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+
+      this.el_.setAttribute('data-current-time', (0, _utilsFormatTimeJs2['default'])(time, this.player_.duration()));
+    }
+  }]);
+
+  return PlayProgressBar;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('PlayProgressBar', PlayProgressBar);
+exports['default'] = PlayProgressBar;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../utils/fn.js":93,"../../utils/format-time.js":94}],76:[function(require,module,exports){
+/**
+ * @file progress-control.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+require('./seek-bar.js');
+
+require('./mouse-time-display.js');
+
+/**
+ * The Progress Control component contains the seek bar, load progress,
+ * and play progress
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class ProgressControl
+ */
+
+var ProgressControl = (function (_Component) {
+  _inherits(ProgressControl, _Component);
+
+  function ProgressControl() {
+    _classCallCheck(this, ProgressControl);
+
+    _get(Object.getPrototypeOf(ProgressControl.prototype), 'constructor', this).apply(this, arguments);
+  }
+
+  _createClass(ProgressControl, [{
+    key: 'createEl',
+
+    /**
+     * Create the component's DOM element
+     *
+     * @return {Element}
+     * @method createEl
+     */
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(ProgressControl.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-progress-control koment-control'
+      });
+    }
+  }]);
+
+  return ProgressControl;
+})(_componentJs2['default']);
+
+ProgressControl.prototype.options_ = {
+  children: ['seekBar']
+};
+
+_componentJs2['default'].registerComponent('ProgressControl', ProgressControl);
+exports['default'] = ProgressControl;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"./mouse-time-display.js":74,"./seek-bar.js":77}],77:[function(require,module,exports){
+/**
+ * @file seek-bar.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _globalWindow = require('global/window');
+
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
+
+var _sliderSliderJs = require('../../slider/slider.js');
+
+var _sliderSliderJs2 = _interopRequireDefault(_sliderSliderJs);
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = require('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsFormatTimeJs = require('../../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
+
+require('./timeline-progress-bar.js');
+
+require('./load-progress-bar.js');
+
+require('./play-progress-bar.js');
+
+require('./tooltip-progress-bar.js');
+
+/**
+ * Seek Bar and holder for the progress bars
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Slider
+ * @class SeekBar
+ */
+
+var SeekBar = (function (_Slider) {
+  _inherits(SeekBar, _Slider);
+
+  function SeekBar(player, options) {
+    _classCallCheck(this, SeekBar);
+
+    _get(Object.getPrototypeOf(SeekBar.prototype), 'constructor', this).call(this, player, options);
+    this.on(player, 'timeupdate', this.updateProgress);
+    this.on(player, 'ended', this.updateProgress);
+    player.ready(Fn.bind(this, this.updateProgress));
+
+    if (options.playerOptions && options.playerOptions.controlBar && options.playerOptions.controlBar.progressControl && options.playerOptions.controlBar.progressControl.keepTooltipsInside) {
+      this.keepTooltipsInside = options.playerOptions.controlBar.progressControl.keepTooltipsInside;
+    }
+
+    if (this.keepTooltipsInside) {
+      this.tooltipProgressBar = this.addChild('TooltipProgressBar');
+    }
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(SeekBar, [{
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(SeekBar.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-progress-holder'
+      }, {
+        'aria-label': 'progress bar'
+      });
+    }
+
+    /**
+     * Update ARIA accessibility attributes
+     *
+     * @method updateARIAAttributes
+     */
+  }, {
+    key: 'updateProgress',
+    value: function updateProgress() {
+      this.updateAriaAttributes(this.el_);
+
+      if (this.keepTooltipsInside) {
+        this.updateAriaAttributes(this.tooltipProgressBar.el_);
+        this.tooltipProgressBar.el_.style.width = this.bar.el_.style.width;
+
+        var playerWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.player().el()).width);
+        var tooltipWidth = parseFloat(_globalWindow2['default'].getComputedStyle(this.tooltipProgressBar.tooltip).width);
+        var tooltipStyle = this.tooltipProgressBar.el().style;
+
+        tooltipStyle.maxWidth = Math.floor(playerWidth - tooltipWidth / 2) + 'px';
+        tooltipStyle.minWidth = Math.ceil(tooltipWidth / 2) + 'px';
+        tooltipStyle.right = '-' + tooltipWidth / 2 + 'px';
+      }
+    }
+  }, {
+    key: 'updateAriaAttributes',
+    value: function updateAriaAttributes(el) {
+      // Allows for smooth scrubbing, when player can't keep up.
+      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+
+      // machine readable value of progress bar (percentage complete)
+      el.setAttribute('aria-valuenow', (this.getPercent() * 100).toFixed(2));
+      // human readable value of progress bar (time complete)
+      el.setAttribute('aria-valuetext', (0, _utilsFormatTimeJs2['default'])(time, this.player_.duration()));
+    }
+
+    /**
+     * Get percentage of video played
+     *
+     * @return {Number} Percentage played
+     * @method getPercent
+     */
+  }, {
+    key: 'getPercent',
+    value: function getPercent() {
+      var percent = this.player_.currentTime() / this.player_.duration();
+
+      return percent >= 1 ? 1 : percent;
+    }
+
+    /**
+     * Handle mouse down on seek bar
+     *
+     * @method handleMouseDown
+     */
+  }, {
+    key: 'handleMouseDown',
+    value: function handleMouseDown(event) {
+      _get(Object.getPrototypeOf(SeekBar.prototype), 'handleMouseDown', this).call(this, event);
+
+      this.player_.scrubbing(true);
+
+      this.videoWasPlaying = !this.player_.paused();
+      this.player_.pause();
+    }
+
+    /**
+     * Handle mouse move on seek bar
+     *
+     * @method handleMouseMove
+     */
+  }, {
+    key: 'handleMouseMove',
+    value: function handleMouseMove(event) {
+      var newTime = this.calculateDistance(event) * this.player_.duration();
+
+      // Don't let video end while scrubbing.
+      if (newTime === this.player_.duration()) {
+        newTime = newTime - 0.1;
+      }
+
+      // Set new time (tell player to seek to new time)
+      this.player_.currentTime(newTime);
+    }
+
+    /**
+     * Handle mouse up on seek bar
+     *
+     * @method handleMouseUp
+     */
+  }, {
+    key: 'handleMouseUp',
+    value: function handleMouseUp(event) {
+      _get(Object.getPrototypeOf(SeekBar.prototype), 'handleMouseUp', this).call(this, event);
+
+      this.player_.scrubbing(false);
+      if (this.videoWasPlaying) {
+        this.player_.play();
+      }
+    }
+
+    /**
+     * Move more quickly fast forward for keyboard-only users
+     *
+     * @method stepForward
+     */
+  }, {
+    key: 'stepForward',
+    value: function stepForward() {
+      // more quickly fast forward for keyboard-only users
+      this.player_.currentTime(this.player_.currentTime() + 5);
+    }
+
+    /**
+     * Move more quickly rewind for keyboard-only users
+     *
+     * @method stepBack
+     */
+  }, {
+    key: 'stepBack',
+    value: function stepBack() {
+      // more quickly rewind for keyboard-only users
+      this.player_.currentTime(this.player_.currentTime() - 5);
+    }
+  }]);
+
+  return SeekBar;
+})(_sliderSliderJs2['default']);
+
+SeekBar.prototype.options_ = {
+  children: ['loadProgressBar', 'timelineProgressBar',
+  //'mouseTimeDisplay',
+  'playProgressBar'],
+  barName: 'playProgressBar'
+};
+
+SeekBar.prototype.playerEvent = 'timeupdate';
+
+_componentJs2['default'].registerComponent('SeekBar', SeekBar);
+exports['default'] = SeekBar;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../slider/slider.js":86,"../../utils/fn.js":93,"../../utils/format-time.js":94,"./load-progress-bar.js":73,"./play-progress-bar.js":75,"./timeline-progress-bar.js":78,"./tooltip-progress-bar.js":79,"global/window":8}],78:[function(require,module,exports){
+/**
+ * @file timeline-progress-bar.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsDomJs = require('../../utils/dom.js');
+
+var Dom = _interopRequireWildcard(_utilsDomJs);
+
+/**
+ * Shows load progress
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class TimelineProgressBar
+ */
+
+var TimelineProgressBar = (function (_Component) {
+  _inherits(TimelineProgressBar, _Component);
+
+  function TimelineProgressBar(player, options) {
+    _classCallCheck(this, TimelineProgressBar);
+
+    _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.on(player, 'progress', this.update);
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(TimelineProgressBar, [{
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-load-progress',
+        innerHTML: '<span class="koment-control-text"><span>' + this.localize('Loaded') + '</span>: 0%</span>'
+      });
+    }
+
+    /**
+     * Update progress bar
+     *
+     * @method update
+     */
+  }, {
+    key: 'update',
+    value: function update() {
+      var buffered = this.player_.buffered();
+      var duration = this.player_.duration();
+      var bufferedEnd = this.player_.bufferedEnd();
+      var children = this.el_.children;
+
+      // get the percent width of a time compared to the total end
+      var percentify = function percentify(time, end) {
+        // no NaN
+        var percent = time / end || 0;
+
+        return (percent >= 1 ? 1 : percent) * 100 + '%';
+      };
+
+      // update the width of the progress bar
+      this.el_.style.width = percentify(bufferedEnd, duration);
+
+      // add child elements to represent the individual buffered time ranges
+      for (var i = 0; i < buffered.length; i++) {
+        var start = buffered.start(i);
+        var end = buffered.end(i);
+        var part = children[i];
+
+        if (!part) {
+          part = this.el_.appendChild(Dom.createEl());
+        }
+
+        // set the percent based on the width of the progress bar (bufferedEnd)
+        part.style.left = percentify(start, bufferedEnd);
+        part.style.width = percentify(end - start, bufferedEnd);
+      }
+
+      // remove unused buffered range elements
+      for (var i = children.length; i > buffered.length; i--) {
+        this.el_.removeChild(children[i - 1]);
+      }
+    }
+  }]);
+
+  return TimelineProgressBar;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('TimelineProgressBar', TimelineProgressBar);
+exports['default'] = TimelineProgressBar;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../utils/dom.js":91}],79:[function(require,module,exports){
+/**
+ * @file play-progress-bar.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFnJs = require('../../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+var _utilsFormatTimeJs = require('../../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
+
+/**
+ * Shows play progress
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class PlayProgressBar
+ */
+
+var TooltipProgressBar = (function (_Component) {
+  _inherits(TooltipProgressBar, _Component);
+
+  function TooltipProgressBar(player, options) {
+    _classCallCheck(this, TooltipProgressBar);
+
+    _get(Object.getPrototypeOf(TooltipProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.updateDataAttr();
+    this.on(player, 'timeupdate', this.updateDataAttr);
+    player.ready(Fn.bind(this, this.updateDataAttr));
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(TooltipProgressBar, [{
+    key: 'createEl',
+    value: function createEl() {
+      var el = _get(Object.getPrototypeOf(TooltipProgressBar.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-tooltip-progress-bar koment-slider-bar',
+        innerHTML: '<div class="koment-time-tooltip"></div>\n        <span class="koment-control-text"><span>' + this.localize('Progress') + '</span>: 0%</span>'
+      });
+
+      this.tooltip = el.querySelector('.koment-time-tooltip');
+
+      return el;
+    }
+  }, {
+    key: 'updateDataAttr',
+    value: function updateDataAttr() {
+      var time = this.player_.scrubbing() ? this.player_.getCache().currentTime : this.player_.currentTime();
+      var formattedTime = (0, _utilsFormatTimeJs2['default'])(time, this.player_.duration());
+
+      this.el_.setAttribute('data-current-time', formattedTime);
+      this.tooltip.innerHTML = formattedTime;
+    }
+  }]);
+
+  return TooltipProgressBar;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('TooltipProgressBar', TooltipProgressBar);
+exports['default'] = TooltipProgressBar;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../utils/fn.js":93,"../../utils/format-time.js":94}],80:[function(require,module,exports){
 /**
  * @file fullscreen-api.js
  */
@@ -22008,7 +23293,7 @@ if (browserApi) {
 exports['default'] = FullscreenApi;
 module.exports = exports['default'];
 
-},{"global/document":7}],70:[function(require,module,exports){
+},{"global/document":7}],81:[function(require,module,exports){
 /**
  * @file koment.js
  */
@@ -22328,7 +23613,7 @@ if (!_globalWindow2['default'].requestAnimationFrame) {
 exports['default'] = koment;
 module.exports = exports['default'];
 
-},{"../../package.json":60,"./player":73,"./setup":74,"./utils/browser.js":77,"./utils/dom.js":79,"./utils/events.js":80,"./utils/log.js":83,"./utils/stylesheet.js":85,"./utils/url.js":88,"global/document":7,"global/window":8,"lodash-compat/object/merge":43}],71:[function(require,module,exports){
+},{"../../package.json":63,"./player":84,"./setup":85,"./utils/browser.js":89,"./utils/dom.js":91,"./utils/events.js":92,"./utils/log.js":96,"./utils/stylesheet.js":98,"./utils/url.js":101,"global/document":7,"global/window":8,"lodash-compat/object/merge":46}],82:[function(require,module,exports){
 /**
  * @file media-error.js
  */
@@ -22437,7 +23722,7 @@ for (var errNum = 0; errNum < MediaError.errorTypes.length; errNum++) {
 exports['default'] = MediaError;
 module.exports = exports['default'];
 
-},{"object.assign":51}],72:[function(require,module,exports){
+},{"object.assign":54}],83:[function(require,module,exports){
 /**
  * @file modal-dialog.js
  */
@@ -22870,7 +24155,7 @@ _component2['default'].registerComponent('ModalDialog', ModalDialog);
 exports['default'] = ModalDialog;
 module.exports = exports['default'];
 
-},{"./component":63,"./utils/dom":79,"./utils/fn":81}],73:[function(require,module,exports){
+},{"./component":66,"./utils/dom":91,"./utils/fn":93}],84:[function(require,module,exports){
 /**
  * @file player.js
  */
@@ -22968,6 +24253,8 @@ var _techTech2 = _interopRequireDefault(_techTech);
 // execute them and they will register themselves with video.js.
 
 require('./control-bar/control-bar');
+
+require('./control-bar/progress-control/progress-control');
 
 require('./component/koment-display');
 
@@ -24480,6 +25767,88 @@ var Player = (function (_Component) {
       return this.duration() - this.currentTime();
     }
 
+    // http://dev.w3.org/html5/spec/video.html#dom-media-buffered
+    // Buffered returns a timerange object.
+    // Kind of like an array of portions of the video that have been downloaded.
+
+    /**
+     * Get a TimeRange object with the times of the video that have been downloaded
+     * If you just want the percent of the video that's been downloaded,
+     * use bufferedPercent.
+     * ```js
+     *     // Number of different ranges of time have been buffered. Usually 1.
+     *     numberOfRanges = bufferedTimeRange.length,
+     *     // Time in seconds when the first range starts. Usually 0.
+     *     firstRangeStart = bufferedTimeRange.start(0),
+     *     // Time in seconds when the first range ends
+     *     firstRangeEnd = bufferedTimeRange.end(0),
+     *     // Length in seconds of the first time range
+     *     firstRangeLength = firstRangeEnd - firstRangeStart;
+     * ```
+     *
+     * @return {Object} A mock TimeRange object (following HTML spec)
+     * @method buffered
+     */
+  }, {
+    key: 'buffered',
+    value: function buffered() {
+      var buffered = this.techGet_('buffered');
+
+      if (!buffered || !buffered.length) {
+        buffered = createTimeRange(0, 0);
+      }
+
+      return buffered;
+    }
+
+    /**
+     * Get the percent (as a decimal) of the video that's been downloaded
+     * ```js
+     *     var howMuchIsDownloaded = myPlayer.bufferedPercent();
+     * ```
+     * 0 means none, 1 means all.
+     * (This method isn't in the HTML5 spec, but it's very convenient)
+     *
+     * @return {Number} A decimal between 0 and 1 representing the percent
+     * @method bufferedPercent
+     */
+  }, {
+    key: 'bufferedPercent',
+    value: (function (_bufferedPercent) {
+      function bufferedPercent() {
+        return _bufferedPercent.apply(this, arguments);
+      }
+
+      bufferedPercent.toString = function () {
+        return _bufferedPercent.toString();
+      };
+
+      return bufferedPercent;
+    })(function () {
+      return bufferedPercent(this.buffered(), this.duration());
+    })
+
+    /**
+     * Get the ending time of the last buffered time range
+     * This is used in the progress bar to encapsulate all time ranges.
+     *
+     * @return {Number} The end of the last buffered time range
+     * @method bufferedEnd
+     */
+  }, {
+    key: 'bufferedEnd',
+    value: function bufferedEnd() {
+      var buffered = this.buffered();
+      var duration = this.duration();
+      var end = buffered.end(buffered.length - 1);
+
+      if (end > duration) {
+        end = duration;
+      }
+
+      return end;
+    }
+
     // Check if current tech can support native fullscreen
     // (e.g. with built in controls like iOS, so not our flash swf)
     /**
@@ -25267,7 +26636,7 @@ var navigator = _globalWindow2['default'].navigator;
 Player.prototype.options_ = {
   // default inactivity timeout
   inactivityTimeout: 2000,
-  children: ['komentDisplay', 'controlBar'],
+  children: ['komentDisplay', 'progressControl', 'controlBar'],
 
   language: navigator && (navigator.languages && navigator.languages[0] || navigator.userLanguage || navigator.language) || 'en',
 
@@ -25367,7 +26736,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./component":63,"./component/koment-display":64,"./control-bar/control-bar":66,"./fullscreen-api":69,"./media-error":71,"./modal-dialog":72,"./tech/tech":75,"./tech/youtube":76,"./utils/browser":77,"./utils/dom":79,"./utils/events":80,"./utils/fn":81,"./utils/guid":82,"./utils/log":83,"./utils/merge-options":84,"./utils/stylesheet":85,"global/document":7,"global/window":8,"object.assign":51,"safe-json-parse/tuple":55}],74:[function(require,module,exports){
+},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":76,"./fullscreen-api":80,"./media-error":82,"./modal-dialog":83,"./tech/tech":87,"./tech/youtube":88,"./utils/browser":89,"./utils/dom":91,"./utils/events":92,"./utils/fn":93,"./utils/guid":95,"./utils/log":96,"./utils/merge-options":97,"./utils/stylesheet":98,"global/document":7,"global/window":8,"object.assign":54,"safe-json-parse/tuple":58}],85:[function(require,module,exports){
 /**
  * @file setup.js
  *
@@ -25486,7 +26855,311 @@ exports.autoSetup = autoSetup;
 exports.autoSetupTimeout = autoSetupTimeout;
 exports.hasLoaded = hasLoaded;
 
-},{"./utils/events.js":80,"global/document":7,"global/window":8,"lodash":46}],75:[function(require,module,exports){
+},{"./utils/events.js":92,"global/document":7,"global/window":8,"lodash":49}],86:[function(require,module,exports){
+/**
+ * @file slider.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x3, _x4, _x5) { var _again = true; _function: while (_again) { var object = _x3, property = _x4, receiver = _x5; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x3 = parent; _x4 = property; _x5 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsDomJs = require('../utils/dom.js');
+
+var Dom = _interopRequireWildcard(_utilsDomJs);
+
+var _objectAssign = require('object.assign');
+
+var _objectAssign2 = _interopRequireDefault(_objectAssign);
+
+/**
+ * The base functionality for sliders like the volume bar and seek bar
+ *
+ * @param {Player|Object} player
+ * @param {Object=} options
+ * @extends Component
+ * @class Slider
+ */
+
+var Slider = (function (_Component) {
+  _inherits(Slider, _Component);
+
+  function Slider(player, options) {
+    _classCallCheck(this, Slider);
+
+    _get(Object.getPrototypeOf(Slider.prototype), 'constructor', this).call(this, player, options);
+
+    // Set property names to bar to match with the child Slider class is looking for
+    this.bar = this.getChild(this.options_.barName);
+
+    // Set a horizontal or vertical class on the slider depending on the slider type
+    this.vertical(!!this.options_.vertical);
+
+    this.on('mousedown', this.handleMouseDown);
+    this.on('touchstart', this.handleMouseDown);
+    this.on('focus', this.handleFocus);
+    this.on('blur', this.handleBlur);
+    this.on('click', this.handleClick);
+
+    this.on(player, 'controlsvisible', this.update);
+    this.on(player, this.playerEvent, this.update);
+  }
+
+  /**
+   * Create the component's DOM element
+   *
+   * @param {String} type Type of element to create
+   * @param {Object=} props List of properties in Object form
+   * @return {Element}
+   * @method createEl
+   */
+
+  _createClass(Slider, [{
+    key: 'createEl',
+    value: function createEl(type) {
+      var props = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      var attributes = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+      // Add the slider element class to all sub classes
+      props.className = props.className + ' vjs-slider';
+      props = (0, _objectAssign2['default'])({
+        tabIndex: 0
+      }, props);
+
+      attributes = (0, _objectAssign2['default'])({
+        'role': 'slider',
+        'aria-valuenow': 0,
+        'aria-valuemin': 0,
+        'aria-valuemax': 100,
+        'tabIndex': 0
+      }, attributes);
+
+      return _get(Object.getPrototypeOf(Slider.prototype), 'createEl', this).call(this, type, props, attributes);
+    }
+
+    /**
+     * Handle mouse down on slider
+     *
+     * @param {Object} event Mouse down event object
+     * @method handleMouseDown
+     */
+  }, {
+    key: 'handleMouseDown',
+    value: function handleMouseDown(event) {
+      var doc = this.bar.el_.ownerDocument;
+
+      event.preventDefault();
+      Dom.blockTextSelection();
+
+      this.addClass('vjs-sliding');
+      this.trigger('slideractive');
+
+      this.on(doc, 'mousemove', this.handleMouseMove);
+      this.on(doc, 'mouseup', this.handleMouseUp);
+      this.on(doc, 'touchmove', this.handleMouseMove);
+      this.on(doc, 'touchend', this.handleMouseUp);
+
+      this.handleMouseMove(event);
+    }
+
+    /**
+     * To be overridden by a subclass
+     *
+     * @method handleMouseMove
+     */
+  }, {
+    key: 'handleMouseMove',
+    value: function handleMouseMove() {}
+
+    /**
+     * Handle mouse up on Slider
+     *
+     * @method handleMouseUp
+     */
+  }, {
+    key: 'handleMouseUp',
+    value: function handleMouseUp() {
+      var doc = this.bar.el_.ownerDocument;
+
+      Dom.unblockTextSelection();
+
+      this.removeClass('vjs-sliding');
+      this.trigger('sliderinactive');
+
+      this.off(doc, 'mousemove', this.handleMouseMove);
+      this.off(doc, 'mouseup', this.handleMouseUp);
+      this.off(doc, 'touchmove', this.handleMouseMove);
+      this.off(doc, 'touchend', this.handleMouseUp);
+
+      this.update();
+    }
+
+    /**
+     * Update slider
+     *
+     * @method update
+     */
+  }, {
+    key: 'update',
+    value: function update() {
+      // In VolumeBar init we have a setTimeout for update that pops and update to the end of the
+      // execution stack. The player is destroyed before then update will cause an error
+      if (!this.el_) {
+        return;
+      }
+
+      // If scrubbing, we could use a cached value to make the handle keep up with the user's mouse.
+      // On HTML5 browsers scrubbing is really smooth, but some flash players are slow, so we might want to utilize this later.
+      // var progress =  (this.player_.scrubbing()) ? this.player_.getCache().currentTime / this.player_.duration() : this.player_.currentTime() / this.player_.duration();
+      var progress = this.getPercent();
+      var bar = this.bar;
+
+      // If there's no bar...
+      if (!bar) {
+        return;
+      }
+
+      // Protect against no duration and other division issues
+      if (typeof progress !== 'number' || progress !== progress || progress < 0 || progress === Infinity) {
+        progress = 0;
+      }
+
+      // Convert to a percentage for setting
+      var percentage = (progress * 100).toFixed(2) + '%';
+
+      // Set the new bar width or height
+      if (this.vertical()) {
+        bar.el().style.height = percentage;
+      } else {
+        bar.el().style.width = percentage;
+      }
+    }
+
+    /**
+     * Calculate distance for slider
+     *
+     * @param {Object} event Event object
+     * @method calculateDistance
+     */
+  }, {
+    key: 'calculateDistance',
+    value: function calculateDistance(event) {
+      var position = Dom.getPointerPosition(this.el_, event);
+
+      if (this.vertical()) {
+        return position.y;
+      }
+      return position.x;
+    }
+
+    /**
+     * Handle on focus for slider
+     *
+     * @method handleFocus
+     */
+  }, {
+    key: 'handleFocus',
+    value: function handleFocus() {
+      this.on(this.bar.el_.ownerDocument, 'keydown', this.handleKeyPress);
+    }
+
+    /**
+     * Handle key press for slider
+     *
+     * @param {Object} event Event object
+     * @method handleKeyPress
+     */
+  }, {
+    key: 'handleKeyPress',
+    value: function handleKeyPress(event) {
+      // Left and Down Arrows
+      if (event.which === 37 || event.which === 40) {
+        event.preventDefault();
+        this.stepBack();
+
+        // Up and Right Arrows
+      } else if (event.which === 38 || event.which === 39) {
+          event.preventDefault();
+          this.stepForward();
+        }
+    }
+
+    /**
+     * Handle on blur for slider
+     *
+     * @method handleBlur
+     */
+  }, {
+    key: 'handleBlur',
+    value: function handleBlur() {
+      this.off(this.bar.el_.ownerDocument, 'keydown', this.handleKeyPress);
+    }
+
+    /**
+     * Listener for click events on slider, used to prevent clicks
+     *   from bubbling up to parent elements like button menus.
+     *
+     * @param {Object} event Event object
+     * @method handleClick
+     */
+  }, {
+    key: 'handleClick',
+    value: function handleClick(event) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+    }
+
+    /**
+     * Get/set if slider is horizontal for vertical
+     *
+     * @param {Boolean} bool True if slider is vertical, false is horizontal
+     * @return {Boolean} True if slider is vertical, false is horizontal
+     * @method vertical
+     */
+  }, {
+    key: 'vertical',
+    value: function vertical(bool) {
+      if (bool === undefined) {
+        return this.vertical_ || false;
+      }
+
+      this.vertical_ = !!bool;
+
+      if (this.vertical_) {
+        this.addClass('vjs-slider-vertical');
+      } else {
+        this.addClass('vjs-slider-horizontal');
+      }
+
+      return this;
+    }
+  }]);
+
+  return Slider;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('Slider', Slider);
+exports['default'] = Slider;
+module.exports = exports['default'];
+
+},{"../component.js":66,"../utils/dom.js":91,"object.assign":54}],87:[function(require,module,exports){
 /**
  * @file tech.js
  * Media Technology Controller - Base class for media playback
@@ -25886,7 +27559,7 @@ Tech.registerTech('Tech', Tech);
 exports['default'] = Tech;
 module.exports = exports['default'];
 
-},{"../component":63,"../media-error.js":71,"../utils/buffer.js":78,"../utils/fn.js":81,"../utils/log.js":83,"../utils/time-ranges.js":86,"global/window":8}],76:[function(require,module,exports){
+},{"../component":66,"../media-error.js":82,"../utils/buffer.js":90,"../utils/fn.js":93,"../utils/log.js":96,"../utils/time-ranges.js":99,"global/window":8}],88:[function(require,module,exports){
 /**
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
@@ -26286,7 +27959,7 @@ _techJs2['default'].registerTech('Youtube', Youtube);
 exports['default'] = Youtube;
 module.exports = exports['default'];
 
-},{"../component":63,"../utils/fn.js":81,"./tech.js":75,"global/document":7}],77:[function(require,module,exports){
+},{"../component":66,"../utils/fn.js":93,"./tech.js":87,"global/document":7}],89:[function(require,module,exports){
 /**
  * @file browser.js
  */
@@ -26387,7 +28060,7 @@ exports.TOUCH_ENABLED = TOUCH_ENABLED;
 var BACKGROUND_SIZE_SUPPORTED = ('backgroundSize' in _globalDocument2['default'].createElement('video').style);
 exports.BACKGROUND_SIZE_SUPPORTED = BACKGROUND_SIZE_SUPPORTED;
 
-},{"global/document":7,"global/window":8}],78:[function(require,module,exports){
+},{"global/document":7,"global/window":8}],90:[function(require,module,exports){
 /**
  * @file buffer.js
  */
@@ -26438,7 +28111,7 @@ function bufferedPercent(buffered, duration) {
   return bufferedDuration / duration;
 }
 
-},{"./time-ranges.js":86}],79:[function(require,module,exports){
+},{"./time-ranges.js":99}],91:[function(require,module,exports){
 /**
  * @file dom.js
  */
@@ -27169,7 +28842,7 @@ exports.$ = $;
 var $$ = createQuerier('querySelectorAll');
 exports.$$ = $$;
 
-},{"./guid.js":82,"./log.js":83,"global/document":7,"global/window":8,"tsml":57}],80:[function(require,module,exports){
+},{"./guid.js":95,"./log.js":96,"global/document":7,"global/window":8,"tsml":60}],92:[function(require,module,exports){
 /**
  * @file events.js
  *
@@ -27610,7 +29283,7 @@ function one(elem, type, fn) {
   on(elem, type, func);
 }
 
-},{"./dom.js":79,"./guid.js":82,"./log.js":83,"global/document":7,"global/window":8}],81:[function(require,module,exports){
+},{"./dom.js":91,"./guid.js":95,"./log.js":96,"global/document":7,"global/window":8}],93:[function(require,module,exports){
 /**
  * @file fn.js
  */
@@ -27656,7 +29329,60 @@ var bind = function bind(context, fn, uid) {
 };
 exports.bind = bind;
 
-},{"./guid.js":82}],82:[function(require,module,exports){
+},{"./guid.js":95}],94:[function(require,module,exports){
+/**
+ * @file format-time.js
+ *
+ * Format seconds as a time string, H:MM:SS or M:SS
+ * Supplying a guide (in seconds) will force a number of leading zeros
+ * to cover the length of the guide
+ *
+ * @param  {Number} seconds Number of seconds to be turned into a string
+ * @param  {Number} guide   Number (in seconds) to model the string after
+ * @return {String}         Time formatted as H:MM:SS or M:SS
+ * @private
+ * @function formatTime
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+function formatTime(seconds) {
+  var guide = arguments.length <= 1 || arguments[1] === undefined ? seconds : arguments[1];
+  return (function () {
+    seconds = seconds < 0 ? 0 : seconds;
+    var s = Math.floor(seconds % 60);
+    var m = Math.floor(seconds / 60 % 60);
+    var h = Math.floor(seconds / 3600);
+    var gm = Math.floor(guide / 60 % 60);
+    var gh = Math.floor(guide / 3600);
+
+    // handle invalid times
+    if (isNaN(seconds) || seconds === Infinity) {
+      // '-' is false for all relational operators (e.g. <, >=) so this setting
+      // will add the minimum number of fields specified by the guide
+      h = m = s = '-';
+    }
+
+    // Check if we need to show hours
+    h = h > 0 || gh > 0 ? h + ':' : '';
+
+    // If hours are showing, we may need to add a leading zero.
+    // Always show at least one digit of minutes.
+    m = ((h || gm >= 10) && m < 10 ? '0' + m : m) + ':';
+
+    // Check if leading zero is need for seconds
+    s = s < 10 ? '0' + s : s;
+
+    return h + m + s;
+  })();
+}
+
+exports['default'] = formatTime;
+module.exports = exports['default'];
+
+},{}],95:[function(require,module,exports){
 /**
  * @file guid.js
  *
@@ -27683,7 +29409,7 @@ function newGUID() {
   return _guid++;
 }
 
-},{}],83:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 /**
  * @file log.js
  */
@@ -27813,7 +29539,7 @@ log.warn = function () {
 
 exports['default'] = log;
 
-},{"./browser":77,"global/window":8}],84:[function(require,module,exports){
+},{"./browser":89,"global/window":8}],97:[function(require,module,exports){
 /**
  * @file merge-options.js
  */
@@ -27882,7 +29608,7 @@ function mergeOptions() {
 
 module.exports = exports['default'];
 
-},{"lodash":46}],85:[function(require,module,exports){
+},{"lodash":49}],98:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -27913,7 +29639,7 @@ var setTextContent = function setTextContent(el, content) {
 };
 exports.setTextContent = setTextContent;
 
-},{"global/document":7}],86:[function(require,module,exports){
+},{"global/document":7}],99:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -27986,7 +29712,7 @@ function createTimeRanges(start, end) {
 
 exports.createTimeRange = createTimeRanges;
 
-},{"./log.js":83}],87:[function(require,module,exports){
+},{"./log.js":96}],100:[function(require,module,exports){
 /**
  * @file to-title-case.js
  *
@@ -28009,7 +29735,7 @@ function toTitleCase(string) {
 exports["default"] = toTitleCase;
 module.exports = exports["default"];
 
-},{}],88:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /**
  * @file url.js
  */
@@ -28152,10 +29878,10 @@ var isCrossOrigin = function isCrossOrigin(url) {
 };
 exports.isCrossOrigin = isCrossOrigin;
 
-},{"global/document":7,"global/window":8}],89:[function(require,module,exports){
+},{"global/document":7,"global/window":8}],102:[function(require,module,exports){
 "use strict";
 
-},{}],90:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -28180,4 +29906,4 @@ _qunit2['default'].test('the environment is sane', function (assert) {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../src/js/koment":70}]},{},[89,90]);
+},{"../src/js/koment":81}]},{},[102,103]);

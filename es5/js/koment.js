@@ -308,5 +308,11 @@ if (typeof define === 'function' && define.amd) {
     module.exports = koment;
   }
 
+if (!_globalWindow2['default'].requestAnimationFrame) {
+  _globalWindow2['default'].requestAnimationFrame = function (fn) {
+    setTimeout(fn, 16.66);
+  };
+}
+
 exports['default'] = koment;
 module.exports = exports['default'];

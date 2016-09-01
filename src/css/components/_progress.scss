@@ -1,0 +1,182 @@
+//
+// Let's talk pixel math!
+// Start with a base font size of 10px (assuming that hasn't changed)
+// No Hover:
+// - Progress holder is 3px
+// - Progress handle is 9px
+// - Progress handle is pulled up 3px to center it.
+//
+// Hover:
+// - Progress holder becomes 5px
+// - Progress handle becomes 15px
+// - Progress handle is pulled up 5px to center it
+//
+
+.koment .koment-progress-control {
+  @include flex(auto);
+  @include display-flex(center);
+  height: 0.4em;
+  min-width: 4em;
+  width: 100%;
+}
+
+.koment-live .koment-progress-control {
+  display: none;
+}
+
+// Box containing play and load progresses. Also acts as seek scrubber.
+.koment .koment-progress-holder {
+  @include flex(auto);
+  @include transition(all 0.2s);
+  height: 0.3em;
+}
+
+// We need an increased hit area on hover
+.koment .koment-progress-control:hover .koment-progress-holder {
+  //font-size: 1.666666666666666666em
+}
+
+/* If we let the font size grow as much as everything else, the current time tooltip ends up
+ ginormous. If you'd like to enable the current time tooltip all the time, this should be disabled
+ to avoid a weird hitch when you roll off the hover. */
+
+// Also show the current time tooltip
+.koment .koment-progress-control:hover .koment-time-tooltip,
+.koment .koment-progress-control:hover .koment-mouse-display:after,
+.koment .koment-progress-control:hover .koment-play-progress:after {
+  font-family: $text-font-family;
+  visibility: visible;
+  font-size: 0.6em;
+}
+
+// Progress Bars
+.koment .koment-progress-holder .koment-play-progress,
+.koment .koment-progress-holder .koment-load-progress,
+.koment .koment-progress-holder .koment-tooltip-progress-bar,
+.koment .koment-progress-holder .koment-load-progress div {
+  position: absolute;
+  display: block;
+  height: 0.3em;
+  margin: 0;
+  padding: 0;
+  // updated by javascript during playback
+  width: 0;
+  // Needed for IE6
+  left: 0;
+  top: 0;
+}
+
+.koment .koment-mouse-display {
+
+  &:before {
+    display: none;
+  }
+}
+
+.koment .koment-play-progress {
+  background-color: $primary-foreground-color;
+
+  // Progress handle
+  &:before {
+    position: absolute;
+    top: -0.333333333333333em;
+    right: -0.5em;
+    font-size: 0.9em;
+  }
+}
+
+// Current Time "tooltip"
+// By default this is hidden and only shown when hovering over the progress control
+.koment .koment-time-tooltip,
+.koment .koment-mouse-display:after,
+.koment .koment-play-progress:after {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  top: -3.4em;
+  right: -1.9em;
+  font-size: 0.9em;
+  color: #000;
+  content: attr(data-current-time);
+  padding: 6px 8px 8px 8px;
+  @include background-color-with-alpha(#fff, 0.8);
+  @include border-radius(0.3em);
+}
+
+.koment .koment-time-tooltip,
+.koment .koment-play-progress:before,
+.koment .koment-play-progress:after {
+  z-index: 1;
+}
+
+.koment .koment-progress-control .koment-keep-tooltips-inside:after {
+  display: none;
+}
+
+.koment .koment-load-progress {
+  // For IE8 we'll lighten the color
+  background: lighten($secondary-background-color, 25%);
+  // Otherwise we'll rely on stacked opacities
+  background: rgba($secondary-background-color, $secondary-background-transparency);
+}
+
+// there are child elements of the load progress bar that represent the
+// specific time ranges that have been buffered
+.koment .koment-load-progress div {
+  // For IE8 we'll lighten the color
+  background: lighten($secondary-background-color, 50%);
+  // Otherwise we'll rely on stacked opacities
+  background: rgba($secondary-background-color, 0.75);
+}
+
+.koment.koment-no-flex .koment-progress-control {
+  width: auto;
+}
+
+.koment .koment-time-tooltip {
+  display: inline-block;
+  height: 2.4em;
+  position: relative;
+  float: right;
+  right: -1.9em;
+}
+
+.koment-tooltip-progress-bar {
+  visibility: hidden;
+}
+
+.koment .koment-progress-control .koment-mouse-display {
+  display: none;
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background-color: #000;
+  z-index: 1;
+}
+
+.koment-no-flex .koment-progress-control .koment-mouse-display {
+  z-index: 0;
+}
+
+.koment .koment-progress-control:hover .koment-mouse-display {
+  display: block;
+}
+
+.koment.koment-user-inactive .koment-progress-control .koment-mouse-display,
+.koment.koment-user-inactive .koment-progress-control .koment-mouse-display:after {
+  visibility: hidden;
+  opacity: 0;
+  $trans: visibility 1.0s, opacity 1.0s;
+  @include transition($trans);
+}
+
+.koment.koment-user-inactive.koment-no-flex .koment-progress-control .koment-mouse-display,
+.koment.koment-user-inactive.koment-no-flex .koment-progress-control .koment-mouse-display:after {
+  display: none;
+}
+
+.koment-mouse-display .koment-time-tooltip,
+.koment .koment-progress-control .koment-mouse-display:after {
+  color: #fff;
+  @include background-color-with-alpha(#000, 0.8);
+}

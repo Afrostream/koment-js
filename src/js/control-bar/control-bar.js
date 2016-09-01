@@ -6,6 +6,7 @@ import Component from '../component';
 // Required children
 import './koment-toggle';
 import './like-button';
+import './edit-button';
 
 /**
  * Container of main controls
@@ -36,6 +37,7 @@ ControlBar.prototype.options_ = {
   children: [
     'komentToggle',
     'likeButton',
+    'editButton',
   ]
 };
 

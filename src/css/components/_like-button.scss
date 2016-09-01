@@ -6,13 +6,14 @@
 
   font-size: 0.7em;
 
+  transition: height 0.2s linear;
+
   @extend .koment-icon-heart;
 
   &:before {
     line-height: 2.3;
   }
 
-  color: #ff3e25;
 }
 
 $size: 2em;
@@ -21,10 +22,6 @@ $size: 2em;
   display: flex;
   opacity: 1;
   visibility: visible;
-  animation-name: like-show;
-  animation-duration: 0.2s;
-  animation-iteration-count: 1;
-  animation-timing-function: linear;
 
   .line {
     @for $i from 1 through 8 {
@@ -44,7 +41,9 @@ $size: 2em;
   //  will-change: top, height;
   //  margin: $size / 2;
   //}
-
+  &:hover {
+    color: #ff3e25;
+  }
   &.active {
     animation: grow-shrink .3s ease 1;
     .line:before {
@@ -78,16 +77,5 @@ $size: 2em;
   }
   100% {
     transform: scale(1);
-  }
-}
-
-@keyframes like-show {
-  from {
-    transform: translate3d(0, -20px, 0);
-    opacity: 0;
-  }
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1;
   }
 }
