@@ -1450,6 +1450,24 @@ var Player = (function (_Component) {
         this.addClass('koment-toggle-menu');
       } else {
         this.removeClass('koment-toggle-menu');
+        this.toggleEdit(this.toggleMenu_);
+      }
+
+      return this;
+    }
+  }, {
+    key: 'toggleEdit',
+    value: function toggleEdit(toggle) {
+      if (toggle !== undefined) {
+        this.toggleEdit_ = !!toggle;
+      } else {
+        this.toggleEdit_ = !this.toggleEdit_;
+      }
+
+      if (this.toggleEdit_) {
+        this.addClass('koment-toggle-edit');
+      } else {
+        this.removeClass('koment-toggle-edit');
       }
 
       return this;

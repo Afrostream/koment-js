@@ -12,6 +12,18 @@
   @include background-color-with-alpha($primary-background-color, $primary-background-transparency);
 }
 
+.koment.koment-toggle-edit .koment-control-bar {
+  margin-top: $padding-global;
+  top: $padding-global;
+  left: $padding-global;
+  right: $padding-global;
+  width: auto;
+  border-radius: 0.4em;
+  $trans: all 0.2s; // Var needed because of comma
+  @include transition($trans);
+  @include background-color-with-alpha($primary-background-color, 1);
+}
+
 // Video has started playing
 .koment-has-started .koment-control-bar {
   @include display-flex;
@@ -19,7 +31,8 @@
   opacity: 1;
   flex-direction: column;
 
-  $trans: visibility 0.1s, opacity 0.1s, height 0.4s; // Var needed because of comma
+  //$trans: visibility 0.1s, opacity 0.1s, height 0.4s, width 0.2s; // Var needed because of comma
+  $trans: visibility 0.1s, opacity 0.1s, height 0.4s, width 0.2s; // Var needed because of comma
   @include transition($trans);
 }
 

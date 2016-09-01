@@ -49,7 +49,7 @@ class LikeButton extends Button {
   handleClick (event) {
     super.handleClick(event);
     this.addClass('active');
-    this.setTimeout(this.disable, 300)
+    this.setTimeout(this.disable, 300);
   }
 
   disable () {

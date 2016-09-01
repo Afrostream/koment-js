@@ -1,6 +1,7 @@
 /**
- * @file koment-toggle.js
+ * @file post-submit-button.js
  */
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -11,27 +12,17 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _utilsToTitleCase = require('../utils/to-title-case');
-
-var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
-
-var _utilsDom = require('../utils/dom');
-
-var Dom = _interopRequireWildcard(_utilsDom);
-
-var _componentJs = require('../component.js');
+var _componentJs = require('../../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
 
-var _buttonJs = require('../button.js');
+var _buttonJs = require('../../button.js');
 
 var _buttonJs2 = _interopRequireDefault(_buttonJs);
 
@@ -44,16 +35,16 @@ var _buttonJs2 = _interopRequireDefault(_buttonJs);
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class EditButton
+ * @class PostSubmitButton
  */
 
-var EditButton = (function (_Button) {
-  _inherits(EditButton, _Button);
+var PostSubmitButton = (function (_Button) {
+  _inherits(PostSubmitButton, _Button);
 
-  function EditButton(player, options, ready) {
-    _classCallCheck(this, EditButton);
+  function PostSubmitButton(player, options, ready) {
+    _classCallCheck(this, PostSubmitButton);
 
-    _get(Object.getPrototypeOf(EditButton.prototype), 'constructor', this).call(this, player, options, ready);
+    _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'constructor', this).call(this, player, options, ready);
   }
 
   /**
@@ -63,17 +54,10 @@ var EditButton = (function (_Button) {
    * @method buildCSSClass
    */
 
-  _createClass(EditButton, [{
+  _createClass(PostSubmitButton, [{
     key: 'buildCSSClass',
     value: function buildCSSClass() {
-      return 'edit-button ' + _get(Object.getPrototypeOf(EditButton.prototype), 'buildCSSClass', this).call(this);
-    }
-  }, {
-    key: 'createEl',
-    value: function createEl() {
-      return _get(Object.getPrototypeOf(EditButton.prototype), 'createEl', this).call(this, 'button', {
-        innerHTML: '<div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div>'
-      });
+      return 'kmt-post-submit-button ' + _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'buildCSSClass', this).call(this);
     }
 
     /**
@@ -84,23 +68,15 @@ var EditButton = (function (_Button) {
   }, {
     key: 'handleClick',
     value: function handleClick(event) {
-      _get(Object.getPrototypeOf(EditButton.prototype), 'handleClick', this).call(this, event);
-      this.addClass('active');
-      this.setTimeout(this.disable, 300);
-      this.player_.toggleEdit();
-    }
-  }, {
-    key: 'disable',
-    value: function disable() {
-      this.removeClass('active');
+      _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'handleClick', this).call(this, event);
     }
   }]);
 
-  return EditButton;
+  return PostSubmitButton;
 })(_buttonJs2['default']);
 
-EditButton.prototype.controlText_ = 'Edit';
+PostSubmitButton.prototype.controlText_ = 'Send';
 
-_componentJs2['default'].registerComponent('EditButton', EditButton);
-exports['default'] = EditButton;
+_componentJs2['default'].registerComponent('PostSubmitButton', PostSubmitButton);
+exports['default'] = PostSubmitButton;
 module.exports = exports['default'];

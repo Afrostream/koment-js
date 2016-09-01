@@ -29,6 +29,8 @@ require('./like-button');
 
 require('./edit-button');
 
+require('./post-box/post-box');
+
 /**
  * Container of main controls
  *
@@ -69,7 +71,7 @@ var ControlBar = (function (_Component) {
 })(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'likeButton', 'editButton']
+  children: ['komentToggle', 'likeButton', 'editButton', 'postBox']
 };
 
 _component2['default'].registerComponent('ControlBar', ControlBar);

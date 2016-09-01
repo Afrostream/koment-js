@@ -15,3 +15,15 @@
   -moz-appearance: none;
   appearance: none;
 }
+
+.koment .koment-button {
+  cursor: pointer;
+
+  font-size: 0.7em;
+
+  transition: all 0.2s linear;
+
+  &:before {
+    line-height: 2.3;
+  }
+}

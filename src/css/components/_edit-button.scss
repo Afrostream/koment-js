@@ -6,35 +6,35 @@
 
   font-size: 0.7em;
 
-  transition: height 0.2s linear;
-
-  @extend .koment-icon-edit;
+  transition: all 0.2s linear;
 
   &:before {
     line-height: 2.3;
   }
+
+  @extend .koment-icon-edit;
+
 }
 
 .koment.koment-toggle-menu .edit-button {
   display: flex;
   opacity: 1;
   visibility: visible;
+
+  animation: show .3s ease 1;
+
   &:hover {
     color: #ff3e25;
   }
   &.active {
-    animation: grow-shrink .3s ease 1;
   }
 }
 
-@keyframes grow-shrink {
-  40% {
-    transform: scale(1.1);
+@keyframes show {
+  from {
+    height: 0;
   }
-  75% {
-    transform: scale(.9);
-  }
-  100% {
-    transform: scale(1);
+  to {
+    height: 4em;
   }
 }

@@ -7,6 +7,7 @@ import Component from '../component';
 import './koment-toggle';
 import './like-button';
 import './edit-button';
+import './post-box/post-box';
 
 /**
  * Container of main controls
@@ -38,6 +39,7 @@ ControlBar.prototype.options_ = {
     'komentToggle',
     'likeButton',
     'editButton',
+    'postBox',
   ]
 };
 

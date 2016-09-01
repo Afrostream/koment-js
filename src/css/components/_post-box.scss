@@ -1,0 +1,48 @@
+.koment .kmt-post-box {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  right: 0;
+  left: 2em;
+}
+
+.koment .kmt-post-submit-button {
+  @extend .koment-icon-send;
+  font-size: 1.3em;
+  &:before {
+    top: 25%;
+  }
+  &:hover {
+    color: #9c9c9c;
+  }
+}
+
+.koment.koment-toggle-edit .kmt-post-box {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+  padding: 0.5em;
+
+  [contentEditable=true]:empty:not(:focus):before {
+    content: attr(data-placeholder-default);
+  }
+
+  .kmt-post-box-comments-input {
+    height: 100%;
+    width: 100%;
+    border-radius: 0.2em;
+    padding: 0.5em;
+    font-size: 1.3em;
+    @include background-color-with-alpha($primary-foreground-color, 0.3);
+    color: $primary-foreground-color;
+    margin-right: 0.5em;
+  }
+
+  .kmt-message-length {
+    width: 2em;
+  }
+
+}

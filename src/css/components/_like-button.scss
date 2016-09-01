@@ -6,13 +6,13 @@
 
   font-size: 0.7em;
 
-  transition: height 0.2s linear;
-
-  @extend .koment-icon-heart;
+  transition: all 0.2s linear;
 
   &:before {
     line-height: 2.3;
   }
+
+  @extend .koment-icon-heart;
 
 }
 

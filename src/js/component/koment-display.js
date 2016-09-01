@@ -17,7 +17,12 @@ import KomentItem from './koment-item';
 class KomentDisplay extends Component {
 
   constructor (player, options) {
-    super(player, options)
+    super(player, options);
+
+    this.emitTapEvents();
+
+    this.on('tap', this.handleClick);
+    this.on('click', this.handleClick);
 
     let data = {
       json: true,
@@ -58,6 +63,15 @@ class KomentDisplay extends Component {
       kommentsList = sortBy(kommentsList, ['timecode']);
       this.createChilds(kommentsList);
     });
+  }
+
+  /**
+   * Handle Click - Override with specific functionality for component
+   *
+   * @method handleClick
+   */
+  handleClick () {
+    this.player_.toggleEdit(false);
   }
 
   /**

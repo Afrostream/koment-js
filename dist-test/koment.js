@@ -19655,7 +19655,7 @@ _component2['default'].registerComponent('Button', Button);
 exports['default'] = Button;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":65,"./component":66,"./utils/log.js":96,"object.assign":54}],65:[function(require,module,exports){
+},{"./clickable-component.js":65,"./component":66,"./utils/log.js":99,"object.assign":54}],65:[function(require,module,exports){
 /**
  * @file button.js
  */
@@ -19943,7 +19943,7 @@ _component2['default'].registerComponent('ClickableComponent', ClickableComponen
 exports['default'] = ClickableComponent;
 module.exports = exports['default'];
 
-},{"./component":66,"./utils/dom.js":91,"./utils/events.js":92,"./utils/fn.js":93,"./utils/log.js":96,"global/document":7,"object.assign":54}],66:[function(require,module,exports){
+},{"./component":66,"./utils/dom.js":94,"./utils/events.js":95,"./utils/fn.js":96,"./utils/log.js":99,"global/document":7,"object.assign":54}],66:[function(require,module,exports){
 /**
  * @file component.js
  *
@@ -21570,7 +21570,7 @@ Component.registerComponent('Component', Component);
 exports['default'] = Component;
 module.exports = exports['default'];
 
-},{"./utils/dom.js":91,"./utils/events.js":92,"./utils/fn.js":93,"./utils/guid.js":95,"./utils/log.js":96,"./utils/merge-options.js":97,"./utils/to-title-case.js":100,"global/window":8}],67:[function(require,module,exports){
+},{"./utils/dom.js":94,"./utils/events.js":95,"./utils/fn.js":96,"./utils/guid.js":98,"./utils/log.js":99,"./utils/merge-options.js":100,"./utils/to-title-case.js":103,"global/window":8}],67:[function(require,module,exports){
 /**
  * @file koment-display.js
  **/
@@ -21631,6 +21631,11 @@ var KomentDisplay = (function (_Component) {
 
     _get(Object.getPrototypeOf(KomentDisplay.prototype), 'constructor', this).call(this, player, options);
 
+    this.emitTapEvents();
+
+    this.on('tap', this.handleClick);
+    this.on('click', this.handleClick);
+
     var data = {
       json: true,
       uri: this.options_.url,
@@ -21673,13 +21678,24 @@ var KomentDisplay = (function (_Component) {
   }
 
   /**
-   * Create the component's DOM element
+   * Handle Click - Override with specific functionality for component
    *
-   * @return {Element}
-   * @method createEl
+   * @method handleClick
    */
 
   _createClass(KomentDisplay, [{
+    key: 'handleClick',
+    value: function handleClick() {
+      this.player_.toggleEdit(false);
+    }
+
+    /**
+     * Create the component's DOM element
+     *
+     * @return {Element}
+     * @method createEl
+     */
+  }, {
     key: 'createEl',
     value: function createEl() {
       return _get(Object.getPrototypeOf(KomentDisplay.prototype), 'createEl', this).call(this, 'div', {
@@ -21860,7 +21876,7 @@ _component2['default'].registerComponent('KomentDisplay', KomentDisplay);
 exports['default'] = KomentDisplay;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/dom":91,"../utils/fn.js":93,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
+},{"../component":66,"../utils/dom":94,"../utils/fn.js":96,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
 /**
  * @file koment-item.js
  **/
@@ -21945,7 +21961,7 @@ _componentJs2['default'].registerComponent('KomentItem', KomentItem);
 exports['default'] = KomentItem;
 module.exports = exports['default'];
 
-},{"../component.js":66,"../utils/dom":91}],69:[function(require,module,exports){
+},{"../component.js":66,"../utils/dom":94}],69:[function(require,module,exports){
 /**
  * @file control-bar.js
  */
@@ -21976,6 +21992,8 @@ require('./koment-toggle');
 require('./like-button');
 
 require('./edit-button');
+
+require('./post-box/post-box');
 
 /**
  * Container of main controls
@@ -22017,14 +22035,14 @@ var ControlBar = (function (_Component) {
 })(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'likeButton', 'editButton']
+  children: ['komentToggle', 'likeButton', 'editButton', 'postBox']
 };
 
 _component2['default'].registerComponent('ControlBar', ControlBar);
 exports['default'] = ControlBar;
 module.exports = exports['default'];
 
-},{"../component":66,"./edit-button":70,"./koment-toggle":71,"./like-button":72}],70:[function(require,module,exports){
+},{"../component":66,"./edit-button":70,"./koment-toggle":71,"./like-button":72,"./post-box/post-box":73}],70:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -22114,6 +22132,7 @@ var EditButton = (function (_Button) {
       _get(Object.getPrototypeOf(EditButton.prototype), 'handleClick', this).call(this, event);
       this.addClass('active');
       this.setTimeout(this.disable, 300);
+      this.player_.toggleEdit();
     }
   }, {
     key: 'disable',
@@ -22131,7 +22150,7 @@ _componentJs2['default'].registerComponent('EditButton', EditButton);
 exports['default'] = EditButton;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":91,"../utils/to-title-case":100}],71:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":94,"../utils/to-title-case":103}],71:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -22225,7 +22244,7 @@ _componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
 exports['default'] = KomentToggle;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":91,"../utils/to-title-case":100}],72:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":94,"../utils/to-title-case":103}],72:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -22332,7 +22351,235 @@ _componentJs2['default'].registerComponent('LikeButton', LikeButton);
 exports['default'] = LikeButton;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":91,"../utils/to-title-case":100}],73:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":94,"../utils/to-title-case":103}],73:[function(require,module,exports){
+/**
+ * @file post-toggle.js
+ */
+
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+require('./post-comment-box');
+
+require('./post-submit-button');
+
+/**
+ * The button component for toggling and selecting koment
+ * Chapters act much differently than other text tracks
+ * Cues are navigation vs. other tracks of alternative languages
+ *
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends Component
+ * @class PostBox
+ */
+
+var PostBox = (function (_Component) {
+  _inherits(PostBox, _Component);
+
+  function PostBox(player, options, ready) {
+    _classCallCheck(this, PostBox);
+
+    _get(Object.getPrototypeOf(PostBox.prototype), 'constructor', this).call(this, player, options, ready);
+  }
+
+  _createClass(PostBox, [{
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(PostBox.prototype), 'createEl', this).call(this, 'div', {
+        className: 'kmt-post-box'
+      });
+    }
+  }]);
+
+  return PostBox;
+})(_componentJs2['default']);
+
+PostBox.prototype.options_ = {
+  children: ['postCommentBox', 'postSubmitButton']
+};
+
+_componentJs2['default'].registerComponent('PostBox', PostBox);
+exports['default'] = PostBox;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"./post-comment-box":74,"./post-submit-button":75}],74:[function(require,module,exports){
+/**
+ * @file koment-toggle.js
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _utilsToTitleCase = require('../../utils/to-title-case');
+
+var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+require('./post-comment-box');
+
+/**
+ * The button component for toggling and selecting koment
+ * Chapters act much differently than other text tracks
+ * Cues are navigation vs. other tracks of alternative languages
+ *
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends Component
+ * @class PostCommentBox
+ */
+
+var PostCommentBox = (function (_Component) {
+  _inherits(PostCommentBox, _Component);
+
+  function PostCommentBox(player, options, ready) {
+    _classCallCheck(this, PostCommentBox);
+
+    _get(Object.getPrototypeOf(PostCommentBox.prototype), 'constructor', this).call(this, player, options, ready);
+  }
+
+  _createClass(PostCommentBox, [{
+    key: 'createEl',
+    value: function createEl() {
+
+      return _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
+        className: 'kmt-post-box-comments-input'
+      }, {
+        contenteditable: true,
+        ariaMultiline: false,
+        maxlength: 140,
+        dataPlaceholderDefault: 'Add your comment here...'
+      });
+      //innerHTML: '<div class="kmt-post-box-comments-box"><div class="kmt-post-box-comments-input" contenteditable="true" aria-multiline="true" maxlength="120" data-placeholder-default="Add your comment here..."></div><span className="kmt-message-length">0/120</span></div>'
+    }
+  }]);
+
+  return PostCommentBox;
+})(_componentJs2['default']);
+
+_componentJs2['default'].registerComponent('PostCommentBox', PostCommentBox);
+exports['default'] = PostCommentBox;
+module.exports = exports['default'];
+
+},{"../../component.js":66,"../../utils/to-title-case":103,"./post-comment-box":74}],75:[function(require,module,exports){
+/**
+ * @file post-submit-button.js
+ */
+
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _componentJs = require('../../component.js');
+
+var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _buttonJs = require('../../button.js');
+
+var _buttonJs2 = _interopRequireDefault(_buttonJs);
+
+/**
+ * The button component for toggling and selecting koment
+ * Chapters act much differently than other text tracks
+ * Cues are navigation vs. other tracks of alternative languages
+ *
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends Button
+ * @class PostSubmitButton
+ */
+
+var PostSubmitButton = (function (_Button) {
+  _inherits(PostSubmitButton, _Button);
+
+  function PostSubmitButton(player, options, ready) {
+    _classCallCheck(this, PostSubmitButton);
+
+    _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'constructor', this).call(this, player, options, ready);
+  }
+
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+  _createClass(PostSubmitButton, [{
+    key: 'buildCSSClass',
+    value: function buildCSSClass() {
+      return 'kmt-post-submit-button ' + _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'buildCSSClass', this).call(this);
+    }
+
+    /**
+     * Handle click on text track
+     *
+     * @method handleClick
+     */
+  }, {
+    key: 'handleClick',
+    value: function handleClick(event) {
+      _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'handleClick', this).call(this, event);
+    }
+  }]);
+
+  return PostSubmitButton;
+})(_buttonJs2['default']);
+
+PostSubmitButton.prototype.controlText_ = 'Send';
+
+_componentJs2['default'].registerComponent('PostSubmitButton', PostSubmitButton);
+exports['default'] = PostSubmitButton;
+module.exports = exports['default'];
+
+},{"../../button.js":64,"../../component.js":66}],76:[function(require,module,exports){
 /**
  * @file load-progress-bar.js
  */
@@ -22450,7 +22697,7 @@ _componentJs2['default'].registerComponent('LoadProgressBar', LoadProgressBar);
 exports['default'] = LoadProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":91}],74:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":94}],77:[function(require,module,exports){
 /**
  * @file mouse-time-display.js
  */
@@ -22619,7 +22866,7 @@ _componentJs2['default'].registerComponent('MouseTimeDisplay', MouseTimeDisplay)
 exports['default'] = MouseTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":91,"../../utils/fn.js":93,"../../utils/format-time.js":94,"global/window":8,"lodash-compat/function/throttle":13}],75:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":94,"../../utils/fn.js":96,"../../utils/format-time.js":97,"global/window":8,"lodash-compat/function/throttle":13}],78:[function(require,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -22713,7 +22960,7 @@ _componentJs2['default'].registerComponent('PlayProgressBar', PlayProgressBar);
 exports['default'] = PlayProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/fn.js":93,"../../utils/format-time.js":94}],76:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/fn.js":96,"../../utils/format-time.js":97}],79:[function(require,module,exports){
 /**
  * @file progress-control.js
  */
@@ -22787,7 +23034,7 @@ _componentJs2['default'].registerComponent('ProgressControl', ProgressControl);
 exports['default'] = ProgressControl;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"./mouse-time-display.js":74,"./seek-bar.js":77}],77:[function(require,module,exports){
+},{"../../component.js":66,"./mouse-time-display.js":77,"./seek-bar.js":80}],80:[function(require,module,exports){
 /**
  * @file seek-bar.js
  */
@@ -23024,7 +23271,7 @@ _componentJs2['default'].registerComponent('SeekBar', SeekBar);
 exports['default'] = SeekBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../slider/slider.js":86,"../../utils/fn.js":93,"../../utils/format-time.js":94,"./load-progress-bar.js":73,"./play-progress-bar.js":75,"./timeline-progress-bar.js":78,"./tooltip-progress-bar.js":79,"global/window":8}],78:[function(require,module,exports){
+},{"../../component.js":66,"../../slider/slider.js":89,"../../utils/fn.js":96,"../../utils/format-time.js":97,"./load-progress-bar.js":76,"./play-progress-bar.js":78,"./timeline-progress-bar.js":81,"./tooltip-progress-bar.js":82,"global/window":8}],81:[function(require,module,exports){
 /**
  * @file timeline-progress-bar.js
  */
@@ -23142,7 +23389,7 @@ _componentJs2['default'].registerComponent('TimelineProgressBar', TimelineProgre
 exports['default'] = TimelineProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":91}],79:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":94}],82:[function(require,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -23234,7 +23481,7 @@ _componentJs2['default'].registerComponent('TooltipProgressBar', TooltipProgress
 exports['default'] = TooltipProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/fn.js":93,"../../utils/format-time.js":94}],80:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/fn.js":96,"../../utils/format-time.js":97}],83:[function(require,module,exports){
 /**
  * @file fullscreen-api.js
  */
@@ -23293,7 +23540,7 @@ if (browserApi) {
 exports['default'] = FullscreenApi;
 module.exports = exports['default'];
 
-},{"global/document":7}],81:[function(require,module,exports){
+},{"global/document":7}],84:[function(require,module,exports){
 /**
  * @file koment.js
  */
@@ -23613,7 +23860,7 @@ if (!_globalWindow2['default'].requestAnimationFrame) {
 exports['default'] = koment;
 module.exports = exports['default'];
 
-},{"../../package.json":63,"./player":84,"./setup":85,"./utils/browser.js":89,"./utils/dom.js":91,"./utils/events.js":92,"./utils/log.js":96,"./utils/stylesheet.js":98,"./utils/url.js":101,"global/document":7,"global/window":8,"lodash-compat/object/merge":46}],82:[function(require,module,exports){
+},{"../../package.json":63,"./player":87,"./setup":88,"./utils/browser.js":92,"./utils/dom.js":94,"./utils/events.js":95,"./utils/log.js":99,"./utils/stylesheet.js":101,"./utils/url.js":104,"global/document":7,"global/window":8,"lodash-compat/object/merge":46}],85:[function(require,module,exports){
 /**
  * @file media-error.js
  */
@@ -23722,7 +23969,7 @@ for (var errNum = 0; errNum < MediaError.errorTypes.length; errNum++) {
 exports['default'] = MediaError;
 module.exports = exports['default'];
 
-},{"object.assign":54}],83:[function(require,module,exports){
+},{"object.assign":54}],86:[function(require,module,exports){
 /**
  * @file modal-dialog.js
  */
@@ -24155,7 +24402,7 @@ _component2['default'].registerComponent('ModalDialog', ModalDialog);
 exports['default'] = ModalDialog;
 module.exports = exports['default'];
 
-},{"./component":66,"./utils/dom":91,"./utils/fn":93}],84:[function(require,module,exports){
+},{"./component":66,"./utils/dom":94,"./utils/fn":96}],87:[function(require,module,exports){
 /**
  * @file player.js
  */
@@ -25608,6 +25855,24 @@ var Player = (function (_Component) {
         this.addClass('koment-toggle-menu');
       } else {
         this.removeClass('koment-toggle-menu');
+        this.toggleEdit(this.toggleMenu_);
+      }
+
+      return this;
+    }
+  }, {
+    key: 'toggleEdit',
+    value: function toggleEdit(toggle) {
+      if (toggle !== undefined) {
+        this.toggleEdit_ = !!toggle;
+      } else {
+        this.toggleEdit_ = !this.toggleEdit_;
+      }
+
+      if (this.toggleEdit_) {
+        this.addClass('koment-toggle-edit');
+      } else {
+        this.removeClass('koment-toggle-edit');
       }
 
       return this;
@@ -26736,7 +27001,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":76,"./fullscreen-api":80,"./media-error":82,"./modal-dialog":83,"./tech/tech":87,"./tech/youtube":88,"./utils/browser":89,"./utils/dom":91,"./utils/events":92,"./utils/fn":93,"./utils/guid":95,"./utils/log":96,"./utils/merge-options":97,"./utils/stylesheet":98,"global/document":7,"global/window":8,"object.assign":54,"safe-json-parse/tuple":58}],85:[function(require,module,exports){
+},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":79,"./fullscreen-api":83,"./media-error":85,"./modal-dialog":86,"./tech/tech":90,"./tech/youtube":91,"./utils/browser":92,"./utils/dom":94,"./utils/events":95,"./utils/fn":96,"./utils/guid":98,"./utils/log":99,"./utils/merge-options":100,"./utils/stylesheet":101,"global/document":7,"global/window":8,"object.assign":54,"safe-json-parse/tuple":58}],88:[function(require,module,exports){
 /**
  * @file setup.js
  *
@@ -26855,7 +27120,7 @@ exports.autoSetup = autoSetup;
 exports.autoSetupTimeout = autoSetupTimeout;
 exports.hasLoaded = hasLoaded;
 
-},{"./utils/events.js":92,"global/document":7,"global/window":8,"lodash":49}],86:[function(require,module,exports){
+},{"./utils/events.js":95,"global/document":7,"global/window":8,"lodash":49}],89:[function(require,module,exports){
 /**
  * @file slider.js
  */
@@ -27159,7 +27424,7 @@ _componentJs2['default'].registerComponent('Slider', Slider);
 exports['default'] = Slider;
 module.exports = exports['default'];
 
-},{"../component.js":66,"../utils/dom.js":91,"object.assign":54}],87:[function(require,module,exports){
+},{"../component.js":66,"../utils/dom.js":94,"object.assign":54}],90:[function(require,module,exports){
 /**
  * @file tech.js
  * Media Technology Controller - Base class for media playback
@@ -27559,7 +27824,7 @@ Tech.registerTech('Tech', Tech);
 exports['default'] = Tech;
 module.exports = exports['default'];
 
-},{"../component":66,"../media-error.js":82,"../utils/buffer.js":90,"../utils/fn.js":93,"../utils/log.js":96,"../utils/time-ranges.js":99,"global/window":8}],88:[function(require,module,exports){
+},{"../component":66,"../media-error.js":85,"../utils/buffer.js":93,"../utils/fn.js":96,"../utils/log.js":99,"../utils/time-ranges.js":102,"global/window":8}],91:[function(require,module,exports){
 /**
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
@@ -27959,7 +28224,7 @@ _techJs2['default'].registerTech('Youtube', Youtube);
 exports['default'] = Youtube;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/fn.js":93,"./tech.js":87,"global/document":7}],89:[function(require,module,exports){
+},{"../component":66,"../utils/fn.js":96,"./tech.js":90,"global/document":7}],92:[function(require,module,exports){
 /**
  * @file browser.js
  */
@@ -28060,7 +28325,7 @@ exports.TOUCH_ENABLED = TOUCH_ENABLED;
 var BACKGROUND_SIZE_SUPPORTED = ('backgroundSize' in _globalDocument2['default'].createElement('video').style);
 exports.BACKGROUND_SIZE_SUPPORTED = BACKGROUND_SIZE_SUPPORTED;
 
-},{"global/document":7,"global/window":8}],90:[function(require,module,exports){
+},{"global/document":7,"global/window":8}],93:[function(require,module,exports){
 /**
  * @file buffer.js
  */
@@ -28111,7 +28376,7 @@ function bufferedPercent(buffered, duration) {
   return bufferedDuration / duration;
 }
 
-},{"./time-ranges.js":99}],91:[function(require,module,exports){
+},{"./time-ranges.js":102}],94:[function(require,module,exports){
 /**
  * @file dom.js
  */
@@ -28842,7 +29107,7 @@ exports.$ = $;
 var $$ = createQuerier('querySelectorAll');
 exports.$$ = $$;
 
-},{"./guid.js":95,"./log.js":96,"global/document":7,"global/window":8,"tsml":60}],92:[function(require,module,exports){
+},{"./guid.js":98,"./log.js":99,"global/document":7,"global/window":8,"tsml":60}],95:[function(require,module,exports){
 /**
  * @file events.js
  *
@@ -29283,7 +29548,7 @@ function one(elem, type, fn) {
   on(elem, type, func);
 }
 
-},{"./dom.js":91,"./guid.js":95,"./log.js":96,"global/document":7,"global/window":8}],93:[function(require,module,exports){
+},{"./dom.js":94,"./guid.js":98,"./log.js":99,"global/document":7,"global/window":8}],96:[function(require,module,exports){
 /**
  * @file fn.js
  */
@@ -29329,7 +29594,7 @@ var bind = function bind(context, fn, uid) {
 };
 exports.bind = bind;
 
-},{"./guid.js":95}],94:[function(require,module,exports){
+},{"./guid.js":98}],97:[function(require,module,exports){
 /**
  * @file format-time.js
  *
@@ -29382,7 +29647,7 @@ function formatTime(seconds) {
 exports['default'] = formatTime;
 module.exports = exports['default'];
 
-},{}],95:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 /**
  * @file guid.js
  *
@@ -29409,7 +29674,7 @@ function newGUID() {
   return _guid++;
 }
 
-},{}],96:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 /**
  * @file log.js
  */
@@ -29539,7 +29804,7 @@ log.warn = function () {
 
 exports['default'] = log;
 
-},{"./browser":89,"global/window":8}],97:[function(require,module,exports){
+},{"./browser":92,"global/window":8}],100:[function(require,module,exports){
 /**
  * @file merge-options.js
  */
@@ -29608,7 +29873,7 @@ function mergeOptions() {
 
 module.exports = exports['default'];
 
-},{"lodash":49}],98:[function(require,module,exports){
+},{"lodash":49}],101:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -29639,7 +29904,7 @@ var setTextContent = function setTextContent(el, content) {
 };
 exports.setTextContent = setTextContent;
 
-},{"global/document":7}],99:[function(require,module,exports){
+},{"global/document":7}],102:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -29712,7 +29977,7 @@ function createTimeRanges(start, end) {
 
 exports.createTimeRange = createTimeRanges;
 
-},{"./log.js":96}],100:[function(require,module,exports){
+},{"./log.js":99}],103:[function(require,module,exports){
 /**
  * @file to-title-case.js
  *
@@ -29735,7 +30000,7 @@ function toTitleCase(string) {
 exports["default"] = toTitleCase;
 module.exports = exports["default"];
 
-},{}],101:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 /**
  * @file url.js
  */
@@ -29878,10 +30143,10 @@ var isCrossOrigin = function isCrossOrigin(url) {
 };
 exports.isCrossOrigin = isCrossOrigin;
 
-},{"global/document":7,"global/window":8}],102:[function(require,module,exports){
+},{"global/document":7,"global/window":8}],105:[function(require,module,exports){
 "use strict";
 
-},{}],103:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -29906,4 +30171,4 @@ _qunit2['default'].test('the environment is sane', function (assert) {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../src/js/koment":81}]},{},[102,103]);
+},{"../src/js/koment":84}]},{},[105,106]);
