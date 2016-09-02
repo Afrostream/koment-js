@@ -20,7 +20,7 @@ import assign from 'object.assign';
 import mergeOptions from './utils/merge-options';
 import ModalDialog from './modal-dialog';
 import Tech from './tech/tech';
-
+import { map } from 'lodash';
 // The following imports are used only to ensure that the corresponding modules
 // are always included in the video.js package. Importing the modules will
 // execute them and they will register themselves with video.js.
@@ -205,7 +205,7 @@ class Player extends Component {
     this.on('fullscreenchange', this.handleFullscreenChange_);
     this.on('stageclick', this.handleStageClick_);
 
-    this.loadTech_()
+    this.sourceList_()
   }
 
   /**
@@ -520,6 +520,23 @@ class Player extends Component {
     `);
   }
 
+  sourceList_ () {
+    const sourceTech = this.selectSource();
+
+    if (sourceTech) {
+      this.loadTech_(sourceTech[0]);
+    } else {
+      // We need to wrap this in a timeout to give folks a chance to add error event handlers
+      this.setTimeout(function () {
+        this.error({code: 4, message: this.localize(this.options_.notSupportedMessage)});
+      }, 0);
+
+      // we could not find an appropriate tech, but let's still notify the delegate that this is it
+      // this needs a better comment about why this is needed
+      this.triggerReady();
+    }
+  }
+
   /**
    * Load the Media Playback Technology (tech)
    * Load/Create an instance of playback technology including element and API methods
@@ -530,14 +547,12 @@ class Player extends Component {
    * @method loadTech_
    * @private
    */
-  loadTech_ () {
+  loadTech_ (techName) {
 
     // Pause and remove current playback technology
     if (this.tech_) {
       this.unloadTech_();
     }
-
-    const techName = 'Youtube';
 
     this.techName_ = techName;//this.tag.tagName;
     // Turn off API access because we're loading a new tech that might load asynchronously
@@ -615,6 +630,23 @@ class Player extends Component {
     this.tech_.dispose();
 
     this.tech_ = false;
+  }
+
+  selectSource () {
+    const techs = map(Tech.techs_, (tech)=> {
+      return [tech.name, Tech.getTech(tech.name) || Component.getComponent(tech.name)];
+    }).filter(([techName, tech]) => {
+      // Check if the current tech is defined before continuing
+      if (tech) {
+        // Check if the browser supports this technology
+        return tech.isSupported(this.tag);
+      }
+
+      log.error(`The "${techName}" tech is undefined. Skipped browser support check for that tech.`);
+      return false;
+    });
+
+    return techs && techs.length && techs[0];
   }
 
   /**

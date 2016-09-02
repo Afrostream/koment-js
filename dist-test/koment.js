@@ -24577,6 +24577,8 @@ var _techTech = require('./tech/tech');
 
 var _techTech2 = _interopRequireDefault(_techTech);
 
+var _lodash = require('lodash');
+
 // The following imports are used only to ensure that the corresponding modules
 // are always included in the video.js package. Importing the modules will
 // execute them and they will register themselves with video.js.
@@ -24777,7 +24779,7 @@ var Player = (function (_Component) {
     this.on('fullscreenchange', this.handleFullscreenChange_);
     this.on('stageclick', this.handleStageClick_);
 
-    this.loadTech_();
+    this.sourceList_();
   }
 
   /*
@@ -25105,6 +25107,24 @@ var Player = (function (_Component) {
 
       stylesheet.setTextContent(this.styleEl_, '\n      .' + idClass + ' {\n        width: ' + width + 'px;\n        height: ' + height + 'px;\n      }\n\n      .' + idClass + '.koment-fluid {\n        padding-top: ' + ratioMultiplier * 100 + '%;\n      }\n    ');
     }
+  }, {
+    key: 'sourceList_',
+    value: function sourceList_() {
+      var sourceTech = this.selectSource();
+
+      if (sourceTech) {
+        this.loadTech_(sourceTech[0]);
+      } else {
+        // We need to wrap this in a timeout to give folks a chance to add error event handlers
+        this.setTimeout(function () {
+          this.error({ code: 4, message: this.localize(this.options_.notSupportedMessage) });
+        }, 0);
+
+        // we could not find an appropriate tech, but let's still notify the delegate that this is it
+        // this needs a better comment about why this is needed
+        this.triggerReady();
+      }
+    }
 
     /**
      * Load the Media Playback Technology (tech)
@@ -25118,14 +25138,12 @@ var Player = (function (_Component) {
      */
   }, {
     key: 'loadTech_',
-    value: function loadTech_() {
+    value: function loadTech_(techName) {
 
       // Pause and remove current playback technology
       if (this.tech_) {
         this.unloadTech_();
       }
-
-      var techName = 'Youtube';
 
       this.techName_ = techName; //this.tag.tagName;
       // Turn off API access because we're loading a new tech that might load asynchronously
@@ -25203,6 +25221,31 @@ var Player = (function (_Component) {
       this.tech_.dispose();
 
       this.tech_ = false;
+    }
+  }, {
+    key: 'selectSource',
+    value: function selectSource() {
+      var _this2 = this;
+
+      var techs = (0, _lodash.map)(_techTech2['default'].techs_, function (tech) {
+        return [tech.name, _techTech2['default'].getTech(tech.name) || _component2['default'].getComponent(tech.name)];
+      }).filter(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2);
+
+        var techName = _ref2[0];
+        var tech = _ref2[1];
+
+        // Check if the current tech is defined before continuing
+        if (tech) {
+          // Check if the browser supports this technology
+          return tech.isSupported(_this2.tag);
+        }
+
+        _utilsLog2['default'].error('The "' + techName + '" tech is undefined. Skipped browser support check for that tech.');
+        return false;
+      });
+
+      return techs && techs.length && techs[0];
     }
 
     /**
@@ -25398,12 +25441,12 @@ var Player = (function (_Component) {
   }, {
     key: 'handleTechWaiting_',
     value: function handleTechWaiting_() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.addClass('koment-waiting');
       this.trigger('waiting');
       this.one('timeupdate', function () {
-        return _this2.removeClass('koment-waiting');
+        return _this3.removeClass('koment-waiting');
       });
     }
 
@@ -26923,7 +26966,7 @@ var Player = (function (_Component) {
   }, {
     key: 'createModal',
     value: function createModal(content, options) {
-      var _this3 = this;
+      var _this4 = this;
 
       options = options || {};
       options.content = content || '';
@@ -26932,7 +26975,7 @@ var Player = (function (_Component) {
 
       this.addChild(modal);
       modal.on('dispose', function () {
-        _this3.removeChild(modal);
+        _this4.removeChild(modal);
       });
 
       return modal.open();
@@ -27114,7 +27157,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":79,"./fullscreen-api":83,"./media-error":85,"./modal-dialog":86,"./tech/tech":90,"./tech/youtube":91,"./utils/browser":92,"./utils/dom":94,"./utils/events":95,"./utils/fn":96,"./utils/guid":98,"./utils/log":99,"./utils/merge-options":100,"./utils/stylesheet":101,"global/document":7,"global/window":8,"object.assign":54,"safe-json-parse/tuple":58}],88:[function(require,module,exports){
+},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":79,"./fullscreen-api":83,"./media-error":85,"./modal-dialog":86,"./tech/tech":90,"./tech/youtube":91,"./utils/browser":92,"./utils/dom":94,"./utils/events":95,"./utils/fn":96,"./utils/guid":98,"./utils/log":99,"./utils/merge-options":100,"./utils/stylesheet":101,"global/document":7,"global/window":8,"lodash":49,"object.assign":54,"safe-json-parse/tuple":58}],88:[function(require,module,exports){
 /**
  * @file setup.js
  *
@@ -27917,6 +27960,11 @@ var Tech = (function (_Component) {
         return _globalWindow2['default'].koment[name];
       }
     }
+  }, {
+    key: 'isSupported',
+    value: function isSupported(tag) {
+      return false;
+    }
   }]);
 
   return Tech;
@@ -28367,6 +28415,10 @@ function useNativeControlsOnAndroid() {
 }
 
 Youtube.apiReadyQueue = [];
+
+Youtube.isSupported = function (tag) {
+  return tag && tag.tagName && tag.tagName === 'IFRAME' && tag.src && ~tag.src.indexOf('youtube');
+};
 
 loadScript('https://www.youtube.com/iframe_api', apiLoaded);
 injectCss();

@@ -382,6 +382,11 @@ function useNativeControlsOnAndroid () {
 
 Youtube.apiReadyQueue = [];
 
+Youtube.isSupported = function (tag) {
+  return tag && tag.tagName && tag.tagName === 'IFRAME' && tag.src && ~tag.src.indexOf('youtube');
+};
+
+
 loadScript('https://www.youtube.com/iframe_api', apiLoaded);
 injectCss();
 

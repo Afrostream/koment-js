@@ -304,6 +304,10 @@ class Tech extends Component {
       return window.koment[name];
     }
   }
+
+  static isSupported (tag) {
+    return false;
+  }
 }
 
 Tech.prototype.featuresVolumeControl = true;

@@ -43,7 +43,7 @@ $ie8screen: "\\0screen";
 .koment-has-started.koment-user-inactive.koment-playing .koment-control-bar {
   // Remain visible for screen reader and keyboard users
   visibility: visible;
-  opacity: 0;
+  opacity: 0.3;
 
   $trans: visibility 1.0s, opacity 1.0s, height 0.4s;
   @include transition($trans);
