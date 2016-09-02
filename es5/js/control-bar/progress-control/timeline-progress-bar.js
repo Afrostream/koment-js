@@ -27,6 +27,8 @@ var _utilsDomJs = require('../../utils/dom.js');
 
 var Dom = _interopRequireWildcard(_utilsDomJs);
 
+var _lodash = require('lodash');
+
 /**
  * Shows load progress
  *
@@ -43,6 +45,7 @@ var TimelineProgressBar = (function (_Component) {
     _classCallCheck(this, TimelineProgressBar);
 
     _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.on(player, 'komentsupdated', this.update);
     this.on(player, 'progress', this.update);
   }
 
@@ -57,8 +60,7 @@ var TimelineProgressBar = (function (_Component) {
     key: 'createEl',
     value: function createEl() {
       return _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-load-progress',
-        innerHTML: '<span class="koment-control-text"><span>' + this.localize('Loaded') + '</span>: 0%</span>'
+        className: 'koment-timeline-progress'
       });
     }
 
@@ -70,9 +72,10 @@ var TimelineProgressBar = (function (_Component) {
   }, {
     key: 'update',
     value: function update() {
-      var buffered = this.player_.buffered();
+      var _this = this;
+
+      var items = this.player_.komentsList();
       var duration = this.player_.duration();
-      var bufferedEnd = this.player_.bufferedEnd();
       var children = this.el_.children;
 
       // get the percent width of a time compared to the total end
@@ -83,28 +86,18 @@ var TimelineProgressBar = (function (_Component) {
         return (percent >= 1 ? 1 : percent) * 100 + '%';
       };
 
-      // update the width of the progress bar
-      this.el_.style.width = percentify(bufferedEnd, duration);
-
       // add child elements to represent the individual buffered time ranges
-      for (var i = 0; i < buffered.length; i++) {
-        var start = buffered.start(i);
-        var end = buffered.end(i);
+      (0, _lodash.forEach)(items, function (item, i) {
+
         var part = children[i];
 
         if (!part) {
-          part = this.el_.appendChild(Dom.createEl());
+          part = _this.el_.appendChild(Dom.createEl());
         }
 
         // set the percent based on the width of the progress bar (bufferedEnd)
-        part.style.left = percentify(start, bufferedEnd);
-        part.style.width = percentify(end - start, bufferedEnd);
-      }
-
-      // remove unused buffered range elements
-      for (var i = children.length; i > buffered.length; i--) {
-        this.el_.removeChild(children[i - 1]);
-      }
+        part.style.left = percentify(item.timecode, duration);
+      });
     }
   }]);
 

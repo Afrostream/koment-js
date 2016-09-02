@@ -52,11 +52,13 @@
 // Progress Bars
 .koment .koment-progress-holder .koment-play-progress,
 .koment .koment-progress-holder .koment-load-progress,
+.koment .koment-progress-holder .koment-timeline-progress,
 .koment .koment-progress-holder .koment-tooltip-progress-bar,
+.koment .koment-progress-holder .koment-timeline-progress div,
 .koment .koment-progress-holder .koment-load-progress div {
   position: absolute;
   display: block;
-  height: 0.3em;
+  height: 0.5em;
   margin: 0;
   padding: 0;
   // updated by javascript during playback
@@ -64,6 +66,14 @@
   // Needed for IE6
   left: 0;
   top: 0;
+}
+
+.koment .koment-progress-holder .koment-timeline-progress {
+  width: 100%;
+  div {
+    width: 1px;
+    @include background-color-with-alpha($primary-background-color, 0.3);
+  }
 }
 
 .koment .koment-mouse-display {
@@ -74,7 +84,7 @@
 }
 
 .koment .koment-play-progress {
-  background-color: $primary-foreground-color;
+  @include background-color-with-alpha($primary-background-color, 0.3);
 
   // Progress handle
   &:before {

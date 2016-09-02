@@ -7,16 +7,49 @@
   top: 0;
   right: 0;
   left: 2em;
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+
 }
 
 .koment .kmt-post-submit-button {
-  @extend .koment-icon-send;
   height: 3em;
   font-size: 1.5em;
-  border: 2px solid $primary-foreground-color;
-  &:hover {
-    color: #9c9c9c;
+  .koment-control-text {
+    border: 0;
+    clip: inherit;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
   }
+  &:hover {
+    background-color: rgba(0, 0, 0, 0);
+    color: #FFFFFF;
+    &:before {
+      width: 100%;
+      background-color: #3498db;
+    }
+  }
+
+  &:before {
+    position: absolute;
+    content: '';
+    width: 0px;
+    background-color: #fbfbfb;
+    transition: .3s ease;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  cursor: pointer;
+  border: #3498db solid 4px;
+  background-color: #FFF;
+  color: #3498db;
+  transition: all 0.3s;
+  font-weight: 700;
 }
 
 .koment.koment-toggle-edit .kmt-post-box {
@@ -35,10 +68,30 @@
     border-radius: $primary-border-radius / 2;
     padding: 0.5em;
     font-size: 1.3em;
-    @include background-color-with-alpha($primary-foreground-color, 0.3);
-    color: $primary-foreground-color;
+    @include background-color-with-alpha(#3498db, 1);
+    color: $primary-background-color;
     margin-right: 0.5em;
     outline: none;
+    &:after {
+      content: '';
+      position: absolute;
+      border-style: solid;
+      left: 10px + $primary-border-radius;
+      bottom: -10px;
+      width: 0;
+      height: 0;
+      border-width: 10px 6px 0 6px;
+      border-color: rgba($primary-background-color, 1) transparent transparent transparent;
+      transform: skewX(-20deg);
+    }
+
+    &:before {
+      color: rgba($primary-background-color, 0.8);
+    }
+
+    .highlight {
+      background: #fcc;
+    }
   }
 
   .kmt-message-length {

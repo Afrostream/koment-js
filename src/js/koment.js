@@ -251,7 +251,7 @@ koment.trigger = Events.trigger;
 /*
  * Custom Universal Module Definition (UMD)
  *
- * Video.js will never be a non-browser lib so we can simplify UMD a bunch and
+ * Koment.js will never be a non-browser lib so we can simplify UMD a bunch and
  * still support requirejs and browserify. This also needs to be closure
  * compiler compatible, so string keys are used.
  */
@@ -268,5 +268,6 @@ if (!window.requestAnimationFrame) {
     setTimeout(fn, 16.66);
   }
 }
+
 
 export default koment;

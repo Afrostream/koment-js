@@ -53,6 +53,11 @@ var Youtube = (function (_Tech) {
     _classCallCheck(this, Youtube);
 
     _get(Object.getPrototypeOf(Youtube.prototype), 'constructor', this).call(this, options, ready);
+
+    if (_isOnMobile) {
+      this.el_.parentNode.className += ' koment-youtube-mobile';
+    }
+
     if (Youtube.isApiReady) {
       this.initYTPlayer();
     } else {
@@ -302,11 +307,23 @@ var Youtube = (function (_Tech) {
       };
     }
   }, {
+    key: 'play',
+    value: function play() {
+      if (this.ytPlayer) {
+        this.ytPlayer.playVideo();
+      }
+    }
+  }, {
     key: 'pause',
     value: function pause() {
       if (this.ytPlayer) {
         this.ytPlayer.pauseVideo();
       }
+    }
+  }, {
+    key: 'currentSrc',
+    value: function currentSrc() {
+      return this.ytPlayer && this.ytPlayer.getVideoUrl();
     }
   }, {
     key: 'paused',
@@ -388,9 +405,38 @@ function loadScript(src, callback) {
   tag.src = src;
 }
 
+var _isOnMobile = koment.browser.IS_IOS || useNativeControlsOnAndroid();
+
+function injectCss() {
+  var css = // iframe blocker to catch mouse events
+  '.koment-youtube .koment-iframe-blocker { display: none; }' + '.koment-youtube.koment-user-inactive .koment-iframe-blocker { display: block; }' + '.koment-youtube .koment-poster { background-size: cover; }' + '.koment-youtube-mobile .koment-big-play-button { display: none; }';
+
+  var head = _globalDocument2['default'].head || _globalDocument2['default'].getElementsByTagName('head')[0];
+
+  var style = _globalDocument2['default'].createElement('style');
+  style.type = 'text/css';
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(_globalDocument2['default'].createTextNode(css));
+  }
+
+  head.appendChild(style);
+}
+
+function useNativeControlsOnAndroid() {
+  var stockRegex = window.navigator.userAgent.match(/applewebkit\/(\d*).*Version\/(\d*.\d*)/i);
+  //True only Android Stock Browser on OS versions 4.X and below
+  //where a Webkit version and a "Version/X.X" String can be found in
+  //user agent.
+  return videojs.browser.IS_ANDROID && videojs.browser.ANDROID_VERSION < 5 && stockRegex && stockRegex[2] > 0;
+}
+
 Youtube.apiReadyQueue = [];
 
 loadScript('https://www.youtube.com/iframe_api', apiLoaded);
+injectCss();
 
 _component2['default'].registerComponent('Youtube', Youtube);
 _techJs2['default'].registerTech('Youtube', Youtube);

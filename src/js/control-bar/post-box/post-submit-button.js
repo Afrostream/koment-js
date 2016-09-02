@@ -43,7 +43,7 @@ class PostSubmitButton extends Button {
   }
 }
 
-PostSubmitButton.prototype.controlText_ = 'Send';
+PostSubmitButton.prototype.controlText_ = 'Ok';
 
 Component.registerComponent('PostSubmitButton', PostSubmitButton);
 export default PostSubmitButton

@@ -1254,6 +1254,13 @@ class Player extends Component {
     return this;
   }
 
+  komentsList (list) {
+    if (list !== undefined) {
+      this.komentsList_ = list;
+    }
+    return this.komentsList_;
+  }
+
   toggleMenu (toggle) {
     if (toggle !== undefined) {
       this.toggleMenu_ = !!toggle;
@@ -1282,8 +1289,13 @@ class Player extends Component {
     }
 
     if (this.toggleEdit_) {
+      this.playBeforeEdit = !this.paused();
+      this.pause();
       this.addClass('koment-toggle-edit');
     } else {
+      if (this.playBeforeEdit) {
+        this.play();
+      }
       this.removeClass('koment-toggle-edit');
     }
 
@@ -1292,7 +1304,9 @@ class Player extends Component {
 
   sendKoment (koment) {
     console.log('koment send ', koment);
+    this.komentsList_.unshift(koment);
     this.toggleEdit(false);
+    this.trigger({data: koment, type: 'komentsupdated'});
   }
 
   /**
@@ -1680,6 +1694,10 @@ class Player extends Component {
     // Resize the box, controller, and poster to original sizes
     // this.positionAll();
     this.trigger('exitFullWindow');
+  }
+
+  src () {
+    return this.techGet_('currentSrc');
   }
 
   /**

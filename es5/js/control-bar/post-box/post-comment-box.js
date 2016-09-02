@@ -46,26 +46,88 @@ var PostCommentBox = (function (_Component) {
     _classCallCheck(this, PostCommentBox);
 
     _get(Object.getPrototypeOf(PostCommentBox.prototype), 'constructor', this).call(this, player, options, ready);
+    this.on(player, 'submit', this.onSubmit);
+    this.on('keyup', this.read);
   }
 
   _createClass(PostCommentBox, [{
+    key: 'read',
+    value: function read() {
+      var over = '';
+      var max = this.options_.max;
+      var text = this.el_.innerHTML;
+      text = this.parseHtml(text);
+      var textSize = text.length;
+      if (textSize >= 140) {
+        over = text.substr(max);
+        over = '<span class="highlight">' + over + '</span>';
+      }
+      this.validate(text);
+      this.spanEl.innerHTML = textSize + ' / ' + max;
+      var replacement = this.el_.innerHTML.substr(0, max) + over;
+      this.el_.innerHTML = replacement;
+    }
+  }, {
+    key: 'validate',
+    value: function validate(html) {
+      var max = this.options_.max;
+      var length = html.length;
+      if (length > max || length < 1) {
+        return this.addClass('-error');
+      }
+      if (this.hasClass('-error')) {
+        return this.removeClass('-error');
+      }
+    }
+  }, {
+    key: 'parseHtml',
+    value: function parseHtml(html) {
+      html = html.replace(/&nbsp;/g, ' ');
+      html = html.replace(/<br(\s*)\/*>/ig, '\r\n'); // replace br for newlines
+      html = html.replace(/<[div>]+>/ig, '\r\n'); // replace div for newlines
+      html = html.replace(/<\/[div>]+>/gm, ''); // remove remaining divs
+      html = html.replace(/\r\n$/, ''); // remove last newline
+
+      html = html.replace(/<\S[^><]*>/g, '');
+
+      return html;
+    }
+  }, {
+    key: 'onSubmit',
+    value: function onSubmit() {
+      var text = this.el_.innerHTML;
+      var timecode = this.player_.currentTime();
+      this.el_.innerHTML = '';
+      this.player_.sendKoment({ text: text, timecode: timecode });
+    }
+  }, {
     key: 'createEl',
     value: function createEl() {
 
-      return _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
+      var el = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
         className: 'kmt-post-box-comments-input'
       }, {
-        contenteditable: true,
-        ariaMultiline: false,
-        maxlength: 140,
-        dataPlaceholderDefault: 'Add your comment here...'
+        'contenteditable': true,
+        'aria-multiline': false,
+        'max-length': 140,
+        'data-placeHolder-default': 'Add your comment here...'
       });
       //innerHTML: '<div class="kmt-post-box-comments-box"><div class="kmt-post-box-comments-input" contenteditable="true" aria-multiline="true" maxlength="120" data-placeholder-default="Add your comment here..."></div><span className="kmt-message-length">0/120</span></div>'
+      this.spanEl = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
+        className: 'kmt-message-length',
+        innerHtml: '0 / 140'
+      });
+      //el.appendChild(this.spanEl);
+      return el;
     }
   }]);
 
   return PostCommentBox;
 })(_componentJs2['default']);
+
+PostCommentBox.prototype.options_ = {
+  max: 140
+};
 
 _componentJs2['default'].registerComponent('PostCommentBox', PostCommentBox);
 exports['default'] = PostCommentBox;

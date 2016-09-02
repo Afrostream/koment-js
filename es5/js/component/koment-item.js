@@ -57,7 +57,7 @@ var KomentItem = (function (_Component) {
     value: function createEl() {
 
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-item komment-mask'
+        className: 'koment-item koment-hidden'
       });
 
       this.contentEl_ = Dom.createEl('div', {
@@ -69,6 +69,22 @@ var KomentItem = (function (_Component) {
 
       el.appendChild(this.contentEl_);
       return el;
+    }
+  }, {
+    key: 'hide',
+    value: function hide() {
+      var _this = this;
+
+      if (this.hasClass('koment-show')) {
+        this.removeClass('koment-show');
+      }
+      this.addClass('koment-mask');
+      this.setTimeout(function () {
+        if (_this.hasClass('koment-mask')) {
+          _this.removeClass('koment-mask');
+        }
+        _this.addClass('koment-hidden');
+      }, 500);
     }
   }]);
 

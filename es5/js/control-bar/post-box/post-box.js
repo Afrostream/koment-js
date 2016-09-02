@@ -1,6 +1,7 @@
 /**
- * @file koment-toggle.js
+ * @file post-toggle.js
  */
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17,10 +18,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _utilsToTitleCase = require('../../utils/to-title-case');
-
-var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
-
 var _componentJs = require('../../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
@@ -28,8 +25,6 @@ var _componentJs2 = _interopRequireDefault(_componentJs);
 require('./post-comment-box');
 
 require('./post-submit-button');
-
-require('./post-cancel-button');
 
 /**
  * The button component for toggling and selecting koment
@@ -65,7 +60,7 @@ var PostBox = (function (_Component) {
 })(_componentJs2['default']);
 
 PostBox.prototype.options_ = {
-  children: ['postCommentBox', 'postSubmitButton', 'postCancelButton']
+  children: ['postCommentBox', 'postSubmitButton']
 };
 
 _componentJs2['default'].registerComponent('PostBox', PostBox);

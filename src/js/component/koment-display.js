@@ -5,7 +5,7 @@ import Component from '../component';
 import * as Fn from '../utils/fn.js';
 import * as Dom from '../utils/dom'
 import xhr from 'xhr'
-import { filter, forEach, map, clone, sortBy, slice, difference } from 'lodash';
+import { filter, forEach, map, clone, sortBy, slice, difference, uniq } from 'lodash';
 import KomentItem from './koment-item';
 
 /**
@@ -61,7 +61,9 @@ class KomentDisplay extends Component {
         timecode: 345
       });
       kommentsList = sortBy(kommentsList, ['timecode']);
-      this.createChilds(kommentsList);
+
+      this.player_.komentsList(kommentsList);
+      this.createChilds();
     });
   }
 
@@ -89,13 +91,22 @@ class KomentDisplay extends Component {
     });
   }
 
+  update (e) {
+    const item = e.data;
+    const mi = new KomentItem(this.player_, item);
+    this.items.unshift(mi);
+    this.addChild(mi);
+    this.requestTick();
+  }
+
   /**
    * Create menu from chapter buttons
    *
    * @return {Menu} Menu of chapter buttons
    * @method createMenu
    */
-  createChilds (items) {
+  createChilds () {
+    let items = this.player_.komentsList();
     this.items = [];
     for (let i = 0, l = items.length; i < l; i++) {
       const item = items[i]
@@ -119,6 +130,8 @@ class KomentDisplay extends Component {
         break;
     }
 
+    this.on(this.player_, 'komentsupdated', this.update);
+
     this.addClass(this.options_.template);
   }
 
@@ -139,30 +152,19 @@ class KomentDisplay extends Component {
 
   //VIKI MODE
   showElementsViki () {
-    let className = this.pause ? 'koment-paused' : 'koment-show';
-    const currentTimecode = this.player_.currentTime();
-    const positionGap = this.options_.tte;
-    let filtereds = filter(this.items, (item)=> (item.timecode <= currentTimecode + positionGap) && (item.timecode >= currentTimecode - positionGap)).slice(3);
-
+    let className = 'koment-show';
+    const currentTimecode = Math.round(this.player_.currentTime());
+    let nbVisible = filter(this.items, (item)=> item.hasClass(className));
+    let filtereds = uniq(this.items, (item)=> Math.round(item.timecode));
+    filtereds = filter(filtereds, (item)=> Math.round(item.timecode) === currentTimecode);
+    filtereds = slice(filtereds, Math.min(2, nbVisible.length));
     forEach(filtereds, (item)=> {
       if (!item.hasClass(className)) {
         item.show();
-        item.removeClass('koment-mask');
-        item.removeClass('koment-show');
-        item.removeClass('koment-paused');
         item.addClass(className);
+        item.setTimeout(item.hide, this.options_.tte * 1000);
       }
     });
-    const nonVisible = difference(this.items, filtereds);
-    forEach(nonVisible, (item)=> {
-      if (!item.hasClass('koment-mask')) {
-        item.addClass('koment-mask');
-        item.removeClass('koment-paused');
-        item.removeClass('koment-show');
-        item.setTimeout(this.hide, 500);
-      }
-    });
-
 
     this.ticking = false;
   }

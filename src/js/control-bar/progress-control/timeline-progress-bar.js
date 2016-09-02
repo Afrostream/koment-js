@@ -3,7 +3,7 @@
  */
 import Component from '../../component.js';
 import * as Dom from '../../utils/dom.js';
-
+import { forEach } from 'lodash';
 /**
  * Shows load progress
  *
@@ -16,6 +16,7 @@ class TimelineProgressBar extends Component {
 
   constructor (player, options) {
     super(player, options);
+    this.on(player, 'komentsupdated', this.update);
     this.on(player, 'progress', this.update);
   }
 
@@ -27,8 +28,7 @@ class TimelineProgressBar extends Component {
    */
   createEl () {
     return super.createEl('div', {
-      className: 'koment-load-progress',
-      innerHTML: `<span class="koment-control-text"><span>${this.localize('Loaded')}</span>: 0%</span>`
+      className: 'koment-timeline-progress'
     });
   }
 
@@ -38,9 +38,8 @@ class TimelineProgressBar extends Component {
    * @method update
    */
   update () {
-    const buffered = this.player_.buffered();
+    const items = this.player_.komentsList();
     const duration = this.player_.duration();
-    const bufferedEnd = this.player_.bufferedEnd();
     const children = this.el_.children;
 
     // get the percent width of a time compared to the total end
@@ -51,13 +50,11 @@ class TimelineProgressBar extends Component {
       return ((percent >= 1 ? 1 : percent) * 100) + '%';
     };
 
-    // update the width of the progress bar
-    this.el_.style.width = percentify(bufferedEnd, duration);
 
     // add child elements to represent the individual buffered time ranges
-    for (let i = 0; i < buffered.length; i++) {
-      const start = buffered.start(i);
-      const end = buffered.end(i);
+    forEach(items, (item, i)=> {
+
+
       let part = children[i];
 
       if (!part) {
@@ -65,14 +62,9 @@ class TimelineProgressBar extends Component {
       }
 
       // set the percent based on the width of the progress bar (bufferedEnd)
-      part.style.left = percentify(start, bufferedEnd);
-      part.style.width = percentify(end - start, bufferedEnd);
-    }
+      part.style.left = percentify(item.timecode, duration);
+    });
 
-    // remove unused buffered range elements
-    for (let i = children.length; i > buffered.length; i--) {
-      this.el_.removeChild(children[i - 1]);
-    }
   }
 
 }

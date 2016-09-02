@@ -22,6 +22,47 @@ class PostCommentBox extends Component {
   constructor (player, options, ready) {
     super(player, options, ready);
     this.on(player, 'submit', this.onSubmit);
+    this.on('keyup', this.read);
+  }
+
+  read () {
+    let over = '';
+    let max = this.options_.max;
+    let text = this.el_.innerHTML;
+    text = this.parseHtml(text);
+    let textSize = text.length;
+    if (textSize >= 140) {
+      over = text.substr(max);
+      over = '<span class="highlight">' + over + '</span>';
+    }
+    this.validate(text);
+    this.spanEl.innerHTML = `${textSize} / ${max}`;
+    let replacement = this.el_.innerHTML.substr(0, max) + over;
+    this.el_.innerHTML = replacement;
+  }
+
+  validate (html) {
+    let max = this.options_.max;
+    var length = html.length;
+    if (length > max || length < 1) {
+      return this.addClass('-error');
+    }
+    if (this.hasClass('-error')) {
+      return this.removeClass('-error');
+    }
+  }
+
+
+  parseHtml (html) {
+    html = html.replace(/&nbsp;/g, ' ');
+    html = html.replace(/<br(\s*)\/*>/ig, '\r\n'); // replace br for newlines
+    html = html.replace(/<[div>]+>/ig, '\r\n'); // replace div for newlines
+    html = html.replace(/<\/[div>]+>/gm, ''); // remove remaining divs
+    html = html.replace(/\r\n$/, ''); // remove last newline
+
+    html = html.replace(/<\S[^><]*>/g, '');
+
+    return html;
   }
 
   onSubmit () {
@@ -33,18 +74,28 @@ class PostCommentBox extends Component {
 
   createEl () {
 
-    return super.createEl('div', {
+    let el = super.createEl('div', {
       className: 'kmt-post-box-comments-input'
     }, {
-      contenteditable: true,
-      ariaMultiline: false,
-      maxlength: 140,
-      dataPlaceholderDefault: 'Add your comment here...'
+      'contenteditable': true,
+      'aria-multiline': false,
+      'max-length': 140,
+      'data-placeHolder-default': 'Add your comment here...'
     });
     //innerHTML: '<div class="kmt-post-box-comments-box"><div class="kmt-post-box-comments-input" contenteditable="true" aria-multiline="true" maxlength="120" data-placeholder-default="Add your comment here..."></div><span className="kmt-message-length">0/120</span></div>'
+    this.spanEl = super.createEl('div', {
+      className: 'kmt-message-length',
+      innerHtml: '0 / 140'
+    });
+    //el.appendChild(this.spanEl);
+    return el;
   }
 
 }
 
+PostCommentBox.prototype.options_ = {
+  max: 140
+};
+
 Component.registerComponent('PostCommentBox', PostCommentBox);
-export default PostCommentBox
+export default PostCommentBox;

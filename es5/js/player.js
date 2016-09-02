@@ -1438,6 +1438,14 @@ var Player = (function (_Component) {
       return this;
     }
   }, {
+    key: 'komentsList',
+    value: function komentsList(list) {
+      if (list !== undefined) {
+        this.komentsList_ = list;
+      }
+      return this.komentsList_;
+    }
+  }, {
     key: 'toggleMenu',
     value: function toggleMenu(toggle) {
       if (toggle !== undefined) {
@@ -1465,12 +1473,25 @@ var Player = (function (_Component) {
       }
 
       if (this.toggleEdit_) {
+        this.playBeforeEdit = !this.paused();
+        this.pause();
         this.addClass('koment-toggle-edit');
       } else {
+        if (this.playBeforeEdit) {
+          this.play();
+        }
         this.removeClass('koment-toggle-edit');
       }
 
       return this;
+    }
+  }, {
+    key: 'sendKoment',
+    value: function sendKoment(koment) {
+      console.log('koment send ', koment);
+      this.komentsList_.unshift(koment);
+      this.toggleEdit(false);
+      this.trigger({ data: koment, type: 'komentsupdated' });
     }
 
     /**
@@ -1899,6 +1920,11 @@ var Player = (function (_Component) {
       // Resize the box, controller, and poster to original sizes
       // this.positionAll();
       this.trigger('exitFullWindow');
+    }
+  }, {
+    key: 'src',
+    value: function src() {
+      return this.techGet_('currentSrc');
     }
 
     /**

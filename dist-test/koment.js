@@ -21673,7 +21673,9 @@ var KomentDisplay = (function (_Component) {
         timecode: 345
       });
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
-      _this.createChilds(kommentsList);
+
+      _this.player_.komentsList(kommentsList);
+      _this.createChilds();
     });
   }
 
@@ -21705,6 +21707,15 @@ var KomentDisplay = (function (_Component) {
         role: 'group'
       });
     }
+  }, {
+    key: 'update',
+    value: function update(e) {
+      var item = e.data;
+      var mi = new _komentItem2['default'](this.player_, item);
+      this.items.unshift(mi);
+      this.addChild(mi);
+      this.requestTick();
+    }
 
     /**
      * Create menu from chapter buttons
@@ -21714,7 +21725,8 @@ var KomentDisplay = (function (_Component) {
      */
   }, {
     key: 'createChilds',
-    value: function createChilds(items) {
+    value: function createChilds() {
+      var items = this.player_.komentsList();
       this.items = [];
       for (var i = 0, l = items.length; i < l; i++) {
         var item = items[i];
@@ -21737,6 +21749,8 @@ var KomentDisplay = (function (_Component) {
           this.on(this.player_, 'timeupdate', this.requestTick);
           break;
       }
+
+      this.on(this.player_, 'komentsupdated', this.update);
 
       this.addClass(this.options_.template);
     }
@@ -21765,29 +21779,23 @@ var KomentDisplay = (function (_Component) {
     value: function showElementsViki() {
       var _this2 = this;
 
-      var className = this.pause ? 'koment-paused' : 'koment-show';
-      var currentTimecode = this.player_.currentTime();
-      var positionGap = this.options_.tte;
-      var filtereds = (0, _lodash.filter)(this.items, function (item) {
-        return item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
-      }).slice(3);
-
+      var className = 'koment-show';
+      var currentTimecode = Math.round(this.player_.currentTime());
+      var nbVisible = (0, _lodash.filter)(this.items, function (item) {
+        return item.hasClass(className);
+      });
+      var filtereds = (0, _lodash.uniq)(this.items, function (item) {
+        return Math.round(item.timecode);
+      });
+      filtereds = (0, _lodash.filter)(filtereds, function (item) {
+        return Math.round(item.timecode) === currentTimecode;
+      });
+      filtereds = (0, _lodash.slice)(filtereds, Math.min(2, nbVisible.length));
       (0, _lodash.forEach)(filtereds, function (item) {
         if (!item.hasClass(className)) {
           item.show();
-          item.removeClass('koment-mask');
-          item.removeClass('koment-show');
-          item.removeClass('koment-paused');
           item.addClass(className);
-        }
-      });
-      var nonVisible = (0, _lodash.difference)(this.items, filtereds);
-      (0, _lodash.forEach)(nonVisible, function (item) {
-        if (!item.hasClass('koment-mask')) {
-          item.addClass('koment-mask');
-          item.removeClass('koment-paused');
-          item.removeClass('koment-show');
-          item.setTimeout(_this2.hide, 500);
+          item.setTimeout(item.hide, _this2.options_.tte * 1000);
         }
       });
 
@@ -21936,7 +21944,7 @@ var KomentItem = (function (_Component) {
     value: function createEl() {
 
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-item komment-mask'
+        className: 'koment-item koment-hidden'
       });
 
       this.contentEl_ = Dom.createEl('div', {
@@ -21948,6 +21956,22 @@ var KomentItem = (function (_Component) {
 
       el.appendChild(this.contentEl_);
       return el;
+    }
+  }, {
+    key: 'hide',
+    value: function hide() {
+      var _this = this;
+
+      if (this.hasClass('koment-show')) {
+        this.removeClass('koment-show');
+      }
+      this.addClass('koment-mask');
+      this.setTimeout(function () {
+        if (_this.hasClass('koment-mask')) {
+          _this.removeClass('koment-mask');
+        }
+        _this.addClass('koment-hidden');
+      }, 500);
     }
   }]);
 
@@ -22133,7 +22157,6 @@ var EditButton = (function (_Button) {
       this.addClass('active');
       this.setTimeout(this.disable, 300);
       this.player_.toggleEdit();
-      this.player_.pause();
     }
   }, {
     key: 'disable',
@@ -22472,9 +22495,52 @@ var PostCommentBox = (function (_Component) {
 
     _get(Object.getPrototypeOf(PostCommentBox.prototype), 'constructor', this).call(this, player, options, ready);
     this.on(player, 'submit', this.onSubmit);
+    this.on('keyup', this.read);
   }
 
   _createClass(PostCommentBox, [{
+    key: 'read',
+    value: function read() {
+      var over = '';
+      var max = this.options_.max;
+      var text = this.el_.innerHTML;
+      text = this.parseHtml(text);
+      var textSize = text.length;
+      if (textSize >= 140) {
+        over = text.substr(max);
+        over = '<span class="highlight">' + over + '</span>';
+      }
+      this.validate(text);
+      this.spanEl.innerHTML = textSize + ' / ' + max;
+      var replacement = this.el_.innerHTML.substr(0, max) + over;
+      this.el_.innerHTML = replacement;
+    }
+  }, {
+    key: 'validate',
+    value: function validate(html) {
+      var max = this.options_.max;
+      var length = html.length;
+      if (length > max || length < 1) {
+        return this.addClass('-error');
+      }
+      if (this.hasClass('-error')) {
+        return this.removeClass('-error');
+      }
+    }
+  }, {
+    key: 'parseHtml',
+    value: function parseHtml(html) {
+      html = html.replace(/&nbsp;/g, ' ');
+      html = html.replace(/<br(\s*)\/*>/ig, '\r\n'); // replace br for newlines
+      html = html.replace(/<[div>]+>/ig, '\r\n'); // replace div for newlines
+      html = html.replace(/<\/[div>]+>/gm, ''); // remove remaining divs
+      html = html.replace(/\r\n$/, ''); // remove last newline
+
+      html = html.replace(/<\S[^><]*>/g, '');
+
+      return html;
+    }
+  }, {
     key: 'onSubmit',
     value: function onSubmit() {
       var text = this.el_.innerHTML;
@@ -22486,20 +22552,30 @@ var PostCommentBox = (function (_Component) {
     key: 'createEl',
     value: function createEl() {
 
-      return _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
+      var el = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
         className: 'kmt-post-box-comments-input'
       }, {
-        contenteditable: true,
-        ariaMultiline: false,
-        maxlength: 140,
-        dataPlaceholderDefault: 'Add your comment here...'
+        'contenteditable': true,
+        'aria-multiline': false,
+        'max-length': 140,
+        'data-placeHolder-default': 'Add your comment here...'
       });
       //innerHTML: '<div class="kmt-post-box-comments-box"><div class="kmt-post-box-comments-input" contenteditable="true" aria-multiline="true" maxlength="120" data-placeholder-default="Add your comment here..."></div><span className="kmt-message-length">0/120</span></div>'
+      this.spanEl = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
+        className: 'kmt-message-length',
+        innerHtml: '0 / 140'
+      });
+      //el.appendChild(this.spanEl);
+      return el;
     }
   }]);
 
   return PostCommentBox;
 })(_componentJs2['default']);
+
+PostCommentBox.prototype.options_ = {
+  max: 140
+};
 
 _componentJs2['default'].registerComponent('PostCommentBox', PostCommentBox);
 exports['default'] = PostCommentBox;
@@ -22584,7 +22660,7 @@ var PostSubmitButton = (function (_Button) {
   return PostSubmitButton;
 })(_buttonJs2['default']);
 
-PostSubmitButton.prototype.controlText_ = 'Send';
+PostSubmitButton.prototype.controlText_ = 'Ok';
 
 _componentJs2['default'].registerComponent('PostSubmitButton', PostSubmitButton);
 exports['default'] = PostSubmitButton;
@@ -23312,6 +23388,8 @@ var _utilsDomJs = require('../../utils/dom.js');
 
 var Dom = _interopRequireWildcard(_utilsDomJs);
 
+var _lodash = require('lodash');
+
 /**
  * Shows load progress
  *
@@ -23328,6 +23406,7 @@ var TimelineProgressBar = (function (_Component) {
     _classCallCheck(this, TimelineProgressBar);
 
     _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'constructor', this).call(this, player, options);
+    this.on(player, 'komentsupdated', this.update);
     this.on(player, 'progress', this.update);
   }
 
@@ -23342,8 +23421,7 @@ var TimelineProgressBar = (function (_Component) {
     key: 'createEl',
     value: function createEl() {
       return _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-load-progress',
-        innerHTML: '<span class="koment-control-text"><span>' + this.localize('Loaded') + '</span>: 0%</span>'
+        className: 'koment-timeline-progress'
       });
     }
 
@@ -23355,9 +23433,10 @@ var TimelineProgressBar = (function (_Component) {
   }, {
     key: 'update',
     value: function update() {
-      var buffered = this.player_.buffered();
+      var _this = this;
+
+      var items = this.player_.komentsList();
       var duration = this.player_.duration();
-      var bufferedEnd = this.player_.bufferedEnd();
       var children = this.el_.children;
 
       // get the percent width of a time compared to the total end
@@ -23368,28 +23447,18 @@ var TimelineProgressBar = (function (_Component) {
         return (percent >= 1 ? 1 : percent) * 100 + '%';
       };
 
-      // update the width of the progress bar
-      this.el_.style.width = percentify(bufferedEnd, duration);
-
       // add child elements to represent the individual buffered time ranges
-      for (var i = 0; i < buffered.length; i++) {
-        var start = buffered.start(i);
-        var end = buffered.end(i);
+      (0, _lodash.forEach)(items, function (item, i) {
+
         var part = children[i];
 
         if (!part) {
-          part = this.el_.appendChild(Dom.createEl());
+          part = _this.el_.appendChild(Dom.createEl());
         }
 
         // set the percent based on the width of the progress bar (bufferedEnd)
-        part.style.left = percentify(start, bufferedEnd);
-        part.style.width = percentify(end - start, bufferedEnd);
-      }
-
-      // remove unused buffered range elements
-      for (var i = children.length; i > buffered.length; i--) {
-        this.el_.removeChild(children[i - 1]);
-      }
+        part.style.left = percentify(item.timecode, duration);
+      });
     }
   }]);
 
@@ -23400,7 +23469,7 @@ _componentJs2['default'].registerComponent('TimelineProgressBar', TimelineProgre
 exports['default'] = TimelineProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":94}],82:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":94,"lodash":49}],82:[function(require,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -23848,7 +23917,7 @@ koment.trigger = Events.trigger;
 /*
  * Custom Universal Module Definition (UMD)
  *
- * Video.js will never be a non-browser lib so we can simplify UMD a bunch and
+ * Koment.js will never be a non-browser lib so we can simplify UMD a bunch and
  * still support requirejs and browserify. This also needs to be closure
  * compiler compatible, so string keys are used.
  */
@@ -25854,6 +25923,14 @@ var Player = (function (_Component) {
       return this;
     }
   }, {
+    key: 'komentsList',
+    value: function komentsList(list) {
+      if (list !== undefined) {
+        this.komentsList_ = list;
+      }
+      return this.komentsList_;
+    }
+  }, {
     key: 'toggleMenu',
     value: function toggleMenu(toggle) {
       if (toggle !== undefined) {
@@ -25881,8 +25958,13 @@ var Player = (function (_Component) {
       }
 
       if (this.toggleEdit_) {
+        this.playBeforeEdit = !this.paused();
+        this.pause();
         this.addClass('koment-toggle-edit');
       } else {
+        if (this.playBeforeEdit) {
+          this.play();
+        }
         this.removeClass('koment-toggle-edit');
       }
 
@@ -25892,7 +25974,9 @@ var Player = (function (_Component) {
     key: 'sendKoment',
     value: function sendKoment(koment) {
       console.log('koment send ', koment);
+      this.komentsList_.unshift(koment);
       this.toggleEdit(false);
+      this.trigger({ data: koment, type: 'komentsupdated' });
     }
 
     /**
@@ -26321,6 +26405,11 @@ var Player = (function (_Component) {
       // Resize the box, controller, and poster to original sizes
       // this.positionAll();
       this.trigger('exitFullWindow');
+    }
+  }, {
+    key: 'src',
+    value: function src() {
+      return this.techGet_('currentSrc');
     }
 
     /**
@@ -27846,7 +27935,6 @@ module.exports = exports['default'];
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
  */
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -27897,6 +27985,7 @@ var Youtube = (function (_Tech) {
     _classCallCheck(this, Youtube);
 
     _get(Object.getPrototypeOf(Youtube.prototype), 'constructor', this).call(this, options, ready);
+
     if (Youtube.isApiReady) {
       this.initYTPlayer();
     } else {
@@ -28146,11 +28235,23 @@ var Youtube = (function (_Tech) {
       };
     }
   }, {
+    key: 'play',
+    value: function play() {
+      if (this.ytPlayer) {
+        this.ytPlayer.playVideo();
+      }
+    }
+  }, {
     key: 'pause',
     value: function pause() {
       if (this.ytPlayer) {
         this.ytPlayer.pauseVideo();
       }
+    }
+  }, {
+    key: 'currentSrc',
+    value: function currentSrc() {
+      return this.ytPlayer && this.ytPlayer.getVideoUrl();
     }
   }, {
     key: 'paused',
@@ -28232,9 +28333,36 @@ function loadScript(src, callback) {
   tag.src = src;
 }
 
+function injectCss() {
+  var css = // iframe blocker to catch mouse events
+  '.koment-youtube .koment-iframe-blocker { display: none; }' + '.koment-youtube.koment-user-inactive .koment-iframe-blocker { display: block; }' + '.koment-youtube .koment-poster { background-size: cover; }' + '.koment-youtube-mobile .koment-big-play-button { display: none; }';
+
+  var head = _globalDocument2['default'].head || _globalDocument2['default'].getElementsByTagName('head')[0];
+
+  var style = _globalDocument2['default'].createElement('style');
+  style.type = 'text/css';
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(_globalDocument2['default'].createTextNode(css));
+  }
+
+  head.appendChild(style);
+}
+
+function useNativeControlsOnAndroid() {
+  var stockRegex = window.navigator.userAgent.match(/applewebkit\/(\d*).*Version\/(\d*.\d*)/i);
+  //True only Android Stock Browser on OS versions 4.X and below
+  //where a Webkit version and a "Version/X.X" String can be found in
+  //user agent.
+  return videojs.browser.IS_ANDROID && videojs.browser.ANDROID_VERSION < 5 && stockRegex && stockRegex[2] > 0;
+}
+
 Youtube.apiReadyQueue = [];
 
 loadScript('https://www.youtube.com/iframe_api', apiLoaded);
+injectCss();
 
 _component2['default'].registerComponent('Youtube', Youtube);
 _techJs2['default'].registerTech('Youtube', Youtube);

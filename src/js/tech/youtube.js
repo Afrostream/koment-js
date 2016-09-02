@@ -2,7 +2,6 @@
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
  */
-
 import Tech from './tech.js';
 import Component from '../component';
 import document from 'global/document';
@@ -19,6 +18,7 @@ class Youtube extends Tech {
 
   constructor (options, ready) {
     super(options, ready);
+
     if (Youtube.isApiReady) {
       this.initYTPlayer();
     } else {
@@ -260,10 +260,20 @@ class Youtube extends Tech {
     };
   }
 
+  play () {
+    if (this.ytPlayer) {
+      this.ytPlayer.playVideo();
+    }
+  }
+
   pause () {
     if (this.ytPlayer) {
       this.ytPlayer.pauseVideo();
     }
+  }
+
+  currentSrc () {
+    return this.ytPlayer && this.ytPlayer.getVideoUrl();
   }
 
   paused () {
@@ -321,9 +331,9 @@ function apiLoaded () {
 }
 
 function loadScript (src, callback) {
-  var loaded = false;
-  var tag = document.createElement('script');
-  var firstScriptTag = document.getElementsByTagName('script')[0];
+  let loaded = false;
+  let tag = document.createElement('script');
+  let firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   tag.onload = function () {
     if (!loaded) {
@@ -340,9 +350,40 @@ function loadScript (src, callback) {
   tag.src = src;
 }
 
+
+function injectCss () {
+  let css = // iframe blocker to catch mouse events
+    '.koment-youtube .koment-iframe-blocker { display: none; }' +
+    '.koment-youtube.koment-user-inactive .koment-iframe-blocker { display: block; }' +
+    '.koment-youtube .koment-poster { background-size: cover; }' +
+    '.koment-youtube-mobile .koment-big-play-button { display: none; }';
+
+  let head = document.head || document.getElementsByTagName('head')[0];
+
+  let style = document.createElement('style');
+  style.type = 'text/css';
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
+
+  head.appendChild(style);
+}
+
+function useNativeControlsOnAndroid () {
+  var stockRegex = window.navigator.userAgent.match(/applewebkit\/(\d*).*Version\/(\d*.\d*)/i);
+  //True only Android Stock Browser on OS versions 4.X and below
+  //where a Webkit version and a "Version/X.X" String can be found in
+  //user agent.
+  return videojs.browser.IS_ANDROID && videojs.browser.ANDROID_VERSION < 5 && stockRegex && stockRegex[2] > 0;
+}
+
 Youtube.apiReadyQueue = [];
 
 loadScript('https://www.youtube.com/iframe_api', apiLoaded);
+injectCss();
 
 Component.registerComponent('Youtube', Youtube);
 Tech.registerTech('Youtube', Youtube);

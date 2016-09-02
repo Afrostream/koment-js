@@ -69,13 +69,14 @@ var PostSubmitButton = (function (_Button) {
     key: 'handleClick',
     value: function handleClick(event) {
       _get(Object.getPrototypeOf(PostSubmitButton.prototype), 'handleClick', this).call(this, event);
+      this.player_.trigger('submit');
     }
   }]);
 
   return PostSubmitButton;
 })(_buttonJs2['default']);
 
-PostSubmitButton.prototype.controlText_ = 'Send';
+PostSubmitButton.prototype.controlText_ = 'Ok';
 
 _componentJs2['default'].registerComponent('PostSubmitButton', PostSubmitButton);
 exports['default'] = PostSubmitButton;

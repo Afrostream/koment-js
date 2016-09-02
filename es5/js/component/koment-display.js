@@ -58,6 +58,11 @@ var KomentDisplay = (function (_Component) {
 
     _get(Object.getPrototypeOf(KomentDisplay.prototype), 'constructor', this).call(this, player, options);
 
+    this.emitTapEvents();
+
+    this.on('tap', this.handleClick);
+    this.on('click', this.handleClick);
+
     var data = {
       json: true,
       uri: this.options_.url,
@@ -95,18 +100,31 @@ var KomentDisplay = (function (_Component) {
         timecode: 345
       });
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
-      _this.createChilds(kommentsList);
+
+      _this.player_.komentsList(kommentsList);
+      _this.createChilds();
     });
   }
 
   /**
-   * Create the component's DOM element
+   * Handle Click - Override with specific functionality for component
    *
-   * @return {Element}
-   * @method createEl
+   * @method handleClick
    */
 
   _createClass(KomentDisplay, [{
+    key: 'handleClick',
+    value: function handleClick() {
+      this.player_.toggleEdit(false);
+    }
+
+    /**
+     * Create the component's DOM element
+     *
+     * @return {Element}
+     * @method createEl
+     */
+  }, {
     key: 'createEl',
     value: function createEl() {
       return _get(Object.getPrototypeOf(KomentDisplay.prototype), 'createEl', this).call(this, 'div', {
@@ -115,6 +133,15 @@ var KomentDisplay = (function (_Component) {
       }, {
         role: 'group'
       });
+    }
+  }, {
+    key: 'update',
+    value: function update(e) {
+      var item = e.data;
+      var mi = new _komentItem2['default'](this.player_, item);
+      this.items.unshift(mi);
+      this.addChild(mi);
+      this.requestTick();
     }
 
     /**
@@ -125,7 +152,8 @@ var KomentDisplay = (function (_Component) {
      */
   }, {
     key: 'createChilds',
-    value: function createChilds(items) {
+    value: function createChilds() {
+      var items = this.player_.komentsList();
       this.items = [];
       for (var i = 0, l = items.length; i < l; i++) {
         var item = items[i];
@@ -148,6 +176,8 @@ var KomentDisplay = (function (_Component) {
           this.on(this.player_, 'timeupdate', this.requestTick);
           break;
       }
+
+      this.on(this.player_, 'komentsupdated', this.update);
 
       this.addClass(this.options_.template);
     }
@@ -176,29 +206,23 @@ var KomentDisplay = (function (_Component) {
     value: function showElementsViki() {
       var _this2 = this;
 
-      var className = this.pause ? 'koment-paused' : 'koment-show';
-      var currentTimecode = this.player_.currentTime();
-      var positionGap = this.options_.tte;
-      var filtereds = (0, _lodash.filter)(this.items, function (item) {
-        return item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
-      }).slice(3);
-
+      var className = 'koment-show';
+      var currentTimecode = Math.round(this.player_.currentTime());
+      var nbVisible = (0, _lodash.filter)(this.items, function (item) {
+        return item.hasClass(className);
+      });
+      var filtereds = (0, _lodash.uniq)(this.items, function (item) {
+        return Math.round(item.timecode);
+      });
+      filtereds = (0, _lodash.filter)(filtereds, function (item) {
+        return Math.round(item.timecode) === currentTimecode;
+      });
+      filtereds = (0, _lodash.slice)(filtereds, Math.min(2, nbVisible.length));
       (0, _lodash.forEach)(filtereds, function (item) {
         if (!item.hasClass(className)) {
           item.show();
-          item.removeClass('koment-mask');
-          item.removeClass('koment-show');
-          item.removeClass('koment-paused');
           item.addClass(className);
-        }
-      });
-      var nonVisible = (0, _lodash.difference)(this.items, filtereds);
-      (0, _lodash.forEach)(nonVisible, function (item) {
-        if (!item.hasClass('koment-mask')) {
-          item.addClass('koment-mask');
-          item.removeClass('koment-paused');
-          item.removeClass('koment-show');
-          item.setTimeout(_this2.hide, 500);
+          item.setTimeout(item.hide, _this2.options_.tte * 1000);
         }
       });
 
