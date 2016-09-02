@@ -131,6 +131,7 @@ class KomentDisplay extends Component {
     }
 
     this.on(this.player_, 'komentsupdated', this.update);
+    this.on(this.player_, 'togglemenu', this.requestTick);
 
     this.addClass(this.options_.template);
   }

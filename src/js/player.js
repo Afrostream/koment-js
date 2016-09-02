@@ -1262,6 +1262,7 @@ class Player extends Component {
   }
 
   toggleMenu (toggle) {
+
     if (toggle !== undefined) {
       this.toggleMenu_ = !!toggle;
     }
@@ -1271,6 +1272,7 @@ class Player extends Component {
 
     if (this.toggleMenu_) {
       this.addClass('koment-toggle-menu');
+      this.trigger({data: koment, type: 'togglemenu'});
     } else {
       this.removeClass('koment-toggle-menu');
       this.toggleEdit(this.toggleMenu_);

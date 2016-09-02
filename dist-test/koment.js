@@ -21751,6 +21751,7 @@ var KomentDisplay = (function (_Component) {
       }
 
       this.on(this.player_, 'komentsupdated', this.update);
+      this.on(this.player_, 'togglemenu', this.requestTick);
 
       this.addClass(this.options_.template);
     }
@@ -25934,6 +25935,7 @@ var Player = (function (_Component) {
   }, {
     key: 'toggleMenu',
     value: function toggleMenu(toggle) {
+
       if (toggle !== undefined) {
         this.toggleMenu_ = !!toggle;
       } else {
@@ -25942,6 +25944,7 @@ var Player = (function (_Component) {
 
       if (this.toggleMenu_) {
         this.addClass('koment-toggle-menu');
+        this.trigger({ data: koment, type: 'togglemenu' });
       } else {
         this.removeClass('koment-toggle-menu');
         this.toggleEdit(this.toggleMenu_);
