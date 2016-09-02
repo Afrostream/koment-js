@@ -21787,6 +21787,7 @@ var KomentDisplay = (function (_Component) {
       var filtereds = (0, _lodash.uniq)(this.items, function (item) {
         return Math.round(item.timecode);
       });
+      filtereds = (0, _lodash.sortBy)(filtereds, 'timecode');
       filtereds = (0, _lodash.filter)(filtereds, function (item) {
         return Math.round(item.timecode) === currentTimecode;
       });
@@ -24768,9 +24769,9 @@ var Player = (function (_Component) {
 
     // When the player is first initialized, trigger activity so components
     // like the control bar show themselves if needed
-    //this.userActive(true);
-    //this.reportUserActivity();
-    //this.listenForUserActivity_();
+    this.userActive(true);
+    this.reportUserActivity();
+    this.listenForUserActivity_();
 
     this.on('fullscreenchange', this.handleFullscreenChange_);
     this.on('stageclick', this.handleStageClick_);
@@ -25973,6 +25974,9 @@ var Player = (function (_Component) {
   }, {
     key: 'sendKoment',
     value: function sendKoment(koment) {
+      if (!koment || !koment.text) {
+        return;
+      }
       console.log('koment send ', koment);
       this.komentsList_.unshift(koment);
       this.toggleEdit(false);

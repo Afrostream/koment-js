@@ -198,9 +198,9 @@ class Player extends Component {
 
     // When the player is first initialized, trigger activity so components
     // like the control bar show themselves if needed
-    //this.userActive(true);
-    //this.reportUserActivity();
-    //this.listenForUserActivity_();
+    this.userActive(true);
+    this.reportUserActivity();
+    this.listenForUserActivity_();
 
     this.on('fullscreenchange', this.handleFullscreenChange_);
     this.on('stageclick', this.handleStageClick_);
@@ -1303,6 +1303,9 @@ class Player extends Component {
   }
 
   sendKoment (koment) {
+    if (!koment || !koment.text) {
+      return;
+    }
     console.log('koment send ', koment);
     this.komentsList_.unshift(koment);
     this.toggleEdit(false);

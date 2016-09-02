@@ -156,6 +156,7 @@ class KomentDisplay extends Component {
     const currentTimecode = Math.round(this.player_.currentTime());
     let nbVisible = filter(this.items, (item)=> item.hasClass(className));
     let filtereds = uniq(this.items, (item)=> Math.round(item.timecode));
+    filtereds = sortBy(filtereds, 'timecode');
     filtereds = filter(filtereds, (item)=> Math.round(item.timecode) === currentTimecode);
     filtereds = slice(filtereds, Math.min(2, nbVisible.length));
     forEach(filtereds, (item)=> {
