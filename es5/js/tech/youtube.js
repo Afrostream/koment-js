@@ -2,7 +2,6 @@
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
  */
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -53,10 +52,6 @@ var Youtube = (function (_Tech) {
     _classCallCheck(this, Youtube);
 
     _get(Object.getPrototypeOf(Youtube.prototype), 'constructor', this).call(this, options, ready);
-
-    if (_isOnMobile) {
-      this.el_.parentNode.className += ' koment-youtube-mobile';
-    }
 
     if (Youtube.isApiReady) {
       this.initYTPlayer();
@@ -405,8 +400,6 @@ function loadScript(src, callback) {
   tag.src = src;
 }
 
-var _isOnMobile = koment.browser.IS_IOS || useNativeControlsOnAndroid();
-
 function injectCss() {
   var css = // iframe blocker to catch mouse events
   '.koment-youtube .koment-iframe-blocker { display: none; }' + '.koment-youtube.koment-user-inactive .koment-iframe-blocker { display: block; }' + '.koment-youtube .koment-poster { background-size: cover; }' + '.koment-youtube-mobile .koment-big-play-button { display: none; }';
@@ -434,6 +427,10 @@ function useNativeControlsOnAndroid() {
 }
 
 Youtube.apiReadyQueue = [];
+
+Youtube.isSupported = function (tag) {
+  return tag && tag.tagName && tag.tagName === 'IFRAME' && tag.src && ~tag.src.indexOf('youtube');
+};
 
 loadScript('https://www.youtube.com/iframe_api', apiLoaded);
 injectCss();

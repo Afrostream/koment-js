@@ -291,6 +291,23 @@ koment.off = Events.off;
  */
 koment.trigger = Events.trigger;
 
+/*
+ * Custom Universal Module Definition (UMD)
+ *
+ * Koment.js will never be a non-browser lib so we can simplify UMD a bunch and
+ * still support requirejs and browserify. This also needs to be closure
+ * compiler compatible, so string keys are used.
+ */
+if (typeof define === 'function' && define.amd) {
+  define('koment', [], function () {
+    return koment;
+  });
+
+  // checking that module is an object too because of umdjs/umd#35
+} else if (typeof exports === 'object' && typeof module === 'object') {
+    module.exports = koment;
+  }
+
 if (!_globalWindow2['default'].requestAnimationFrame) {
   _globalWindow2['default'].requestAnimationFrame = function (fn) {
     setTimeout(fn, 16.66);

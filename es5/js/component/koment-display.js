@@ -178,6 +178,7 @@ var KomentDisplay = (function (_Component) {
       }
 
       this.on(this.player_, 'komentsupdated', this.update);
+      this.on(this.player_, 'togglemenu', this.requestTick);
 
       this.addClass(this.options_.template);
     }
@@ -214,6 +215,7 @@ var KomentDisplay = (function (_Component) {
       var filtereds = (0, _lodash.uniq)(this.items, function (item) {
         return Math.round(item.timecode);
       });
+      filtereds = (0, _lodash.sortBy)(filtereds, 'timecode');
       filtereds = (0, _lodash.filter)(filtereds, function (item) {
         return Math.round(item.timecode) === currentTimecode;
       });

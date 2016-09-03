@@ -377,6 +377,11 @@ var Tech = (function (_Component) {
         return _globalWindow2['default'].koment[name];
       }
     }
+  }, {
+    key: 'isSupported',
+    value: function isSupported(tag) {
+      return false;
+    }
   }]);
 
   return Tech;
