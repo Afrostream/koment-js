@@ -56,11 +56,15 @@
   visibility: visible;
   padding: 0.5em;
 
-  [contentEditable=true]:empty:not(:focus):before {
-    content: attr(data-placeholder-default);
+  .koment-avatar {
+    width: 6em;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
   }
 
-  .kmt-post-box-comments-input {
+  .kmt-post-box-comments {
+    position: relative;
     max-height: 100%;
     width: 100%;
     border-radius: $primary-border-radius / 2;
@@ -70,12 +74,13 @@
     color: $primary-background-color;
     margin-right: 0.5em;
     outline: none;
+
     &:after {
       content: '';
       position: absolute;
       border-style: solid;
       left: 10px + $primary-border-radius;
-      bottom: -10px;
+      bottom: -17px;
       width: 0;
       height: 0;
       border-width: 10px 6px 0 6px;
@@ -87,13 +92,24 @@
       color: rgba($primary-background-color, 0.8);
     }
 
-    .highlight {
-      background: #fcc;
+    [contentEditable=true]:empty:not(:focus):before {
+      content: attr(data-placeholder-default);
+    }
+
+    .kmt-post-box-comments-input {
+      height: 100%;
+      word-break: break-word;
+      width: 100%;
+      .highlight {
+        background: #fcc;
+      }
+    }
+
+    .kmt-message-length {
+      position: absolute;
+      bottom: 0.5em;
+      right: 0.5em;
+      font-size: 0.5em;
     }
   }
-
-  .kmt-message-length {
-    width: 2em;
-  }
-
 }

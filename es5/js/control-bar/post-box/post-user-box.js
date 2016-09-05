@@ -1,7 +1,6 @@
 /**
- * @file post-toggle.js
+ * @file koment-toggle.js
  */
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -18,15 +17,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _utilsToTitleCase = require('../../utils/to-title-case');
+
+var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
+
 var _componentJs = require('../../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
 
 require('./post-comment-box');
-
-require('./post-submit-button');
-
-require('./post-user-box');
 
 /**
  * The button component for toggling and selecting koment
@@ -37,34 +36,77 @@ require('./post-user-box');
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Component
- * @class PostBox
+ * @class PostUserBox
  */
 
-var PostBox = (function (_Component) {
-  _inherits(PostBox, _Component);
+var PostUsedrBox = (function (_Component) {
+  _inherits(PostUsedrBox, _Component);
 
-  function PostBox(player, options, ready) {
-    _classCallCheck(this, PostBox);
+  function PostUsedrBox(player, options, ready) {
+    _classCallCheck(this, PostUsedrBox);
 
-    _get(Object.getPrototypeOf(PostBox.prototype), 'constructor', this).call(this, player, options, ready);
+    _get(Object.getPrototypeOf(PostUsedrBox.prototype), 'constructor', this).call(this, player, options, ready);
+    this.update();
   }
 
-  _createClass(PostBox, [{
+  /**
+   * Event handler for updates to the player's poster source
+   *
+   * @method update
+   */
+
+  _createClass(PostUsedrBox, [{
+    key: 'update',
+    value: function update() {
+      var url = this.player_.options_.avatar;
+
+      this.setSrc(url);
+
+      // If there's no poster source we should display:none on this component
+      // so it's not still clickable or right-clickable
+      if (url) {
+        this.show();
+      } else {
+        this.hide();
+      }
+    }
+
+    /**
+     * Set the poster source depending on the display method
+     *
+     * @param {String} url The URL to the poster source
+     * @method setSrc
+     */
+  }, {
+    key: 'setSrc',
+    value: function setSrc(url) {
+      var backgroundImage = '';
+
+      // Any falsey values should stay as an empty string, otherwise
+      // this will throw an extra error
+      if (url) {
+        backgroundImage = 'url("' + url + '")';
+      }
+
+      this.el_.style.backgroundImage = backgroundImage;
+    }
+  }, {
     key: 'createEl',
     value: function createEl() {
-      return _get(Object.getPrototypeOf(PostBox.prototype), 'createEl', this).call(this, 'div', {
-        className: 'kmt-post-box'
+
+      var el = _get(Object.getPrototypeOf(PostUsedrBox.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-avatar'
+      }, {
+        'aria-live': 'off'
       });
+
+      return el;
     }
   }]);
 
-  return PostBox;
+  return PostUsedrBox;
 })(_componentJs2['default']);
 
-PostBox.prototype.options_ = {
-  children: ['postUserBox', 'postCommentBox', 'postSubmitButton']
-};
-
-_componentJs2['default'].registerComponent('PostBox', PostBox);
-exports['default'] = PostBox;
+_componentJs2['default'].registerComponent('PostUserBox', PostUserBox);
+exports['default'] = PostUserBox;
 module.exports = exports['default'];

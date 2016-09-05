@@ -71,7 +71,9 @@ var ControlBar = (function (_Component) {
 })(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'likeButton', 'editButton', 'postBox']
+  children: ['komentToggle',
+  //'likeButton',
+  'editButton', 'postBox']
 };
 
 _component2['default'].registerComponent('ControlBar', ControlBar);

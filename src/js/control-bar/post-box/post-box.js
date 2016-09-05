@@ -5,6 +5,7 @@
 import Component from '../../component.js';
 import './post-comment-box';
 import './post-submit-button';
+import './post-user-box';
 
 /**
  * The button component for toggling and selecting koment
@@ -33,7 +34,9 @@ class PostBox extends Component {
 
 PostBox.prototype.options_ = {
   children: [
+    'postUserBox',
     'postCommentBox',
+    'postlimitBox',
     'postSubmitButton'
   ]
 };

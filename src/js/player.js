@@ -2296,6 +2296,8 @@ Player.prototype.options_ = {
     'controlBar'
   ],
 
+  user: {},
+
   language: navigator && (navigator.languages && navigator.languages[0] || navigator.userLanguage || navigator.language) || 'en',
 
   // locales and their language translations

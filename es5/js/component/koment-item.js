@@ -43,30 +43,84 @@ var KomentItem = (function (_Component) {
     _get(Object.getPrototypeOf(KomentItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
+    this.update();
   }
 
   /**
-   * Create the component's DOM element
+   * Event handler for updates to the player's poster source
    *
-   * @return {Element}
-   * @method createEl
+   * @method update
    */
 
   _createClass(KomentItem, [{
+    key: 'update',
+    value: function update() {
+      var url = this.options_.user.profile.avatar;
+
+      this.setSrc(url);
+
+      // If there's no poster source we should display:none on this component
+      // so it's not still clickable or right-clickable
+      if (url) {
+        this.show();
+      } else {
+        this.hide();
+      }
+    }
+
+    /**
+     * Set the poster source depending on the display method
+     *
+     * @param {String} url The URL to the poster source
+     * @method setSrc
+     */
+  }, {
+    key: 'setSrc',
+    value: function setSrc(url) {
+      var backgroundImage = '';
+
+      // Any falsey values should stay as an empty string, otherwise
+      // this will throw an extra error
+      if (url) {
+        backgroundImage = 'url("' + url + '")';
+      }
+
+      this.avatarEl_.style.backgroundImage = backgroundImage;
+    }
+
+    /**
+     * Create the component's DOM element
+     *
+     * @return {Element}
+     * @method createEl
+     */
+  }, {
     key: 'createEl',
     value: function createEl() {
 
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
         className: 'koment-item koment-hidden'
       });
+      var userName = '';
 
+      var profile = this.options_.user && this.options_.user && this.options_.user.profile;
+      if (profile && profile.nickname) {
+        userName = '<div class="koment-item-user">' + profile.nickname + '</div>';
+      }
       this.contentEl_ = Dom.createEl('div', {
         className: 'koment-item-display',
-        innerHTML: '<span class="koment-item-title">' + this.options_.text + '</span>'
+        innerHTML: userName + '<div class="koment-item-title">' + this.options_.text + '</div>'
       }, {
         'aria-live': 'off'
       });
 
+      this.avatarEl_ = Dom.createEl('div', {
+        className: 'koment-item-avatar'
+      }, {
+        'aria-live': 'off'
+      });
+
+      el.appendChild(this.avatarEl_);
       el.appendChild(this.contentEl_);
       return el;
     }
@@ -92,7 +146,15 @@ var KomentItem = (function (_Component) {
 })(_componentJs2['default']);
 
 KomentItem.prototype.timecode = 0;
-KomentItem.prototype.options_ = {};
+KomentItem.prototype.options_ = {
+  text: '',
+  timecode: 0,
+  user: {
+    profile: {
+      nickname: ''
+    }
+  }
+};
 
 _componentJs2['default'].registerComponent('KomentItem', KomentItem);
 exports['default'] = KomentItem;

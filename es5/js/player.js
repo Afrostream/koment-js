@@ -82,6 +82,8 @@ var _utilsMergeOptions = require('./utils/merge-options');
 
 var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
 
+var _utilsTimeRangesJs = require('./utils/time-ranges.js');
+
 var _modalDialog = require('./modal-dialog');
 
 var _modalDialog2 = _interopRequireDefault(_modalDialog);
@@ -101,6 +103,8 @@ require('./control-bar/control-bar');
 require('./control-bar/progress-control/progress-control');
 
 require('./component/koment-display');
+
+require('./tech/html5');
 
 require('./tech/youtube');
 
@@ -214,15 +218,13 @@ var Player = (function (_Component) {
     // Cache for video property values.
     this.cache_ = {};
 
-    // Set poster
-    this.poster_ = options.poster || '';
     // Set controls
     this.controls_ = !!options.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
     // May be turned back on by HTML5 tech if nativeControlsForTouch is true
-    tag.controls = false;
+    //tag.controls = false;
 
     /*
      * Store the internal state of scrubbing
@@ -379,7 +381,7 @@ var Player = (function (_Component) {
       tag.className = 'koment-tech';
 
       // Make player findable on elements
-      tag.player = el.player = this;
+      tag.player = el.player = tag.koment = el.koment = this;
       // Default state of video is paused
       this.addClass('koment');
       this.addClass('koment-paused');
@@ -1500,7 +1502,7 @@ var Player = (function (_Component) {
 
       if (this.toggleMenu_) {
         this.addClass('koment-toggle-menu');
-        this.trigger({ data: koment, type: 'togglemenu' });
+        this.trigger('togglemenu');
       } else {
         this.removeClass('koment-toggle-menu');
         this.toggleEdit(this.toggleMenu_);
@@ -1532,14 +1534,14 @@ var Player = (function (_Component) {
     }
   }, {
     key: 'sendKoment',
-    value: function sendKoment(koment) {
-      if (!koment || !koment.text) {
+    value: function sendKoment(kmt) {
+      if (!kmt || !kmt.text) {
         return;
       }
-      console.log('koment send ', koment);
-      this.komentsList_.unshift(koment);
+      console.log('koment send ', kmt);
+      this.komentsList_.unshift(kmt);
       this.toggleEdit(false);
-      this.trigger({ data: koment, type: 'komentsupdated' });
+      this.trigger({ data: kmt, type: 'komentsupdated' });
     }
 
     /**
@@ -1724,7 +1726,7 @@ var Player = (function (_Component) {
       var buffered = this.techGet_('buffered');
 
       if (!buffered || !buffered.length) {
-        buffered = createTimeRange(0, 0);
+        buffered = (0, _utilsTimeRangesJs.createTimeRange)(0, 0);
       }
 
       return buffered;
