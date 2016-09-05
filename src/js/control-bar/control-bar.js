@@ -37,7 +37,7 @@ class ControlBar extends Component {
 ControlBar.prototype.options_ = {
   children: [
     'komentToggle',
-    'likeButton',
+    //'likeButton',
     'editButton',
     'postBox',
   ]

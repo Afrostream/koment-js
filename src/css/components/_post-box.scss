@@ -2,7 +2,6 @@
   display: none;
   opacity: 0;
   visibility: hidden;
-  position: absolute;
   bottom: 0;
   top: 0;
   right: 0;
@@ -52,6 +51,7 @@
 
 .koment.koment-toggle-edit .kmt-post-box {
   display: flex;
+  flex: 1;
   opacity: 1;
   visibility: visible;
   padding: 0.5em;
@@ -61,7 +61,7 @@
   }
 
   .kmt-post-box-comments-input {
-    height: 100%;
+    max-height: 100%;
     width: 100%;
     border-radius: $primary-border-radius / 2;
     padding: 0.5em;

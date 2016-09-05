@@ -49,16 +49,23 @@ class KomentDisplay extends Component {
       //      tc += 0.2
       //    })
       //  });
+      forEach(kommentsList, (item)=> {
+        item.avatar = '//graph.facebook.com/10204404008400201/picture'
+        item.username = 'Benjipott'
+      });
+
       const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
       for (let i = 0; i < 50; i++) {
         kommentsList.push({
           text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-          timecode: Math.round(Math.random() * (352 - 0) + 0)
+          timecode: Math.round(Math.random() * (352 - 0) + 0),
+          avatar: '//graph.facebook.com/10204404008400201/picture'
         });
       }
       kommentsList.push({
         text: 'yes c\'est la fin',
-        timecode: 345
+        timecode: 345,
+        avatar: '//graph.facebook.com/10204404008400201/picture'
       });
       kommentsList = sortBy(kommentsList, ['timecode']);
 
@@ -96,7 +103,7 @@ class KomentDisplay extends Component {
     const mi = new KomentItem(this.player_, item);
     this.items.unshift(mi);
     this.addChild(mi);
-    this.requestTick();
+    this.requestTick(true);
   }
 
   /**
@@ -144,7 +151,10 @@ class KomentDisplay extends Component {
    * Calls rAF if it's not already
    * been done already
    */
-  requestTick () {
+  requestTick (force) {
+    if (force !== undefined) {
+      this.ticking = !force;
+    }
     if (!this.ticking) {
       requestAnimationFrame(Fn.bind(this, this.showElements));
       this.ticking = true;

@@ -41,7 +41,7 @@ class KomentToggle extends Button {
    */
   handleClick (event) {
     super.handleClick(event);
-    this.player_.toggleMenu()
+    this.player_.toggleMenu();
   }
 }
 

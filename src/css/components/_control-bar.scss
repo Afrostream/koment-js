@@ -19,6 +19,8 @@
   right: $padding-global;
   width: auto;
   border-radius: $primary-border-radius;
+  max-height: 150px;
+  flex-direction: row;
   $trans: all 0.4s; // Var needed because of comma
   @include transition($trans);
   @include background-color-with-alpha($primary-background-color, 1);

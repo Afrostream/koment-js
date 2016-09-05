@@ -21661,16 +21661,23 @@ var KomentDisplay = (function (_Component) {
       //      tc += 0.2
       //    })
       //  });
+      (0, _lodash.forEach)(kommentsList, function (item) {
+        item.avatar = '//graph.facebook.com/10204404008400201/picture';
+        item.username = 'Benjipott';
+      });
+
       var dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
       for (var i = 0; i < 50; i++) {
         kommentsList.push({
           text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-          timecode: Math.round(Math.random() * (352 - 0) + 0)
+          timecode: Math.round(Math.random() * (352 - 0) + 0),
+          avatar: '//graph.facebook.com/10204404008400201/picture'
         });
       }
       kommentsList.push({
         text: 'yes c\'est la fin',
-        timecode: 345
+        timecode: 345,
+        avatar: '//graph.facebook.com/10204404008400201/picture'
       });
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
 
@@ -21714,7 +21721,7 @@ var KomentDisplay = (function (_Component) {
       var mi = new _komentItem2['default'](this.player_, item);
       this.items.unshift(mi);
       this.addChild(mi);
-      this.requestTick();
+      this.requestTick(true);
     }
 
     /**
@@ -21767,7 +21774,10 @@ var KomentDisplay = (function (_Component) {
      */
   }, {
     key: 'requestTick',
-    value: function requestTick() {
+    value: function requestTick(force) {
+      if (force !== undefined) {
+        this.ticking = !force;
+      }
       if (!this.ticking) {
         requestAnimationFrame(Fn.bind(this, this.showElements));
         this.ticking = true;
@@ -21932,30 +21942,82 @@ var KomentItem = (function (_Component) {
     _get(Object.getPrototypeOf(KomentItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
+    this.update();
   }
 
   /**
-   * Create the component's DOM element
+   * Event handler for updates to the player's poster source
    *
-   * @return {Element}
-   * @method createEl
+   * @method update
    */
 
   _createClass(KomentItem, [{
+    key: 'update',
+    value: function update() {
+      var url = this.options_.avatar;
+
+      this.setSrc(url);
+
+      // If there's no poster source we should display:none on this component
+      // so it's not still clickable or right-clickable
+      if (url) {
+        this.show();
+      } else {
+        this.hide();
+      }
+    }
+
+    /**
+     * Set the poster source depending on the display method
+     *
+     * @param {String} url The URL to the poster source
+     * @method setSrc
+     */
+  }, {
+    key: 'setSrc',
+    value: function setSrc(url) {
+      var backgroundImage = '';
+
+      // Any falsey values should stay as an empty string, otherwise
+      // this will throw an extra error
+      if (url) {
+        backgroundImage = 'url("' + url + '")';
+      }
+
+      this.avatarEl_.style.backgroundImage = backgroundImage;
+    }
+
+    /**
+     * Create the component's DOM element
+     *
+     * @return {Element}
+     * @method createEl
+     */
+  }, {
     key: 'createEl',
     value: function createEl() {
 
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
         className: 'koment-item koment-hidden'
       });
-
+      var userName = '';
+      if (this.options_.username) {
+        userName = '<div class="koment-item-user">' + this.options_.username + '</div>';
+      }
       this.contentEl_ = Dom.createEl('div', {
         className: 'koment-item-display',
-        innerHTML: '<span class="koment-item-title">' + this.options_.text + '</span>'
+        innerHTML: userName + '<div class="koment-item-title">' + this.options_.text + '</div>'
       }, {
         'aria-live': 'off'
       });
 
+      this.avatarEl_ = Dom.createEl('div', {
+        className: 'koment-item-avatar'
+      }, {
+        'aria-live': 'off'
+      });
+
+      el.appendChild(this.avatarEl_);
       el.appendChild(this.contentEl_);
       return el;
     }
@@ -22061,7 +22123,9 @@ var ControlBar = (function (_Component) {
 })(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'likeButton', 'editButton', 'postBox']
+  children: ['komentToggle',
+  //'likeButton',
+  'editButton', 'postBox']
 };
 
 _component2['default'].registerComponent('ControlBar', ControlBar);
@@ -24569,6 +24633,8 @@ var _utilsMergeOptions = require('./utils/merge-options');
 
 var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
 
+var _utilsTimeRangesJs = require('./utils/time-ranges.js');
+
 var _modalDialog = require('./modal-dialog');
 
 var _modalDialog2 = _interopRequireDefault(_modalDialog);
@@ -25989,7 +26055,7 @@ var Player = (function (_Component) {
 
       if (this.toggleMenu_) {
         this.addClass('koment-toggle-menu');
-        this.trigger({ data: koment, type: 'togglemenu' });
+        this.trigger('togglemenu');
       } else {
         this.removeClass('koment-toggle-menu');
         this.toggleEdit(this.toggleMenu_);
@@ -26213,7 +26279,7 @@ var Player = (function (_Component) {
       var buffered = this.techGet_('buffered');
 
       if (!buffered || !buffered.length) {
-        buffered = createTimeRange(0, 0);
+        buffered = (0, _utilsTimeRangesJs.createTimeRange)(0, 0);
       }
 
       return buffered;
@@ -27159,7 +27225,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":79,"./fullscreen-api":83,"./media-error":85,"./modal-dialog":86,"./tech/html5":90,"./tech/tech":91,"./tech/youtube":92,"./utils/browser":93,"./utils/dom":95,"./utils/events":96,"./utils/fn":97,"./utils/guid":99,"./utils/log":100,"./utils/merge-options":101,"./utils/stylesheet":102,"global/document":7,"global/window":8,"lodash":49,"object.assign":54,"safe-json-parse/tuple":58}],88:[function(require,module,exports){
+},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":79,"./fullscreen-api":83,"./media-error":85,"./modal-dialog":86,"./tech/html5":90,"./tech/tech":91,"./tech/youtube":92,"./utils/browser":93,"./utils/dom":95,"./utils/events":96,"./utils/fn":97,"./utils/guid":99,"./utils/log":100,"./utils/merge-options":101,"./utils/stylesheet":102,"./utils/time-ranges.js":103,"global/document":7,"global/window":8,"lodash":49,"object.assign":54,"safe-json-parse/tuple":58}],88:[function(require,module,exports){
 /**
  * @file setup.js
  *

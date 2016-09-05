@@ -18,6 +18,7 @@ import MediaError from './media-error';
 import safeParseTuple from 'safe-json-parse/tuple';
 import assign from 'object.assign';
 import mergeOptions from './utils/merge-options';
+import { createTimeRange } from './utils/time-ranges.js';
 import ModalDialog from './modal-dialog';
 import Tech from './tech/tech';
 import { map } from 'lodash';
@@ -1305,7 +1306,7 @@ class Player extends Component {
 
     if (this.toggleMenu_) {
       this.addClass('koment-toggle-menu');
-      this.trigger({data: koment, type: 'togglemenu'});
+      this.trigger('togglemenu');
     } else {
       this.removeClass('koment-toggle-menu');
       this.toggleEdit(this.toggleMenu_);

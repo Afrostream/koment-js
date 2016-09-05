@@ -15,6 +15,44 @@ class KomentItem extends Component {
     super(player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
+    this.update();
+  }
+
+  /**
+   * Event handler for updates to the player's poster source
+   *
+   * @method update
+   */
+  update () {
+    const url = this.options_.avatar;
+
+    this.setSrc(url);
+
+    // If there's no poster source we should display:none on this component
+    // so it's not still clickable or right-clickable
+    if (url) {
+      this.show();
+    } else {
+      this.hide();
+    }
+  }
+
+  /**
+   * Set the poster source depending on the display method
+   *
+   * @param {String} url The URL to the poster source
+   * @method setSrc
+   */
+  setSrc (url) {
+    let backgroundImage = '';
+
+    // Any falsey values should stay as an empty string, otherwise
+    // this will throw an extra error
+    if (url) {
+      backgroundImage = `url("${url}")`;
+    }
+
+    this.avatarEl_.style.backgroundImage = backgroundImage;
   }
 
   /**
@@ -28,14 +66,24 @@ class KomentItem extends Component {
     const el = super.createEl('div', {
       className: 'koment-item koment-hidden'
     });
-
+    let userName = '';
+    if (this.options_.username) {
+      userName = `<div class="koment-item-user">${this.options_.username}</div>`;
+    }
     this.contentEl_ = Dom.createEl('div', {
       className: 'koment-item-display',
-      innerHTML: `<span class="koment-item-title">${this.options_.text}</span>`
+      innerHTML: `${userName}<div class="koment-item-title">${this.options_.text}</div>`
     }, {
       'aria-live': 'off'
     });
 
+    this.avatarEl_ = Dom.createEl('div', {
+      className: 'koment-item-avatar',
+    }, {
+      'aria-live': 'off'
+    });
+
+    el.appendChild(this.avatarEl_);
     el.appendChild(this.contentEl_);
     return el;
 
