@@ -23824,7 +23824,7 @@ function koment(id, options, ready) {
 
   // Element may have a player attr referring to an already created player instance.
   // If not, set up a new player and return the instance.
-  return tag.player || _player2['default'].players[tag.playerId] || new _player2['default'](tag, options, ready);
+  return tag.koment || _player2['default'].players[tag.playerId] || new _player2['default'](tag, options, ready);
 }
 
 // Add default styles
