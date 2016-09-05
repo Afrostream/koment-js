@@ -27,6 +27,7 @@ import { map } from 'lodash';
 import './control-bar/control-bar';
 import './control-bar/progress-control/progress-control';
 import './component/koment-display';
+import './tech/html5'
 import './tech/youtube'
 /**
  * An instance of the `Player` class is created when any of the Video.js setup methods are used to initialize a video.
@@ -1336,14 +1337,14 @@ class Player extends Component {
     return this;
   }
 
-  sendKoment (koment) {
-    if (!koment || !koment.text) {
+  sendKoment (kmt) {
+    if (!kmt || !kmt.text) {
       return;
     }
-    console.log('koment send ', koment);
-    this.komentsList_.unshift(koment);
+    console.log('koment send ', kmt);
+    this.komentsList_.unshift(kmt);
     this.toggleEdit(false);
-    this.trigger({data: koment, type: 'komentsupdated'});
+    this.trigger({data: kmt, type: 'komentsupdated'});
   }
 
   /**
