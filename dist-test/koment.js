@@ -24942,7 +24942,7 @@ var Player = (function (_Component) {
       tag.className = 'koment-tech';
 
       // Make player findable on elements
-      tag.player = el.player = this;
+      tag.player = el.player = tag.koment = el.koment = this;
       // Default state of video is paused
       this.addClass('koment');
       this.addClass('koment-paused');
@@ -27265,7 +27265,7 @@ var _globalWindow2 = _interopRequireDefault(_globalWindow);
 var _lodash = require('lodash');
 
 var _windowLoaded = false;
-var koken = undefined;
+var koment = undefined;
 
 // Automatically set up any tags that have a data-setup attribute
 var autoSetup = function autoSetup() {
@@ -27303,14 +27303,14 @@ var autoSetup = function autoSetup() {
       if (mediaEl && mediaEl.getAttribute) {
 
         // Make sure this player hasn't already been set up.
-        if (mediaEl.player === undefined) {
+        if (mediaEl.koment === undefined) {
           var options = mediaEl.getAttribute('data-setup');
 
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
           if (options !== null) {
             // Create new video.js instance.
-            koken(mediaEl, options);
+            koment(mediaEl, options);
           }
         }
 
@@ -27328,9 +27328,9 @@ var autoSetup = function autoSetup() {
 };
 
 // Pause to let the DOM keep processing
-function autoSetupTimeout(wait, kok) {
-  if (kok) {
-    koken = kok;
+function autoSetupTimeout(wait, kmt) {
+  if (kmt) {
+    koment = kmt;
   }
 
   setTimeout(autoSetup, wait);

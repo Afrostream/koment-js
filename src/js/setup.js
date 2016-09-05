@@ -9,7 +9,7 @@ import document from 'global/document';
 import window from 'global/window';
 import { map, pullAll } from 'lodash';
 let _windowLoaded = false;
-let koken;
+let koment;
 
 // Automatically set up any tags that have a data-setup attribute
 const autoSetup = function () {
@@ -56,14 +56,14 @@ const autoSetup = function () {
       if (mediaEl && mediaEl.getAttribute) {
 
         // Make sure this player hasn't already been set up.
-        if (mediaEl.player === undefined) {
+        if (mediaEl.koment === undefined) {
           const options = mediaEl.getAttribute('data-setup');
 
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
           if (options !== null) {
             // Create new video.js instance.
-            koken(mediaEl, options);
+            koment(mediaEl, options);
           }
         }
 
@@ -81,9 +81,9 @@ const autoSetup = function () {
 };
 
 // Pause to let the DOM keep processing
-function autoSetupTimeout (wait, kok) {
-  if (kok) {
-    koken = kok;
+function autoSetupTimeout (wait, kmt) {
+  if (kmt) {
+    koment = kmt;
   }
 
   setTimeout(autoSetup, wait);

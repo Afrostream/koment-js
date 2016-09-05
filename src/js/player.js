@@ -281,7 +281,7 @@ class Player extends Component {
     tag.className = 'koment-tech';
 
     // Make player findable on elements
-    tag.player = el.player = this;
+    tag.player = el.player = tag.koment = el.koment = this;
     // Default state of video is paused
     this.addClass('koment');
     this.addClass('koment-paused');
