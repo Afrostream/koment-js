@@ -131,15 +131,13 @@ class Player extends Component {
     // Cache for video property values.
     this.cache_ = {};
 
-    // Set poster
-    this.poster_ = options.poster || '';
     // Set controls
     this.controls_ = !!options.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
     // May be turned back on by HTML5 tech if nativeControlsForTouch is true
-    tag.controls = false;
+    //tag.controls = false;
 
     /*
      * Store the internal state of scrubbing

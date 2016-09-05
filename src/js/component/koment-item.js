@@ -24,7 +24,7 @@ class KomentItem extends Component {
    * @method update
    */
   update () {
-    const url = this.options_.avatar;
+    const url = this.options_.user.profile.avatar;
 
     this.setSrc(url);
 
@@ -67,8 +67,10 @@ class KomentItem extends Component {
       className: 'koment-item koment-hidden'
     });
     let userName = '';
-    if (this.options_.username) {
-      userName = `<div class="koment-item-user">${this.options_.username}</div>`;
+
+    let profile = this.options_.user && this.options_.user && this.options_.user.profile;
+    if (profile && profile.nickname) {
+      userName = `<div class="koment-item-user">${profile.nickname}</div>`;
     }
     this.contentEl_ = Dom.createEl('div', {
       className: 'koment-item-display',
@@ -104,7 +106,15 @@ class KomentItem extends Component {
 }
 
 KomentItem.prototype.timecode = 0;
-KomentItem.prototype.options_ = {};
+KomentItem.prototype.options_ = {
+  text: '',
+  timecode: 0,
+  user: {
+    profile: {
+      nickname: ''
+    }
+  }
+};
 
 Component.registerComponent('KomentItem', KomentItem);
 export default KomentItem;

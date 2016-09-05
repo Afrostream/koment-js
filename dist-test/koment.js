@@ -21954,7 +21954,7 @@ var KomentItem = (function (_Component) {
   _createClass(KomentItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.avatar;
+      var url = this.options_.user.profile.avatar;
 
       this.setSrc(url);
 
@@ -22001,8 +22001,10 @@ var KomentItem = (function (_Component) {
         className: 'koment-item koment-hidden'
       });
       var userName = '';
-      if (this.options_.username) {
-        userName = '<div class="koment-item-user">' + this.options_.username + '</div>';
+
+      var profile = this.options_.user && this.options_.user && this.options_.user.profile;
+      if (profile && profile.nickname) {
+        userName = '<div class="koment-item-user">' + profile.nickname + '</div>';
       }
       this.contentEl_ = Dom.createEl('div', {
         className: 'koment-item-display',
@@ -22043,7 +22045,15 @@ var KomentItem = (function (_Component) {
 })(_componentJs2['default']);
 
 KomentItem.prototype.timecode = 0;
-KomentItem.prototype.options_ = {};
+KomentItem.prototype.options_ = {
+  text: '',
+  timecode: 0,
+  user: {
+    profile: {
+      nickname: ''
+    }
+  }
+};
 
 _componentJs2['default'].registerComponent('KomentItem', KomentItem);
 exports['default'] = KomentItem;
@@ -24769,15 +24779,13 @@ var Player = (function (_Component) {
     // Cache for video property values.
     this.cache_ = {};
 
-    // Set poster
-    this.poster_ = options.poster || '';
     // Set controls
     this.controls_ = !!options.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
     // May be turned back on by HTML5 tech if nativeControlsForTouch is true
-    tag.controls = false;
+    //tag.controls = false;
 
     /*
      * Store the internal state of scrubbing
