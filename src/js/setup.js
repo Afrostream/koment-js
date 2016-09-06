@@ -67,7 +67,7 @@ const autoSetup = function () {
           // We only auto-setup if they've added the data-setup attr.
           //if (options !== null) {
           // Create new video.js instance.
-          koment(mediaEl, options || {});
+          koment(mediaEl, options || {controls: 1});
           //}
         }
 
