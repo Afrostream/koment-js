@@ -55,19 +55,20 @@ const autoSetup = function () {
       // 'function' like expected, at least when loading the player immediately.
       if (mediaEl && mediaEl.getAttribute) {
         let isVideojs = mediaEl.firstChild && mediaEl.firstChild.tagName === 'VIDEO' && ~'vjs-tech'.indexOf(mediaEl.firstChild.classList)
+        let wrapper;
         if (isVideojs) {
+          wrapper = mediaEl;
           mediaEl = mediaEl.firstChild;
         }
         // Make sure this player hasn't already been set up.
         if (mediaEl.koment === undefined) {
-          const options = mediaEl.getAttribute('data-setup');
-
+          let options = mediaEl.getAttribute('data-setup');
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
-          if (options !== null) {
-            // Create new video.js instance.
-            koment(mediaEl, options);
-          }
+          //if (options !== null) {
+          // Create new video.js instance.
+          koment(mediaEl, options || {});
+          //}
         }
 
         // If getAttribute isn't defined, we need to wait for the DOM.

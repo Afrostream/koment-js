@@ -22,27 +22,48 @@
   </style>
   <script src="//vjs.zencdn.net/5.12.0/video.js"></script>
   <link href="//vjs.zencdn.net/5.12.0/video-js.css" rel="stylesheet">
-  <script src="/dist/koment.js"></script>
+
 </head>
 <body>
 
-<video
-  data-setup='{"controls":1,"user":{"id":"toto","avatar":"//graph.facebook.com/10204404008400201/picture","username":"benjipott"}}'
-  class="video-js vjs-default-skin"
-  controls width="640px" height="360px"
-  crossorigin="true">
-  <source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">
-</video>
+<!--<video-->
+<!--data-setup='{"controls":1,"user":{"id":"toto","avatar":"//graph.facebook.com/10204404008400201/picture","username":"benjipott"}}'-->
+<!--class="video-js vjs-default-skin"-->
+<!--controls width="640px" height="360px"-->
+<!--crossorigin="true">-->
+<!--<source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">-->
+<!--</video>-->
 <!--<iframe width="640" data-setup='{"controls":1}' height="360"-->
 <!--src="https://www.youtube.com/embed/3YSWbm_lGBs?enablejsapi=1"-->
 <!--frameborder="0"-->
 <!--allowfullscreen></iframe>-->
+<div id="video-container"/>
 <ul>
   <li><a href="/test/">Run unit tests in browser.</a></li>
 </ul>
 
 <script>
 
+  var container = document.getElementById('video-container');
+  var video = document.createElement('video');
+  video.id = 'player';
+  video.className = 'video-js vjs-afrostream-skin';
+  video.crossOrigin = true;
+  video.setAttribute('crossorigin', true);
+  video.setAttribute('data-setup', '{"controls":1}');
+  container.appendChild(video);
+
+
+  player = videojs('player', {
+    controls: true,
+    sources: [{
+      src: 'http://vjs.zencdn.net/v/oceans.mp4',
+      type: 'video/mp4'
+    }]
+  }).ready(function () {
+  });
+
 </script>
+<script src="/dist/koment.js"></script>
 </body>
 </html>
