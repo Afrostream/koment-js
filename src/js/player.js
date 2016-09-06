@@ -133,7 +133,7 @@ class Player extends Component {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !!options.controls;
+    this.controls_ = !this.tag.controls && !!options.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.

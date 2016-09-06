@@ -50,12 +50,12 @@
   video.className = 'video-js vjs-afrostream-skin';
   video.crossOrigin = true;
   video.setAttribute('crossorigin', true);
-  video.setAttribute('data-setup', '{"controls":1}');
+  //  video.setAttribute('data-setup', '{"controls":1}');
   container.appendChild(video);
 
 
   player = videojs('player', {
-    controls: true,
+    controls: 1,
     sources: [{
       src: 'http://vjs.zencdn.net/v/oceans.mp4',
       type: 'video/mp4'
