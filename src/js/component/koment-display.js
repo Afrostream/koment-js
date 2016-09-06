@@ -139,6 +139,8 @@ class KomentDisplay extends Component {
       case 'viki':
         this.showElements = this.showElementsViki;
         this.on(this.player_, 'timeupdate', this.requestTick);
+        this.on(this.player_, 'pause', this.replaceTick);
+        this.on(this.player_, 'play', this.replaceTick);
         break;
     }
 
@@ -170,18 +172,33 @@ class KomentDisplay extends Component {
   showElementsViki () {
     let className = 'koment-show';
     const currentTimecode = Math.round(this.player_.currentTime());
+    let paused = this.player_.paused() && currentTimecode > 0;
     let nbVisible = filter(this.items, (item)=> item.hasClass(className));
     let filtereds = uniq(this.items, (item)=> Math.round(item.timecode));
+
+    //if (!paused) {
     filtereds = sortBy(filtereds, 'timecode');
     filtereds = filter(filtereds, (item)=> Math.round(item.timecode) === currentTimecode);
     filtereds = slice(filtereds, Math.min(2, nbVisible.length));
+    //}
+
     forEach(filtereds, (item)=> {
       if (!item.hasClass(className)) {
         item.show();
         item.addClass(className);
-        item.setTimeout(item.hide, this.options_.tte * 1000);
+        item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
       }
     });
+
+    //forEach(this.items, (item)=> {
+    //  if (item.hasClass(className)) {
+    //    if (!paused) {
+    //      item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
+    //    } else {
+    //      item.clearTimeout(item.timeout);
+    //    }
+    //  }
+    //});
 
     this.ticking = false;
   }

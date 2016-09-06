@@ -21759,6 +21759,8 @@ var KomentDisplay = (function (_Component) {
         case 'viki':
           this.showElements = this.showElementsViki;
           this.on(this.player_, 'timeupdate', this.requestTick);
+          this.on(this.player_, 'pause', this.replaceTick);
+          this.on(this.player_, 'play', this.replaceTick);
           break;
       }
 
@@ -21797,24 +21799,39 @@ var KomentDisplay = (function (_Component) {
 
       var className = 'koment-show';
       var currentTimecode = Math.round(this.player_.currentTime());
+      var paused = this.player_.paused() && currentTimecode > 0;
       var nbVisible = (0, _lodash.filter)(this.items, function (item) {
         return item.hasClass(className);
       });
       var filtereds = (0, _lodash.uniq)(this.items, function (item) {
         return Math.round(item.timecode);
       });
+
+      //if (!paused) {
       filtereds = (0, _lodash.sortBy)(filtereds, 'timecode');
       filtereds = (0, _lodash.filter)(filtereds, function (item) {
         return Math.round(item.timecode) === currentTimecode;
       });
       filtereds = (0, _lodash.slice)(filtereds, Math.min(2, nbVisible.length));
+      //}
+
       (0, _lodash.forEach)(filtereds, function (item) {
         if (!item.hasClass(className)) {
           item.show();
           item.addClass(className);
-          item.setTimeout(item.hide, _this2.options_.tte * 1000);
+          item.timeout = item.setTimeout(item.hide, _this2.options_.tte * 1000);
         }
       });
+
+      //forEach(this.items, (item)=> {
+      //  if (item.hasClass(className)) {
+      //    if (!paused) {
+      //      item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
+      //    } else {
+      //      item.clearTimeout(item.timeout);
+      //    }
+      //  }
+      //});
 
       this.ticking = false;
     }

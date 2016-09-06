@@ -79,7 +79,7 @@
       @include background-color-with-alpha($primary-background-color, 0.6);
 
       .koment-item-avatar {
-        position: absolute;
+        display: table-cell;
         width: 40px;
         height: 40px;
         background-size: cover;
@@ -92,7 +92,6 @@
 
       .koment-item-display {
         padding: 0.5em;
-        margin-left: 40px;
         color: $primary-foreground-color;
         border-radius: $primary-border-radius;
         min-height: 40px;
@@ -138,7 +137,7 @@
   }
 
   .koment-item.koment-show {
-    display: block;
+    display: inline-table;
   }
   .koment-item.koment-bubble {
     display: inline-block;
