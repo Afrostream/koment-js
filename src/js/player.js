@@ -230,12 +230,12 @@ class Player extends Component {
     // Kill reference to this player
     Player.players[this.id_] = null;
 
-    if (this.tag && this.tag.player) {
-      this.tag.player = null;
+    if (this.tag && this.tag.koment) {
+      this.tag.koment = null;
     }
 
-    if (this.el_ && this.el_.player) {
-      this.el_.player = null;
+    if (this.el_ && this.el_.koment) {
+      this.el_.koment = null;
     }
 
     if (this.tech_) {
@@ -281,7 +281,7 @@ class Player extends Component {
     tag.className = 'koment-tech';
 
     // Make player findable on elements
-    tag.player = el.player = tag.koment = el.koment = this;
+    tag.koment = el.koment = this;
     // Default state of video is paused
     this.addClass('koment');
     this.addClass('koment-paused');
@@ -611,7 +611,7 @@ class Player extends Component {
 
     // Get rid of the original video tag reference after the first tech is loaded
     if (this.tag) {
-      this.tag.player = null;
+      this.tag.koment = null;
       this.tag = null;
     }
   }
@@ -2162,30 +2162,6 @@ class Player extends Component {
    */
   languages () {
     return mergeOptions(Player.prototype.options_.languages, this.languages_);
-  }
-
-  /**
-   * Converts track info to JSON
-   *
-   * @return {Object} JSON object of options
-   * @method toJSON
-   */
-  toJSON () {
-    const options = mergeOptions(this.options_);
-    const tracks = options.tracks;
-
-    options.tracks = [];
-
-    for (let i = 0; i < tracks.length; i++) {
-      let track = tracks[i];
-
-      // deep merge tracks and null out player so no circular references
-      track = mergeOptions(track);
-      track.player = undefined;
-      options.tracks[i] = track;
-    }
-
-    return options;
   }
 
   /**
