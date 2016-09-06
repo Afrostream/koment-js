@@ -15,7 +15,7 @@ import assign from 'object.assign';
  */
 class Slider extends Component {
 
-  constructor(player, options) {
+  constructor (player, options) {
     super(player, options);
 
     // Set property names to bar to match with the child Slider class is looking for
@@ -42,9 +42,9 @@ class Slider extends Component {
    * @return {Element}
    * @method createEl
    */
-  createEl(type, props = {}, attributes = {}) {
+  createEl (type, props = {}, attributes = {}) {
     // Add the slider element class to all sub classes
-    props.className = props.className + ' vjs-slider';
+    props.className = props.className + ' kmt-slider';
     props = assign({
       tabIndex: 0
     }, props);
@@ -66,13 +66,13 @@ class Slider extends Component {
    * @param {Object} event Mouse down event object
    * @method handleMouseDown
    */
-  handleMouseDown(event) {
+  handleMouseDown (event) {
     const doc = this.bar.el_.ownerDocument;
 
     event.preventDefault();
     Dom.blockTextSelection();
 
-    this.addClass('vjs-sliding');
+    this.addClass('kmt-sliding');
     this.trigger('slideractive');
 
     this.on(doc, 'mousemove', this.handleMouseMove);
@@ -88,19 +88,20 @@ class Slider extends Component {
    *
    * @method handleMouseMove
    */
-  handleMouseMove() {}
+  handleMouseMove () {
+  }
 
   /**
    * Handle mouse up on Slider
    *
    * @method handleMouseUp
    */
-  handleMouseUp() {
+  handleMouseUp () {
     const doc = this.bar.el_.ownerDocument;
 
     Dom.unblockTextSelection();
 
-    this.removeClass('vjs-sliding');
+    this.removeClass('kmt-sliding');
     this.trigger('sliderinactive');
 
     this.off(doc, 'mousemove', this.handleMouseMove);
@@ -116,7 +117,7 @@ class Slider extends Component {
    *
    * @method update
    */
-  update() {
+  update () {
     // In VolumeBar init we have a setTimeout for update that pops and update to the end of the
     // execution stack. The player is destroyed before then update will cause an error
     if (!this.el_) {
@@ -136,9 +137,9 @@ class Slider extends Component {
 
     // Protect against no duration and other division issues
     if (typeof progress !== 'number' ||
-        progress !== progress ||
-        progress < 0 ||
-        progress === Infinity) {
+      progress !== progress ||
+      progress < 0 ||
+      progress === Infinity) {
       progress = 0;
     }
 
@@ -159,7 +160,7 @@ class Slider extends Component {
    * @param {Object} event Event object
    * @method calculateDistance
    */
-  calculateDistance(event) {
+  calculateDistance (event) {
     const position = Dom.getPointerPosition(this.el_, event);
 
     if (this.vertical()) {
@@ -173,7 +174,7 @@ class Slider extends Component {
    *
    * @method handleFocus
    */
-  handleFocus() {
+  handleFocus () {
     this.on(this.bar.el_.ownerDocument, 'keydown', this.handleKeyPress);
   }
 
@@ -183,13 +184,13 @@ class Slider extends Component {
    * @param {Object} event Event object
    * @method handleKeyPress
    */
-  handleKeyPress(event) {
+  handleKeyPress (event) {
     // Left and Down Arrows
     if (event.which === 37 || event.which === 40) {
       event.preventDefault();
       this.stepBack();
 
-    // Up and Right Arrows
+      // Up and Right Arrows
     } else if (event.which === 38 || event.which === 39) {
       event.preventDefault();
       this.stepForward();
@@ -201,7 +202,7 @@ class Slider extends Component {
    *
    * @method handleBlur
    */
-  handleBlur() {
+  handleBlur () {
     this.off(this.bar.el_.ownerDocument, 'keydown', this.handleKeyPress);
   }
 
@@ -212,7 +213,7 @@ class Slider extends Component {
    * @param {Object} event Event object
    * @method handleClick
    */
-  handleClick(event) {
+  handleClick (event) {
     event.stopImmediatePropagation();
     event.preventDefault();
   }
@@ -224,7 +225,7 @@ class Slider extends Component {
    * @return {Boolean} True if slider is vertical, false is horizontal
    * @method vertical
    */
-  vertical(bool) {
+  vertical (bool) {
     if (bool === undefined) {
       return this.vertical_ || false;
     }
@@ -232,9 +233,9 @@ class Slider extends Component {
     this.vertical_ = !!bool;
 
     if (this.vertical_) {
-      this.addClass('vjs-slider-vertical');
+      this.addClass('kmt-slider-vertical');
     } else {
-      this.addClass('vjs-slider-horizontal');
+      this.addClass('kmt-slider-horizontal');
     }
 
     return this;
