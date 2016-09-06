@@ -83,3 +83,7 @@ $ie8screen: "\\0screen";
 .koment-has-started.koment-no-flex .koment-control-bar {
   display: table;
 }
+
+.koment.koment-fullscreen .koment-control-bar {
+  z-index: 9999999991;
+}

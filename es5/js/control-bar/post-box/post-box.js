@@ -62,7 +62,7 @@ var PostBox = (function (_Component) {
 })(_componentJs2['default']);
 
 PostBox.prototype.options_ = {
-  children: ['postUserBox', 'postCommentBox', 'postSubmitButton']
+  children: ['postUserBox', 'postCommentBox', 'postlimitBox', 'postSubmitButton']
 };
 
 _componentJs2['default'].registerComponent('PostBox', PostBox);

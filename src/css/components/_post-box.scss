@@ -61,6 +61,7 @@
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
+    margin-right: 0.5em;
   }
 
   .kmt-post-box-comments {
@@ -73,7 +74,6 @@
     @include background-color-with-alpha(#3498db, 1);
     color: $primary-background-color;
     margin-right: 0.5em;
-    outline: none;
 
     &:after {
       content: '';
@@ -100,6 +100,7 @@
       height: 100%;
       word-break: break-word;
       width: 100%;
+      outline: none;
       .highlight {
         background: #fcc;
       }

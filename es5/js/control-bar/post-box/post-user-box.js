@@ -39,13 +39,13 @@ require('./post-comment-box');
  * @class PostUserBox
  */
 
-var PostUsedrBox = (function (_Component) {
-  _inherits(PostUsedrBox, _Component);
+var PostUserBox = (function (_Component) {
+  _inherits(PostUserBox, _Component);
 
-  function PostUsedrBox(player, options, ready) {
-    _classCallCheck(this, PostUsedrBox);
+  function PostUserBox(player, options, ready) {
+    _classCallCheck(this, PostUserBox);
 
-    _get(Object.getPrototypeOf(PostUsedrBox.prototype), 'constructor', this).call(this, player, options, ready);
+    _get(Object.getPrototypeOf(PostUserBox.prototype), 'constructor', this).call(this, player, options, ready);
     this.update();
   }
 
@@ -55,10 +55,10 @@ var PostUsedrBox = (function (_Component) {
    * @method update
    */
 
-  _createClass(PostUsedrBox, [{
+  _createClass(PostUserBox, [{
     key: 'update',
     value: function update() {
-      var url = this.player_.options_.avatar;
+      var url = this.player_.options_.user.avatar;
 
       this.setSrc(url);
 
@@ -94,7 +94,7 @@ var PostUsedrBox = (function (_Component) {
     key: 'createEl',
     value: function createEl() {
 
-      var el = _get(Object.getPrototypeOf(PostUsedrBox.prototype), 'createEl', this).call(this, 'div', {
+      var el = _get(Object.getPrototypeOf(PostUserBox.prototype), 'createEl', this).call(this, 'div', {
         className: 'koment-avatar'
       }, {
         'aria-live': 'off'
@@ -104,7 +104,7 @@ var PostUsedrBox = (function (_Component) {
     }
   }]);
 
-  return PostUsedrBox;
+  return PostUserBox;
 })(_componentJs2['default']);
 
 _componentJs2['default'].registerComponent('PostUserBox', PostUserBox);
