@@ -28,6 +28,7 @@ import { map } from 'lodash';
 import './control-bar/control-bar';
 import './control-bar/progress-control/progress-control';
 import './component/koment-display';
+import './tech/videojs'
 import './tech/html5'
 import './tech/youtube'
 /**

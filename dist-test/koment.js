@@ -19655,7 +19655,7 @@ _component2['default'].registerComponent('Button', Button);
 exports['default'] = Button;
 module.exports = exports['default'];
 
-},{"./clickable-component.js":65,"./component":66,"./utils/log.js":101,"object.assign":54}],65:[function(require,module,exports){
+},{"./clickable-component.js":65,"./component":66,"./utils/log.js":102,"object.assign":54}],65:[function(require,module,exports){
 /**
  * @file button.js
  */
@@ -19943,7 +19943,7 @@ _component2['default'].registerComponent('ClickableComponent', ClickableComponen
 exports['default'] = ClickableComponent;
 module.exports = exports['default'];
 
-},{"./component":66,"./utils/dom.js":96,"./utils/events.js":97,"./utils/fn.js":98,"./utils/log.js":101,"global/document":7,"object.assign":54}],66:[function(require,module,exports){
+},{"./component":66,"./utils/dom.js":97,"./utils/events.js":98,"./utils/fn.js":99,"./utils/log.js":102,"global/document":7,"object.assign":54}],66:[function(require,module,exports){
 /**
  * @file component.js
  *
@@ -21570,7 +21570,7 @@ Component.registerComponent('Component', Component);
 exports['default'] = Component;
 module.exports = exports['default'];
 
-},{"./utils/dom.js":96,"./utils/events.js":97,"./utils/fn.js":98,"./utils/guid.js":100,"./utils/log.js":101,"./utils/merge-options.js":102,"./utils/to-title-case.js":105,"global/window":8}],67:[function(require,module,exports){
+},{"./utils/dom.js":97,"./utils/events.js":98,"./utils/fn.js":99,"./utils/guid.js":101,"./utils/log.js":102,"./utils/merge-options.js":103,"./utils/to-title-case.js":106,"global/window":8}],67:[function(require,module,exports){
 /**
  * @file koment-display.js
  **/
@@ -21896,7 +21896,7 @@ _component2['default'].registerComponent('KomentDisplay', KomentDisplay);
 exports['default'] = KomentDisplay;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/dom":96,"../utils/fn.js":98,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
+},{"../component":66,"../utils/dom":97,"../utils/fn.js":99,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
 /**
  * @file koment-item.js
  **/
@@ -22059,7 +22059,7 @@ _componentJs2['default'].registerComponent('KomentItem', KomentItem);
 exports['default'] = KomentItem;
 module.exports = exports['default'];
 
-},{"../component.js":66,"../utils/dom":96}],69:[function(require,module,exports){
+},{"../component.js":66,"../utils/dom":97}],69:[function(require,module,exports){
 /**
  * @file control-bar.js
  */
@@ -22250,7 +22250,7 @@ _componentJs2['default'].registerComponent('EditButton', EditButton);
 exports['default'] = EditButton;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":96,"../utils/to-title-case":105}],71:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":97,"../utils/to-title-case":106}],71:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -22344,7 +22344,7 @@ _componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
 exports['default'] = KomentToggle;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":96,"../utils/to-title-case":105}],72:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":97,"../utils/to-title-case":106}],72:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -22451,7 +22451,7 @@ _componentJs2['default'].registerComponent('LikeButton', LikeButton);
 exports['default'] = LikeButton;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":96,"../utils/to-title-case":105}],73:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66,"../utils/dom":97,"../utils/to-title-case":106}],73:[function(require,module,exports){
 /**
  * @file post-toggle.js
  */
@@ -23013,7 +23013,7 @@ _componentJs2['default'].registerComponent('PostUserBox', PostUserBox);
 exports['default'] = PostUserBox;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/to-title-case":105,"./post-comment-box":74}],77:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/to-title-case":106,"./post-comment-box":74}],77:[function(require,module,exports){
 /**
  * @file load-progress-bar.js
  */
@@ -23131,7 +23131,7 @@ _componentJs2['default'].registerComponent('LoadProgressBar', LoadProgressBar);
 exports['default'] = LoadProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":96}],78:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":97}],78:[function(require,module,exports){
 /**
  * @file mouse-time-display.js
  */
@@ -23300,7 +23300,7 @@ _componentJs2['default'].registerComponent('MouseTimeDisplay', MouseTimeDisplay)
 exports['default'] = MouseTimeDisplay;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":96,"../../utils/fn.js":98,"../../utils/format-time.js":99,"global/window":8,"lodash-compat/function/throttle":13}],79:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":97,"../../utils/fn.js":99,"../../utils/format-time.js":100,"global/window":8,"lodash-compat/function/throttle":13}],79:[function(require,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -23394,7 +23394,7 @@ _componentJs2['default'].registerComponent('PlayProgressBar', PlayProgressBar);
 exports['default'] = PlayProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/fn.js":98,"../../utils/format-time.js":99}],80:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/fn.js":99,"../../utils/format-time.js":100}],80:[function(require,module,exports){
 /**
  * @file progress-control.js
  */
@@ -23705,7 +23705,7 @@ _componentJs2['default'].registerComponent('SeekBar', SeekBar);
 exports['default'] = SeekBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../slider/slider.js":90,"../../utils/fn.js":98,"../../utils/format-time.js":99,"./load-progress-bar.js":77,"./play-progress-bar.js":79,"./timeline-progress-bar.js":82,"./tooltip-progress-bar.js":83,"global/window":8}],82:[function(require,module,exports){
+},{"../../component.js":66,"../../slider/slider.js":90,"../../utils/fn.js":99,"../../utils/format-time.js":100,"./load-progress-bar.js":77,"./play-progress-bar.js":79,"./timeline-progress-bar.js":82,"./tooltip-progress-bar.js":83,"global/window":8}],82:[function(require,module,exports){
 /**
  * @file timeline-progress-bar.js
  */
@@ -23816,7 +23816,7 @@ _componentJs2['default'].registerComponent('TimelineProgressBar', TimelineProgre
 exports['default'] = TimelineProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/dom.js":96,"lodash":49}],83:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/dom.js":97,"lodash":49}],83:[function(require,module,exports){
 /**
  * @file play-progress-bar.js
  */
@@ -23908,7 +23908,7 @@ _componentJs2['default'].registerComponent('TooltipProgressBar', TooltipProgress
 exports['default'] = TooltipProgressBar;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/fn.js":98,"../../utils/format-time.js":99}],84:[function(require,module,exports){
+},{"../../component.js":66,"../../utils/fn.js":99,"../../utils/format-time.js":100}],84:[function(require,module,exports){
 /**
  * @file fullscreen-api.js
  */
@@ -24287,7 +24287,7 @@ if (!_globalWindow2['default'].requestAnimationFrame) {
 exports['default'] = koment;
 module.exports = exports['default'];
 
-},{"../../package.json":63,"./player":88,"./setup":89,"./utils/browser.js":94,"./utils/dom.js":96,"./utils/events.js":97,"./utils/log.js":101,"./utils/stylesheet.js":103,"./utils/url.js":106,"global/document":7,"global/window":8,"lodash-compat/object/merge":46}],86:[function(require,module,exports){
+},{"../../package.json":63,"./player":88,"./setup":89,"./utils/browser.js":95,"./utils/dom.js":97,"./utils/events.js":98,"./utils/log.js":102,"./utils/stylesheet.js":104,"./utils/url.js":107,"global/document":7,"global/window":8,"lodash-compat/object/merge":46}],86:[function(require,module,exports){
 /**
  * @file media-error.js
  */
@@ -24829,7 +24829,7 @@ _component2['default'].registerComponent('ModalDialog', ModalDialog);
 exports['default'] = ModalDialog;
 module.exports = exports['default'];
 
-},{"./component":66,"./utils/dom":96,"./utils/fn":98}],88:[function(require,module,exports){
+},{"./component":66,"./utils/dom":97,"./utils/fn":99}],88:[function(require,module,exports){
 /**
  * @file player.js
  */
@@ -24935,6 +24935,8 @@ require('./control-bar/control-bar');
 require('./control-bar/progress-control/progress-control');
 
 require('./component/koment-display');
+
+require('./tech/videojs');
 
 require('./tech/html5');
 
@@ -27480,7 +27482,7 @@ exports['default'] = Player;
 module.exports = exports['default'];
 // If empty string, make it a parsable json object.
 
-},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":80,"./fullscreen-api":84,"./media-error":86,"./modal-dialog":87,"./tech/html5":91,"./tech/tech":92,"./tech/youtube":93,"./utils/browser":94,"./utils/dom":96,"./utils/events":97,"./utils/fn":98,"./utils/guid":100,"./utils/log":101,"./utils/merge-options":102,"./utils/stylesheet":103,"./utils/time-ranges.js":104,"global/document":7,"global/window":8,"lodash":49,"object.assign":54,"safe-json-parse/tuple":58}],89:[function(require,module,exports){
+},{"./component":66,"./component/koment-display":67,"./control-bar/control-bar":69,"./control-bar/progress-control/progress-control":80,"./fullscreen-api":84,"./media-error":86,"./modal-dialog":87,"./tech/html5":91,"./tech/tech":92,"./tech/videojs":93,"./tech/youtube":94,"./utils/browser":95,"./utils/dom":97,"./utils/events":98,"./utils/fn":99,"./utils/guid":101,"./utils/log":102,"./utils/merge-options":103,"./utils/stylesheet":104,"./utils/time-ranges.js":105,"global/document":7,"global/window":8,"lodash":49,"object.assign":54,"safe-json-parse/tuple":58}],89:[function(require,module,exports){
 /**
  * @file setup.js
  *
@@ -27516,7 +27518,7 @@ var koment = undefined;
 
 // Automatically set up any tags that have a data-setup attribute
 var autoSetup = function autoSetup() {
-  var selectors = ['.video-js', 'video', 'iframe[src*="player.vimeo.com"]', 'iframe[src*="youtube.com"]', 'iframe[src*="youtube-nocookie.com"]', 'iframe[src*="kickstarter.com"][src*="video.html"]', 'object', 'embed'];
+  var selectors = ['video', 'iframe[src*="player.vimeo.com"]', 'iframe[src*="youtube.com"]', 'iframe[src*="youtube-nocookie.com"]', 'iframe[src*="kickstarter.com"][src*="video.html"]', 'object', 'embed'];
 
   var ignoreList = ['object object', '.komentignore'];
 
@@ -27543,7 +27545,6 @@ var autoSetup = function autoSetup() {
 
     for (var i = 0, e = mediaEls.length; i < e; i++) {
       var mediaEl = mediaEls[i];
-
       // Check if element exists, has getAttribute func.
       // IE seems to consider typeof el.getAttribute == 'object' instead of
       // 'function' like expected, at least when loading the player immediately.
@@ -27599,7 +27600,7 @@ exports.autoSetup = autoSetup;
 exports.autoSetupTimeout = autoSetupTimeout;
 exports.hasLoaded = hasLoaded;
 
-},{"./utils/events.js":97,"global/document":7,"global/window":8,"lodash":49}],90:[function(require,module,exports){
+},{"./utils/events.js":98,"global/document":7,"global/window":8,"lodash":49}],90:[function(require,module,exports){
 /**
  * @file slider.js
  */
@@ -27903,7 +27904,7 @@ _componentJs2['default'].registerComponent('Slider', Slider);
 exports['default'] = Slider;
 module.exports = exports['default'];
 
-},{"../component.js":66,"../utils/dom.js":96,"object.assign":54}],91:[function(require,module,exports){
+},{"../component.js":66,"../utils/dom.js":97,"object.assign":54}],91:[function(require,module,exports){
 /**
  * @file html5.js
  * HTML5 Media Controller - Wrapper for HTML5 Media API
@@ -28854,7 +28855,7 @@ _techJs2['default'].registerTech('Html5', Html5);
 exports['default'] = Html5;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/browser.js":94,"../utils/dom.js":96,"../utils/fn.js":98,"../utils/log.js":101,"../utils/merge-options.js":102,"../utils/to-title-case.js":105,"../utils/url.js":106,"./tech.js":92,"global/document":7,"global/window":8,"object.assign":54,"tsml":60}],92:[function(require,module,exports){
+},{"../component":66,"../utils/browser.js":95,"../utils/dom.js":97,"../utils/fn.js":99,"../utils/log.js":102,"../utils/merge-options.js":103,"../utils/to-title-case.js":106,"../utils/url.js":107,"./tech.js":92,"global/document":7,"global/window":8,"object.assign":54,"tsml":60}],92:[function(require,module,exports){
 /**
  * @file tech.js
  * Media Technology Controller - Base class for media playback
@@ -29259,7 +29260,74 @@ Tech.registerTech('Tech', Tech);
 exports['default'] = Tech;
 module.exports = exports['default'];
 
-},{"../component":66,"../media-error.js":86,"../utils/buffer.js":95,"../utils/fn.js":98,"../utils/log.js":101,"../utils/time-ranges.js":104,"global/window":8}],93:[function(require,module,exports){
+},{"../component":66,"../media-error.js":86,"../utils/buffer.js":96,"../utils/fn.js":99,"../utils/log.js":102,"../utils/time-ranges.js":105,"global/window":8}],93:[function(require,module,exports){
+/**
+ * @file Videojs.js
+ * Videojs Media Controller - Wrapper for Videojs Media API
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _techJs = require('./tech.js');
+
+var _techJs2 = _interopRequireDefault(_techJs);
+
+var _component = require('../component');
+
+var _component2 = _interopRequireDefault(_component);
+
+var _globalDocument = require('global/document');
+
+var _globalDocument2 = _interopRequireDefault(_globalDocument);
+
+var _utilsFnJs = require('../utils/fn.js');
+
+var Fn = _interopRequireWildcard(_utilsFnJs);
+
+/**
+ * Videojs Media Controller - Wrapper for Videojs Media API
+ *
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready Ready callback function
+ * @extends Tech
+ * @class Videojs
+ */
+
+var Videojs = (function (_Tech) {
+  _inherits(Videojs, _Tech);
+
+  function Videojs(options, ready) {
+    _classCallCheck(this, Videojs);
+
+    _get(Object.getPrototypeOf(Videojs.prototype), 'constructor', this).call(this, options, ready);
+  }
+
+  return Videojs;
+})(_techJs2['default']);
+
+Videojs.isSupported = function (tag) {
+  return tag && tag.tagName && tag.tagName === 'DIV' && ~tag.classList.indexOf('video-js');
+};
+
+_component2['default'].registerComponent('Videojs', Videojs);
+_techJs2['default'].registerTech('Videojs', Videojs);
+exports['default'] = Videojs;
+module.exports = exports['default'];
+
+},{"../component":66,"../utils/fn.js":99,"./tech.js":92,"global/document":7}],94:[function(require,module,exports){
 /**
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
@@ -29702,7 +29770,7 @@ _techJs2['default'].registerTech('Youtube', Youtube);
 exports['default'] = Youtube;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/fn.js":98,"./tech.js":92,"global/document":7}],94:[function(require,module,exports){
+},{"../component":66,"../utils/fn.js":99,"./tech.js":92,"global/document":7}],95:[function(require,module,exports){
 /**
  * @file browser.js
  */
@@ -29803,7 +29871,7 @@ exports.TOUCH_ENABLED = TOUCH_ENABLED;
 var BACKGROUND_SIZE_SUPPORTED = ('backgroundSize' in _globalDocument2['default'].createElement('video').style);
 exports.BACKGROUND_SIZE_SUPPORTED = BACKGROUND_SIZE_SUPPORTED;
 
-},{"global/document":7,"global/window":8}],95:[function(require,module,exports){
+},{"global/document":7,"global/window":8}],96:[function(require,module,exports){
 /**
  * @file buffer.js
  */
@@ -29854,7 +29922,7 @@ function bufferedPercent(buffered, duration) {
   return bufferedDuration / duration;
 }
 
-},{"./time-ranges.js":104}],96:[function(require,module,exports){
+},{"./time-ranges.js":105}],97:[function(require,module,exports){
 /**
  * @file dom.js
  */
@@ -30585,7 +30653,7 @@ exports.$ = $;
 var $$ = createQuerier('querySelectorAll');
 exports.$$ = $$;
 
-},{"./guid.js":100,"./log.js":101,"global/document":7,"global/window":8,"tsml":60}],97:[function(require,module,exports){
+},{"./guid.js":101,"./log.js":102,"global/document":7,"global/window":8,"tsml":60}],98:[function(require,module,exports){
 /**
  * @file events.js
  *
@@ -31026,7 +31094,7 @@ function one(elem, type, fn) {
   on(elem, type, func);
 }
 
-},{"./dom.js":96,"./guid.js":100,"./log.js":101,"global/document":7,"global/window":8}],98:[function(require,module,exports){
+},{"./dom.js":97,"./guid.js":101,"./log.js":102,"global/document":7,"global/window":8}],99:[function(require,module,exports){
 /**
  * @file fn.js
  */
@@ -31072,7 +31140,7 @@ var bind = function bind(context, fn, uid) {
 };
 exports.bind = bind;
 
-},{"./guid.js":100}],99:[function(require,module,exports){
+},{"./guid.js":101}],100:[function(require,module,exports){
 /**
  * @file format-time.js
  *
@@ -31125,7 +31193,7 @@ function formatTime(seconds) {
 exports['default'] = formatTime;
 module.exports = exports['default'];
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /**
  * @file guid.js
  *
@@ -31152,7 +31220,7 @@ function newGUID() {
   return _guid++;
 }
 
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /**
  * @file log.js
  */
@@ -31282,7 +31350,7 @@ log.warn = function () {
 
 exports['default'] = log;
 
-},{"./browser":94,"global/window":8}],102:[function(require,module,exports){
+},{"./browser":95,"global/window":8}],103:[function(require,module,exports){
 /**
  * @file merge-options.js
  */
@@ -31351,7 +31419,7 @@ function mergeOptions() {
 
 module.exports = exports['default'];
 
-},{"lodash":49}],103:[function(require,module,exports){
+},{"lodash":49}],104:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -31382,7 +31450,7 @@ var setTextContent = function setTextContent(el, content) {
 };
 exports.setTextContent = setTextContent;
 
-},{"global/document":7}],104:[function(require,module,exports){
+},{"global/document":7}],105:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -31455,7 +31523,7 @@ function createTimeRanges(start, end) {
 
 exports.createTimeRange = createTimeRanges;
 
-},{"./log.js":101}],105:[function(require,module,exports){
+},{"./log.js":102}],106:[function(require,module,exports){
 /**
  * @file to-title-case.js
  *
@@ -31478,7 +31546,7 @@ function toTitleCase(string) {
 exports["default"] = toTitleCase;
 module.exports = exports["default"];
 
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 /**
  * @file url.js
  */
@@ -31621,10 +31689,10 @@ var isCrossOrigin = function isCrossOrigin(url) {
 };
 exports.isCrossOrigin = isCrossOrigin;
 
-},{"global/document":7,"global/window":8}],107:[function(require,module,exports){
+},{"global/document":7,"global/window":8}],108:[function(require,module,exports){
 "use strict";
 
-},{}],108:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -31649,4 +31717,4 @@ _qunit2['default'].test('the environment is sane', function (assert) {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../src/js/koment":85}]},{},[107,108]);
+},{"../src/js/koment":85}]},{},[108,109]);

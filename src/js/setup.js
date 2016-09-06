@@ -14,7 +14,6 @@ let koment;
 // Automatically set up any tags that have a data-setup attribute
 const autoSetup = function () {
   let selectors = [
-    '.video-js',
     'video',
     'iframe[src*="player.vimeo.com"]',
     'iframe[src*="youtube.com"]',
@@ -50,7 +49,6 @@ const autoSetup = function () {
 
     for (let i = 0, e = mediaEls.length; i < e; i++) {
       const mediaEl = mediaEls[i];
-
       // Check if element exists, has getAttribute func.
       // IE seems to consider typeof el.getAttribute == 'object' instead of
       // 'function' like expected, at least when loading the player immediately.
