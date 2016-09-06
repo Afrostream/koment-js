@@ -86,12 +86,12 @@
         background-position: center center;
         background-repeat: no-repeat;
 
-        clip-path: polygon(0 0, 100% 0, 0% 100%, 0 0);
-        -webkit-clip-path: polygon(0 0, 100% 0, 0% 100%, 0 0);
+        //clip-path: polygon(0 0, 100% 0, 0% 100%, 0 0);
+        //-webkit-clip-path: polygon(0 0, 100% 0, 0% 100%, 0 0);
       }
 
       .koment-item-display {
-        padding: 0.5em 0.5em 0.5em 0;
+        padding: 0.5em;
         margin-left: 40px;
         color: $primary-foreground-color;
         border-radius: $primary-border-radius;

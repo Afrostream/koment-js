@@ -15,6 +15,7 @@ class KomentItem extends Component {
     super(player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
+    this.user = this.options_.user;
     this.update();
   }
 
@@ -24,7 +25,7 @@ class KomentItem extends Component {
    * @method update
    */
   update () {
-    const url = this.options_.user.profile.avatar;
+    const url = this.options_.user.avatar;
 
     this.setSrc(url);
 
@@ -68,7 +69,7 @@ class KomentItem extends Component {
     });
     let userName = '';
 
-    let profile = this.options_.user && this.options_.user && this.options_.user.profile;
+    let profile = this.options_.user && this.options_.user;
     if (profile && profile.nickname) {
       userName = `<div class="koment-item-user">${profile.nickname}</div>`;
     }
@@ -110,9 +111,8 @@ KomentItem.prototype.options_ = {
   text: '',
   timecode: 0,
   user: {
-    profile: {
-      nickname: ''
-    }
+    nickname: '',
+    avatar: ''
   }
 };
 

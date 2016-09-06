@@ -5,7 +5,7 @@ import Component from '../component';
 import * as Fn from '../utils/fn.js';
 import * as Dom from '../utils/dom'
 import xhr from 'xhr'
-import { filter, forEach, map, clone, sortBy, slice, difference, uniq } from 'lodash';
+import { filter, forEach, map, clone, sortBy, slice, difference, uniq, merge } from 'lodash';
 import KomentItem from './koment-item';
 
 /**
@@ -41,32 +41,37 @@ class KomentDisplay extends Component {
       }
       kommentsList = res.body || [];
 
-      //  forEach(res.body || [], (item)=> {
-      //    forEach(res.body || [], ()=> {
-      //      let copyItem = clone(item)
-      //      copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
-      //      kommentsList.push(copyItem)
-      //      tc += 0.2
-      //    })
-      //  });
+      //forEach(res.body || [], (item)=> {
+      //  forEach(res.body || [], ()=> {
+      //    let copyItem = clone(item)
+      //    copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
+      //    kommentsList.push(copyItem)
+      //    tc += 0.2
+      //  })
+      //});
       forEach(kommentsList, (item)=> {
-        item.avatar = '//graph.facebook.com/10204404008400201/picture'
-        item.username = 'Benjipott'
+        if (item.user && item.user.facebook) {
+          item.user = merge(item.user, {
+            avatar: `//graph.facebook.com/${item.user.facebook.id}/picture`,
+            nickname: item.user.facebook.nickname
+          });
+        }
       });
 
-      const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-      for (let i = 0; i < 50; i++) {
-        kommentsList.push({
-          text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-          timecode: Math.round(Math.random() * (352 - 0) + 0),
-          avatar: '//graph.facebook.com/10204404008400201/picture'
-        });
-      }
-      kommentsList.push({
-        text: 'yes c\'est la fin',
-        timecode: 345,
-        avatar: '//graph.facebook.com/10204404008400201/picture'
-      });
+      //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
+      //for (let i = 0; i < 50; i++) {
+      //  kommentsList.push({
+      //    text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
+      //    timecode: Math.round(Math.random() * (352 - 0) + 0),
+      //    avatar: '//graph.facebook.com/10204404008400201/picture'
+      //  });
+      //}
+      //kommentsList.push({
+      //  text: 'yes c\'est la fin',
+      //  timecode: 345,
+      //  avatar: '//graph.facebook.com/10204404008400201/picture'
+      //});
+
       kommentsList = sortBy(kommentsList, ['timecode']);
 
       this.player_.komentsList(kommentsList);

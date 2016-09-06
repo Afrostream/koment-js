@@ -21653,32 +21653,37 @@ var KomentDisplay = (function (_Component) {
       }
       kommentsList = res.body || [];
 
-      //  forEach(res.body || [], (item)=> {
-      //    forEach(res.body || [], ()=> {
-      //      let copyItem = clone(item)
-      //      copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
-      //      kommentsList.push(copyItem)
-      //      tc += 0.2
-      //    })
-      //  });
+      //forEach(res.body || [], (item)=> {
+      //  forEach(res.body || [], ()=> {
+      //    let copyItem = clone(item)
+      //    copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
+      //    kommentsList.push(copyItem)
+      //    tc += 0.2
+      //  })
+      //});
       (0, _lodash.forEach)(kommentsList, function (item) {
-        item.avatar = '//graph.facebook.com/10204404008400201/picture';
-        item.username = 'Benjipott';
+        if (item.user && item.user.facebook) {
+          item.user = (0, _lodash.merge)(item.user, {
+            avatar: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
+            nickname: item.user.facebook.nickname
+          });
+        }
       });
 
-      var dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-      for (var i = 0; i < 50; i++) {
-        kommentsList.push({
-          text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-          timecode: Math.round(Math.random() * (352 - 0) + 0),
-          avatar: '//graph.facebook.com/10204404008400201/picture'
-        });
-      }
-      kommentsList.push({
-        text: 'yes c\'est la fin',
-        timecode: 345,
-        avatar: '//graph.facebook.com/10204404008400201/picture'
-      });
+      //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
+      //for (let i = 0; i < 50; i++) {
+      //  kommentsList.push({
+      //    text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
+      //    timecode: Math.round(Math.random() * (352 - 0) + 0),
+      //    avatar: '//graph.facebook.com/10204404008400201/picture'
+      //  });
+      //}
+      //kommentsList.push({
+      //  text: 'yes c\'est la fin',
+      //  timecode: 345,
+      //  avatar: '//graph.facebook.com/10204404008400201/picture'
+      //});
+
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
 
       _this.player_.komentsList(kommentsList);
@@ -21942,6 +21947,7 @@ var KomentItem = (function (_Component) {
     _get(Object.getPrototypeOf(KomentItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
+    this.user = this.options_.user;
     this.update();
   }
 
@@ -21954,7 +21960,7 @@ var KomentItem = (function (_Component) {
   _createClass(KomentItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.user.profile.avatar;
+      var url = this.options_.user.avatar;
 
       this.setSrc(url);
 
@@ -22002,7 +22008,7 @@ var KomentItem = (function (_Component) {
       });
       var userName = '';
 
-      var profile = this.options_.user && this.options_.user && this.options_.user.profile;
+      var profile = this.options_.user && this.options_.user;
       if (profile && profile.nickname) {
         userName = '<div class="koment-item-user">' + profile.nickname + '</div>';
       }
@@ -22049,9 +22055,8 @@ KomentItem.prototype.options_ = {
   text: '',
   timecode: 0,
   user: {
-    profile: {
-      nickname: ''
-    }
+    nickname: '',
+    avatar: ''
   }
 };
 
