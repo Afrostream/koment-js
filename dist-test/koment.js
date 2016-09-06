@@ -27518,7 +27518,7 @@ var koment = undefined;
 
 // Automatically set up any tags that have a data-setup attribute
 var autoSetup = function autoSetup() {
-  var selectors = ['video', 'iframe[src*="player.vimeo.com"]', 'iframe[src*="youtube.com"]', 'iframe[src*="youtube-nocookie.com"]', 'iframe[src*="kickstarter.com"][src*="video.html"]', 'object', 'embed'];
+  var selectors = ['.video-js', 'video', 'iframe[src*="player.vimeo.com"]', 'iframe[src*="youtube.com"]', 'iframe[src*="youtube-nocookie.com"]', 'iframe[src*="kickstarter.com"][src*="video.html"]', 'object', 'embed'];
 
   var ignoreList = ['object object', '.komentignore'];
 
@@ -27549,7 +27549,10 @@ var autoSetup = function autoSetup() {
       // IE seems to consider typeof el.getAttribute == 'object' instead of
       // 'function' like expected, at least when loading the player immediately.
       if (mediaEl && mediaEl.getAttribute) {
-
+        var isVideojs = mediaEl.firstChild && mediaEl.firstChild.tagName === 'VIDEO' && ~'vjs-tech'.indexOf(mediaEl.firstChild.classList);
+        if (isVideojs) {
+          mediaEl = mediaEl.firstChild;
+        }
         // Make sure this player hasn't already been set up.
         if (mediaEl.koment === undefined) {
           var options = mediaEl.getAttribute('data-setup');
@@ -29285,6 +29288,10 @@ var _techJs = require('./tech.js');
 
 var _techJs2 = _interopRequireDefault(_techJs);
 
+var _html5Js = require('./html5.js');
+
+var _html5Js2 = _interopRequireDefault(_html5Js);
+
 var _component = require('../component');
 
 var _component2 = _interopRequireDefault(_component);
@@ -29306,8 +29313,8 @@ var Fn = _interopRequireWildcard(_utilsFnJs);
  * @class Videojs
  */
 
-var Videojs = (function (_Tech) {
-  _inherits(Videojs, _Tech);
+var Videojs = (function (_Html5) {
+  _inherits(Videojs, _Html5);
 
   function Videojs(options, ready) {
     _classCallCheck(this, Videojs);
@@ -29316,10 +29323,10 @@ var Videojs = (function (_Tech) {
   }
 
   return Videojs;
-})(_techJs2['default']);
+})(_html5Js2['default']);
 
 Videojs.isSupported = function (tag) {
-  return tag && tag.tagName && tag.tagName === 'DIV' && ~tag.classList.indexOf('video-js');
+  return tag && tag.firstChild && tag.firstChild.tagName === 'VIDEO' && ~'vjs-tech'.indexOf(tag.firstChild.classList);
 };
 
 _component2['default'].registerComponent('Videojs', Videojs);
@@ -29327,7 +29334,7 @@ _techJs2['default'].registerTech('Videojs', Videojs);
 exports['default'] = Videojs;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/fn.js":99,"./tech.js":92,"global/document":7}],94:[function(require,module,exports){
+},{"../component":66,"../utils/fn.js":99,"./html5.js":91,"./tech.js":92,"global/document":7}],94:[function(require,module,exports){
 /**
  * @file Youtube.js
  * Youtube Media Controller - Wrapper for Youtube Media API
