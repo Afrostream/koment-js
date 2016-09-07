@@ -7,7 +7,7 @@
   right: 0;
   bottom: 3em;
   overflow: hidden;
-  padding: 3em $padding-global;
+  padding: 3em $kmt-padding-global;
 
   transition: all 0.3s linear;
 
@@ -59,12 +59,12 @@
       .koment-item-display {
         position: relative;
         padding: 0.5em;
-        color: $primary-background-color;
-        border-radius: $primary-border-radius;
+        color: $kmt-primary-background-color;
+        border-radius: $kmt-primary-border-radius;
         min-height: 40px;
         max-width: 350px;
         height: 100%;
-        @include background-color-with-alpha($primary-foreground-color, 0.6);
+        @include background-color-with-alpha($kmt-primary-foreground-color, 0.6);
 
         &:after {
           content: "";
@@ -73,7 +73,7 @@
           left: -10px;
           width: 0;
           height: 0;
-          border: 5px solid rgba($primary-foreground-color, 0.6);
+          border: 5px solid rgba($kmt-primary-foreground-color, 0.6);
           border-left-color: transparent;
           border-bottom-color: transparent;
         }
@@ -111,7 +111,7 @@
 }
 
 .koment.koment-toggle-edit .koment-display {
-  @include background-color-with-alpha($primary-foreground-color, 0.8);
+  @include background-color-with-alpha($kmt-primary-foreground-color, 0.8);
   bottom: 0;
   pointer-events: all;
   .koment-item {

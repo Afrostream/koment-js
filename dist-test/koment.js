@@ -22722,7 +22722,7 @@ var PostCommentBox = (function (_Component) {
         'contenteditable': true,
         'aria-multiline': false,
         'max-length': 140,
-        'data-placeHolder-default': 'Add your comment here...'
+        'data-placeHolder-default': this.localize('Add your comment here...')
       });
 
       this.spanEl = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
@@ -22826,7 +22826,7 @@ var PostSubmitButton = (function (_Button) {
   return PostSubmitButton;
 })(_buttonJs2['default']);
 
-PostSubmitButton.prototype.controlText_ = 'Ok';
+PostSubmitButton.prototype.controlText_ = 'Send';
 
 _componentJs2['default'].registerComponent('PostSubmitButton', PostSubmitButton);
 exports['default'] = PostSubmitButton;
@@ -27429,9 +27429,14 @@ var Player = (function (_Component) {
         sources: [],
         tracks: []
       };
-
       var tagOptions = Dom.getElAttributes(tag);
       var dataSetup = tagOptions['data-setup'];
+
+      if (!dataSetup) {
+        tagOptions = Dom.getElAttributes(tag.parentNode);
+        dataSetup = tagOptions['data-setup'];
+      }
+
       // Check if data-setup attr exists.
       if (dataSetup !== null) {
         // Parse options JSON
@@ -27670,10 +27675,10 @@ var autoSetup = function autoSetup() {
           var options = mediaEl.getAttribute('data-setup') || wrapper && wrapper.getAttribute && wrapper.getAttribute('data-setup');
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
-          //if (options !== null) {
-          // Create new video.js instance.
-          koment(mediaEl, options || { controls: 1 });
-          //}
+          if (options !== null) {
+            // Create new video.js instance.
+            koment(mediaEl);
+          }
         }
 
         // If getAttribute isn't defined, we need to wait for the DOM.

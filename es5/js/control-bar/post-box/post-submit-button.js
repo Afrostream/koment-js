@@ -76,7 +76,7 @@ var PostSubmitButton = (function (_Button) {
   return PostSubmitButton;
 })(_buttonJs2['default']);
 
-PostSubmitButton.prototype.controlText_ = 'Ok';
+PostSubmitButton.prototype.controlText_ = 'Send';
 
 _componentJs2['default'].registerComponent('PostSubmitButton', PostSubmitButton);
 exports['default'] = PostSubmitButton;

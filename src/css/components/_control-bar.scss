@@ -5,25 +5,25 @@
   right: 0;
   width: 2.8em;
 
-  margin: 50px $padding-global $padding-global $padding-global;
+  margin: 50px $kmt-padding-global $kmt-padding-global $kmt-padding-global;
 
   border-radius: 4em;
 
-  @include background-color-with-alpha($primary-background-color, $primary-background-transparency);
+  @include background-color-with-alpha($kmt-primary-background-color, $kmt-primary-background-transparency);
 }
 
 .koment.koment-toggle-edit .koment-control-bar {
-  margin-top: $padding-global;
-  top: $padding-global;
-  left: $padding-global;
-  right: $padding-global;
+  margin-top: $kmt-padding-global;
+  top: $kmt-padding-global;
+  left: $kmt-padding-global;
+  right: $kmt-padding-global;
   width: auto;
-  border-radius: $primary-border-radius;
+  border-radius: $kmt-primary-border-radius;
   max-height: 150px;
   flex-direction: row;
   $trans: all 0.4s; // Var needed because of comma
   @include transition($trans);
-  @include background-color-with-alpha($primary-background-color, 1);
+  @include background-color-with-alpha($kmt-primary-background-color, 1);
 }
 
 // Video has started playing

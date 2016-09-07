@@ -268,7 +268,7 @@ var PostCommentBox = (function (_Component) {
         'contenteditable': true,
         'aria-multiline': false,
         'max-length': 140,
-        'data-placeHolder-default': 'Add your comment here...'
+        'data-placeHolder-default': this.localize('Add your comment here...')
       });
 
       this.spanEl = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {

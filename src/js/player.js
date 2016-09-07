@@ -2208,9 +2208,14 @@ class Player extends Component {
       sources: [],
       tracks: []
     };
+    let tagOptions = Dom.getElAttributes(tag);
+    let dataSetup = tagOptions['data-setup'];
 
-    const tagOptions = Dom.getElAttributes(tag);
-    const dataSetup = tagOptions['data-setup'];
+    if (!dataSetup) {
+      tagOptions = Dom.getElAttributes(tag.parentNode)
+      dataSetup = tagOptions['data-setup'];
+    }
+
     // Check if data-setup attr exists.
     if (dataSetup !== null) {
       // Parse options JSON

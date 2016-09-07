@@ -230,7 +230,7 @@ class PostCommentBox extends Component {
       'contenteditable': true,
       'aria-multiline': false,
       'max-length': 140,
-      'data-placeHolder-default': 'Add your comment here...'
+      'data-placeHolder-default': this.localize('Add your comment here...')
     });
 
     this.spanEl = super.createEl('div', {

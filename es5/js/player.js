@@ -2487,9 +2487,14 @@ var Player = (function (_Component) {
         sources: [],
         tracks: []
       };
-
       var tagOptions = Dom.getElAttributes(tag);
       var dataSetup = tagOptions['data-setup'];
+
+      if (!dataSetup) {
+        tagOptions = Dom.getElAttributes(tag.parentNode);
+        dataSetup = tagOptions['data-setup'];
+      }
+
       // Check if data-setup attr exists.
       if (dataSetup !== null) {
         // Parse options JSON

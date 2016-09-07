@@ -75,10 +75,10 @@ var autoSetup = function autoSetup() {
           var options = mediaEl.getAttribute('data-setup') || wrapper && wrapper.getAttribute && wrapper.getAttribute('data-setup');
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
-          //if (options !== null) {
-          // Create new video.js instance.
-          koment(mediaEl, options || { controls: 1 });
-          //}
+          if (options !== null) {
+            // Create new video.js instance.
+            koment(mediaEl);
+          }
         }
 
         // If getAttribute isn't defined, we need to wait for the DOM.

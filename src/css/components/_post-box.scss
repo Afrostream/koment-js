@@ -9,6 +9,9 @@
 }
 
 .koment .kmt-post-submit-button {
+  flex: 1;
+  width: inherit;
+  padding: 0.5em;
   height: 3em;
   font-size: 1.5em;
   .koment-control-text {
@@ -68,28 +71,28 @@
     position: relative;
     max-height: 100%;
     width: 100%;
-    border-radius: $primary-border-radius / 2;
+    border-radius: $kmt-primary-border-radius / 2;
     padding: 0.5em;
     font-size: 1.3em;
     @include background-color-with-alpha(#3498db, 1);
-    color: $primary-background-color;
+    color: $kmt-primary-background-color;
     margin-right: 0.5em;
 
     &:after {
       content: '';
       position: absolute;
       border-style: solid;
-      left: 10px + $primary-border-radius;
+      left: 10px + $kmt-primary-border-radius;
       bottom: -17px;
       width: 0;
       height: 0;
       border-width: 10px 6px 0 6px;
-      border-color: rgba($primary-background-color, 1) transparent transparent transparent;
+      border-color: rgba($kmt-primary-background-color, 1) transparent transparent transparent;
       transform: skewX(-20deg);
     }
 
     &:before {
-      color: rgba($primary-background-color, 0.8);
+      color: rgba($kmt-primary-background-color, 0.8);
     }
 
     [contentEditable=true]:empty:not(:focus):before {

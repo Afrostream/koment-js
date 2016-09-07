@@ -50,13 +50,13 @@
   video.className = 'video-js vjs-afrostream-skin';
   video.crossOrigin = true;
   video.setAttribute('crossorigin', true);
-  video.setAttribute('data-setup', '{"controls":1,"api":"https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments","token":"cab46dacdc415f7fef0166b211afd9dcf7b9ab70","user":{"id":"toto","avatar":"//graph.facebook.com/10204404008400201/picture","username":"benjipott"}}');
+  video.setAttribute('data-setup', '{"controls":1,"api":"https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments","token":"cab46dacdc415f7fef0166b211afd9dcf7b9ab70","user":{"id":"toto","avatar":"//graph.facebook.com/10204404008400201/picture","username":"benjipott"},"languages":{"fr":{"Send":"Envoyer","Add your comment here...":"Commenter"}}}');
   container.appendChild(video);
 
 
   player = videojs('player', {
     controls: 1,
-    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
+//    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
     sources: [{
       src: 'http://vjs.zencdn.net/v/oceans.mp4',
       type: 'video/mp4'
