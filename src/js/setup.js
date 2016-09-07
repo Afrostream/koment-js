@@ -62,7 +62,7 @@ const autoSetup = function () {
         }
         // Make sure this player hasn't already been set up.
         if (mediaEl.koment === undefined) {
-          let options = mediaEl.getAttribute('data-setup');
+          let options = mediaEl.getAttribute('data-setup') || wrapper && wrapper.getAttribute && wrapper.getAttribute('data-setup');
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
           //if (options !== null) {
