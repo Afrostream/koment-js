@@ -21600,10 +21600,6 @@ var _utilsFnJs = require('../utils/fn.js');
 
 var Fn = _interopRequireWildcard(_utilsFnJs);
 
-var _utilsDom = require('../utils/dom');
-
-var Dom = _interopRequireWildcard(_utilsDom);
-
 var _xhr = require('xhr');
 
 var _xhr2 = _interopRequireDefault(_xhr);
@@ -21636,30 +21632,23 @@ var KomentDisplay = (function (_Component) {
     this.on('tap', this.handleClick);
     this.on('click', this.handleClick);
 
-    var data = {
+    this.data_ = {
       json: true,
-      uri: this.options_.url,
+      uri: this.player_.options_.api,
       method: 'GET',
       headers: {
+        'Access-Token': this.player_.options_.token,
         'Content-Type': 'application/json'
       }
     };
 
     var kommentsList = [];
-    var tc = 0;
-    (0, _xhr2['default'])(data, function (err, res) {
+    (0, _xhr2['default'])(this.data_, function (err, res) {
       if (err) {
         throw new Error(err.message);
       }
       kommentsList = res.body || [];
 
-      //forEach(res.body || [], (item)=> {
-      //  forEach(res.body || [], ()=> {
-      //    let copyItem = clone(item)
-      //    copyItem.timecode = Math.round(Math.random() * (50 - 0) + 0);
-      //    kommentsList.push(copyItem)
-      //  })
-      //});
       (0, _lodash.forEach)(kommentsList, function (item) {
         if (item.user && item.user.facebook) {
           item.user = (0, _lodash.merge)(item.user, {
@@ -21668,20 +21657,6 @@ var KomentDisplay = (function (_Component) {
           });
         }
       });
-
-      //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-      //for (let i = 0; i < 50; i++) {
-      //  kommentsList.push({
-      //    text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-      //    timecode: Math.round(Math.random() * (352 - 0) + 0),
-      //    avatar: '//graph.facebook.com/10204404008400201/picture'
-      //  });
-      //}
-      //kommentsList.push({
-      //  text: 'yes c\'est la fin',
-      //  timecode: 345,
-      //  avatar: '//graph.facebook.com/10204404008400201/picture'
-      //});
 
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
 
@@ -21726,6 +21701,14 @@ var KomentDisplay = (function (_Component) {
       this.items.unshift(mi);
       this.addChild(mi);
       this.requestTick(true);
+      var json = (0, _lodash.pick)(item, ['timecode', 'text']);
+
+      (0, _xhr2['default'])((0, _lodash.merge)(this.data_, { method: 'POST', json: json }), function (err, res) {
+        if (err) {
+          throw new Error(err.message);
+        }
+        console.log('koment posted', res);
+      });
     }
 
     /**
@@ -21814,10 +21797,8 @@ var KomentDisplay = (function (_Component) {
       filtereds = (0, _lodash.filter)(filtereds, function (item) {
         return Math.round(item.timecode) === currentTimecode;
       });
-      filtereds = (0, _lodash.take)(filtereds, Math.max(0, 2 - nbVisible));
+      filtereds = (0, _lodash.take)(filtereds, Math.max(0, this.options_.max - nbVisible));
 
-      console.log('nbVisible', nbVisible);
-      console.log('filtereds', filtereds.length);
       (0, _lodash.forEach)(filtereds, function (item) {
         if (!item.hasClass(className)) {
           item.addClass(className);
@@ -21834,8 +21815,8 @@ var KomentDisplay = (function (_Component) {
 })(_component2['default']);
 
 KomentDisplay.prototype.options_ = {
-  url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,
+  max: 3,
   template: 'viki'
 };
 
@@ -21843,7 +21824,7 @@ _component2['default'].registerComponent('KomentDisplay', KomentDisplay);
 exports['default'] = KomentDisplay;
 module.exports = exports['default'];
 
-},{"../component":66,"../utils/dom":98,"../utils/fn.js":100,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
+},{"../component":66,"../utils/fn.js":100,"./koment-item":68,"lodash":49,"xhr":61}],68:[function(require,module,exports){
 /**
  * @file koment-item.js
  **/
@@ -22400,7 +22381,7 @@ module.exports = exports['default'];
 
 },{"../button.js":64,"../component.js":66,"../utils/dom":98,"../utils/to-title-case":107}],73:[function(require,module,exports){
 /**
- * @file post-toggle.js
+ * @file post-box.js
  */
 
 'use strict';
@@ -22663,6 +22644,7 @@ var PostCommentBox = (function (_Component) {
       switch (e.keyCode) {
         case key['enter']:
           e.preventDefault();
+          this.player_.trigger('submit');
           break;
         case key['escape']:
           e.preventDefault();
@@ -22719,9 +22701,10 @@ var PostCommentBox = (function (_Component) {
     key: 'onSubmit',
     value: function onSubmit() {
       var text = this.value();
-      var timecode = this.player_.currentTime();
+      var timecode = Math.round(this.player_.currentTime());
+      var user = this.player_.options_.user;
       this.clear();
-      this.player_.sendKoment({ text: text, timecode: timecode });
+      this.player_.sendKoment({ text: text, timecode: timecode, user: user });
     }
   }, {
     key: 'createEl',
@@ -23706,7 +23689,7 @@ var TimelineProgressBar = (function (_Component) {
     _classCallCheck(this, TimelineProgressBar);
 
     _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'constructor', this).call(this, player, options);
-    this.on(player, 'komentsupdated', this.update);
+    this.on(player, 'komentsupdated', this.insert);
     this.on(player, 'progress', this.update);
   }
 
@@ -23731,6 +23714,36 @@ var TimelineProgressBar = (function (_Component) {
      * @method update
      */
   }, {
+    key: 'insert',
+    value: function insert(e) {
+      var duration = this.player_.duration();
+      var item = e.data;
+      var part = this.addChild(new _timelineProgressItemJs2['default'](this.player_, e.data));
+      // set the percent based on the width of the progress bar (bufferedEnd)
+      part.el_.style.left = this.percentify(item.timecode, duration);
+    }
+
+    /**
+     * get percent position in timeline
+     * @param time
+     * @param end
+     * @returns {string}
+     */
+  }, {
+    key: 'percentify',
+    value: function percentify(time, end) {
+      // no NaN
+      var percent = time / end || 0;
+
+      return (percent >= 1 ? 1 : percent) * 100 + '%';
+    }
+
+    /**
+     * Update progress bar
+     *
+     * @method update
+     */
+  }, {
     key: 'update',
     value: function update() {
       var _this = this;
@@ -23738,14 +23751,6 @@ var TimelineProgressBar = (function (_Component) {
       var items = this.player_.komentsList();
       var duration = this.player_.duration();
       var children = this.children();
-
-      // get the percent width of a time compared to the total end
-      var percentify = function percentify(time, end) {
-        // no NaN
-        var percent = time / end || 0;
-
-        return (percent >= 1 ? 1 : percent) * 100 + '%';
-      };
 
       // add child elements to represent the individual buffered time ranges
       (0, _lodash.forEach)(items, function (item, i) {
@@ -23756,7 +23761,7 @@ var TimelineProgressBar = (function (_Component) {
           part = _this.addChild(new _timelineProgressItemJs2['default'](_this.player_, item));
         }
         // set the percent based on the width of the progress bar (bufferedEnd)
-        part.el_.style.left = percentify(item.timecode, duration);
+        part.el_.style.left = _this.percentify(item.timecode, duration);
       });
     }
   }]);
@@ -23827,7 +23832,7 @@ var TimelineProgressItem = (function (_Component) {
   _createClass(TimelineProgressItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.user.avatar;
+      var url = this.user.avatar;
 
       this.setSrc(url);
 

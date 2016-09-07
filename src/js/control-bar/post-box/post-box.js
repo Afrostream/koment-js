@@ -1,5 +1,5 @@
 /**
- * @file post-toggle.js
+ * @file post-box.js
  */
 
 import Component from '../../component.js';

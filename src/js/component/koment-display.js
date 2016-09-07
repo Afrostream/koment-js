@@ -3,9 +3,8 @@
  **/
 import Component from '../component';
 import * as Fn from '../utils/fn.js';
-import * as Dom from '../utils/dom'
 import xhr from 'xhr'
-import { filter, forEach, map, clone, sortBy, take, difference, uniq, merge } from 'lodash';
+import { filter, forEach, map, sortBy, take, uniq, merge, pick } from 'lodash';
 import KomentItem from './koment-item';
 
 /**
@@ -24,30 +23,23 @@ class KomentDisplay extends Component {
     this.on('tap', this.handleClick);
     this.on('click', this.handleClick);
 
-    let data = {
+    this.data_ = {
       json: true,
-      uri: this.options_.url,
+      uri: this.player_.options_.api,
       method: 'GET',
       headers: {
+        'Access-Token': this.player_.options_.token,
         'Content-Type': 'application/json'
       }
     };
 
     let kommentsList = [];
-    let tc = 0;
-    xhr(data, (err, res) => {
+    xhr(this.data_, (err, res) => {
       if (err) {
         throw new Error(err.message)
       }
       kommentsList = res.body || [];
 
-      //forEach(res.body || [], (item)=> {
-      //  forEach(res.body || [], ()=> {
-      //    let copyItem = clone(item)
-      //    copyItem.timecode = Math.round(Math.random() * (50 - 0) + 0);
-      //    kommentsList.push(copyItem)
-      //  })
-      //});
       forEach(kommentsList, (item)=> {
         if (item.user && item.user.facebook) {
           item.user = merge(item.user, {
@@ -56,20 +48,6 @@ class KomentDisplay extends Component {
           });
         }
       });
-
-      //const dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-      //for (let i = 0; i < 50; i++) {
-      //  kommentsList.push({
-      //    text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-      //    timecode: Math.round(Math.random() * (352 - 0) + 0),
-      //    avatar: '//graph.facebook.com/10204404008400201/picture'
-      //  });
-      //}
-      //kommentsList.push({
-      //  text: 'yes c\'est la fin',
-      //  timecode: 345,
-      //  avatar: '//graph.facebook.com/10204404008400201/picture'
-      //});
 
       kommentsList = sortBy(kommentsList, ['timecode']);
 
@@ -108,6 +86,14 @@ class KomentDisplay extends Component {
     this.items.unshift(mi);
     this.addChild(mi);
     this.requestTick(true);
+    const json = pick(item, ['timecode', 'text']);
+
+    xhr(merge(this.data_, {method: 'POST', json}), (err, res) => {
+      if (err) {
+        throw new Error(err.message)
+      }
+      console.log('koment posted', res);
+    });
   }
 
   /**
@@ -177,10 +163,8 @@ class KomentDisplay extends Component {
 
     filtereds = sortBy(filtereds, 'timecode');
     filtereds = filter(filtereds, (item)=> Math.round(item.timecode) === currentTimecode);
-    filtereds = take(filtereds, Math.max(0, 2 - nbVisible));
+    filtereds = take(filtereds, Math.max(0, this.options_.max - nbVisible));
 
-    console.log('nbVisible', nbVisible)
-    console.log('filtereds', filtereds.length)
     forEach(filtereds, (item)=> {
       if (!item.hasClass(className)) {
         item.addClass(className);
@@ -195,8 +179,8 @@ class KomentDisplay extends Component {
 }
 
 KomentDisplay.prototype.options_ = {
-  url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,
+  max: 3,
   template: 'viki'
 };
 

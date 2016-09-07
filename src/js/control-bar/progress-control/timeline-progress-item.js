@@ -25,7 +25,7 @@ class TimelineProgressItem extends Component {
    * @method update
    */
   update () {
-    const url = this.options_.user.avatar;
+    const url = this.user.avatar;
 
     this.setSrc(url);
 

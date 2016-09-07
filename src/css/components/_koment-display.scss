@@ -52,29 +52,31 @@
         background-position: center center;
         background-repeat: no-repeat;
 
-        &:after {
-          content: "";
-          position: absolute;
-          top: 0;
-          right: 0;
-          width: 0;
-          height: 0;
-          border: 5px solid rgba($primary-background-color, 0.6);
-          border-left-color: transparent;
-          border-bottom-color: transparent;
-        }
-        //clip-path: polygon(0 0, 100% 0, 0% 100%, 0 0);
-        //-webkit-clip-path: polygon(0 0, 100% 0, 0% 100%, 0 0);
+        clip-path: polygon(30px 0, 100% 10px, 100% 100%, 0 100%, 0 0);
+        -webkit-clip-path: polygon(30px 0, 100% 10px, 100% 100%, 0 100%, 0 0);
       }
 
       .koment-item-display {
+        position: relative;
         padding: 0.5em;
-        color: $primary-foreground-color;
+        color: $primary-background-color;
         border-radius: $primary-border-radius;
         min-height: 40px;
         max-width: 350px;
         height: 100%;
-        @include background-color-with-alpha($primary-background-color, 0.6);
+        @include background-color-with-alpha($primary-foreground-color, 0.6);
+
+        &:after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: -10px;
+          width: 0;
+          height: 0;
+          border: 5px solid rgba($primary-foreground-color, 0.6);
+          border-left-color: transparent;
+          border-bottom-color: transparent;
+        }
 
       }
       &.koment-show {

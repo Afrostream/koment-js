@@ -158,6 +158,7 @@ class PostCommentBox extends Component {
     switch (e.keyCode) {
       case key['enter']:
         e.preventDefault();
+        this.player_.trigger('submit');
         break;
       case key['escape']:
         e.preventDefault();
@@ -212,9 +213,10 @@ class PostCommentBox extends Component {
 
   onSubmit () {
     const text = this.value();
-    const timecode = this.player_.currentTime();
+    const timecode = Math.round(this.player_.currentTime());
+    const user = this.player_.options_.user;
     this.clear();
-    this.player_.sendKoment({text, timecode})
+    this.player_.sendKoment({text, timecode, user})
   }
 
   createEl () {
