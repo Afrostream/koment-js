@@ -1,20 +1,20 @@
 $kmt-icon-font-family: koment;
-$kmt-icon-font-path: 'fonts';
+$kmt-icon-font-path: 'fonts' !default;
 
 // Text, icons, hover states
-$kmt-primary-foreground-color: #000000;
-$kmt-primary-border-radius: 0px;
+$kmt-primary-foreground-color: #000000 !default;
+$kmt-primary-border-radius: 0px !default;
 // Control backgrounds (control bar, big play, menus)
-$kmt-primary-background-color: #fff;
-$kmt-primary-background-transparency: 0.9;
+$kmt-primary-background-color: #fff !default;
+$kmt-primary-background-transparency: 0.9 !default;
 
 // Hover states, slider backgrounds
-$kmt-secondary-background-color: lighten($kmt-primary-background-color, 33%);
-$kmt-secondary-background-transparency: 0.5;
+$kmt-secondary-background-color: lighten($kmt-primary-background-color, 33%) !default;
+$kmt-secondary-background-transparency: 0.5 !default;
 
-$kmt-text-font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+$kmt-text-font-family: 'Montserrat', Arial, Helvetica, sans-serif !default;
 
 // Using the '--' naming for component-specific styles
-$kmt-padding-global: 1em;
+$kmt-padding-global: 1em !default;
 
-$kmt-primary-box-color: #3498db;
+$kmt-primary-box-color: #3498db !default;
