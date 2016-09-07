@@ -28,7 +28,7 @@
     color: #FFFFFF;
     &:before {
       width: 100%;
-      background-color: #3498db;
+      background-color: $kmt-primary-box-color;
     }
   }
 
@@ -45,9 +45,9 @@
   }
 
   cursor: pointer;
-  border: #3498db solid 4px;
+  border: $kmt-primary-box-color solid 4px;
   background-color: #FFF;
-  color: #3498db;
+  color: $kmt-primary-box-color;
   transition: all 0.3s;
   font-weight: 700;
 }
@@ -74,7 +74,7 @@
     border-radius: $kmt-primary-border-radius / 2;
     padding: 0.5em;
     font-size: 1.3em;
-    @include background-color-with-alpha(#3498db, 1);
+    @include background-color-with-alpha($kmt-primary-box-color, 1);
     color: $kmt-primary-background-color;
     margin-right: 0.5em;
 
