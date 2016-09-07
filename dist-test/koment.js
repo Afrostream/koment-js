@@ -21656,9 +21656,8 @@ var KomentDisplay = (function (_Component) {
       //forEach(res.body || [], (item)=> {
       //  forEach(res.body || [], ()=> {
       //    let copyItem = clone(item)
-      //    copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
+      //    copyItem.timecode = Math.round(Math.random() * (50 - 0) + 0);
       //    kommentsList.push(copyItem)
-      //    tc += 0.2
       //  })
       //});
       (0, _lodash.forEach)(kommentsList, function (item) {
@@ -21747,27 +21746,33 @@ var KomentDisplay = (function (_Component) {
         this.addChild(mi);
       }
 
-      switch (this.options_.template) {
-        case 'timeline':
-          this.showElements = this.showElementsTimeline;
-          this.on(this.player_, 'loadedmetadata', this.positionTimeline);
-          this.on(this.player_, 'pause', this.replaceTick);
-          this.on(this.player_, 'play', this.replaceTick);
-          this.on(this.player_, 'seeked', this.requestTick);
-          this.on(this.player_, 'timeupdate', this.requestTick);
-          break;
-        case 'viki':
-          this.showElements = this.showElementsViki;
-          this.on(this.player_, 'timeupdate', this.requestTick);
-          this.on(this.player_, 'pause', this.replaceTick);
-          this.on(this.player_, 'play', this.replaceTick);
-          break;
-      }
+      this.on(this.player_, 'timeupdate', this.requestTick);
+      this.on(this.player_, 'pause', this.timeoutReplace);
+      this.on(this.player_, 'play', this.timeoutReplace);
 
       this.on(this.player_, 'komentsupdated', this.update);
       this.on(this.player_, 'togglemenu', this.requestTick);
 
       this.addClass(this.options_.template);
+    }
+  }, {
+    key: 'timeoutReplace',
+    value: function timeoutReplace() {
+      var _this2 = this;
+
+      var currentTimecode = Math.round(this.player_.currentTime());
+      var paused = this.player_.paused() && currentTimecode > 0;
+      var visibleItems = (0, _lodash.filter)(this.items, function (item) {
+        return item.hasClass('koment-show');
+      });
+
+      (0, _lodash.forEach)(visibleItems, function (item) {
+        if (!paused) {
+          item.timeout = item.setTimeout(item.hide, _this2.options_.tte * 1000);
+        } else {
+          item.clearTimeout(item.timeout);
+        }
+      });
     }
   }, {
     key: 'replaceTick',
@@ -21790,128 +21795,48 @@ var KomentDisplay = (function (_Component) {
         this.ticking = true;
       }
     }
-
-    //VIKI MODE
   }, {
-    key: 'showElementsViki',
-    value: function showElementsViki() {
-      var _this2 = this;
+    key: 'showElements',
+    value: function showElements() {
+      var _this3 = this;
 
       var className = 'koment-show';
       var currentTimecode = Math.round(this.player_.currentTime());
-      var paused = this.player_.paused() && currentTimecode > 0;
-      var nbVisible = (0, _lodash.filter)(this.items, function (item) {
+      var visibleItems = (0, _lodash.filter)(this.items, function (item) {
         return item.hasClass(className);
       });
+      var nbVisible = visibleItems.length;
       var filtereds = (0, _lodash.uniq)(this.items, function (item) {
         return Math.round(item.timecode);
       });
 
-      //if (!paused) {
       filtereds = (0, _lodash.sortBy)(filtereds, 'timecode');
       filtereds = (0, _lodash.filter)(filtereds, function (item) {
         return Math.round(item.timecode) === currentTimecode;
       });
-      filtereds = (0, _lodash.slice)(filtereds, Math.min(2, nbVisible.length));
-      //}
+      filtereds = (0, _lodash.take)(filtereds, Math.max(0, 2 - nbVisible));
 
+      console.log('nbVisible', nbVisible);
+      console.log('filtereds', filtereds.length);
       (0, _lodash.forEach)(filtereds, function (item) {
         if (!item.hasClass(className)) {
-          item.show();
           item.addClass(className);
-          item.timeout = item.setTimeout(item.hide, _this2.options_.tte * 1000);
+          item.show();
+          item.timeout = item.setTimeout(item.hide, _this3.options_.tte * 1000);
         }
       });
-
-      //forEach(this.items, (item)=> {
-      //  if (item.hasClass(className)) {
-      //    if (!paused) {
-      //      item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
-      //    } else {
-      //      item.clearTimeout(item.timeout);
-      //    }
-      //  }
-      //});
 
       this.ticking = false;
-    }
-
-    //TIMELINE MODE
-  }, {
-    key: 'showElementsTimeline',
-    value: function showElementsTimeline() {
-      var _this3 = this;
-
-      var className = this.pause ? 'koment-paused' : 'koment-show';
-      var currentTimecode = this.player_.currentTime();
-      var playerWidth = this.player_.width();
-      var positionGap = this.options_.tte + 5;
-      (0, _lodash.forEach)(this.items, function (item) {
-        var inTimeCodeRange = item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
-        if (inTimeCodeRange) {
-          var percent = (_this3.options_.tte - (currentTimecode - item.timecode)) / _this3.options_.tte;
-          var position = percent * playerWidth - playerWidth;
-          var _top = 0;
-          if (!item.hasClass(className)) {
-            item.removeClass('koment-mask');
-            item.removeClass('koment-show');
-            item.removeClass('koment-paused');
-            item.addClass(className);
-          }
-          item.el_.style.webkitTransform = 'translate3d(' + position + 'px, ' + _top + 'px, 0)';
-        } else {
-          if (!item.hasClass('koment-mask')) {
-            item.removeClass('koment-paused');
-            item.removeClass('koment-show');
-            item.addClass('koment-mask');
-          }
-        }
-      });
-      this.ticking = false;
-    }
-  }, {
-    key: 'positionTimeline',
-    value: function positionTimeline() {
-      var _this4 = this;
-
-      var leftItem = 0;
-      var playerWidth = this.player_.width();
-      (0, _lodash.forEach)(this.items, function (item, key) {
-        var prevItem = _this4.items[key - 1];
-        var percent = (_this4.options_.tte - item.timecode) / _this4.options_.tte;
-        var position = playerWidth - percent * playerWidth;
-        var top = 0;
-
-        if (prevItem) {
-          var prevItemPos = Dom.findElPosition(prevItem.el_);
-          prevItemPos.width = prevItem.width();
-          prevItemPos.height = prevItem.height();
-
-          var percentPrevItem = (_this4.options_.tte - prevItem.timecode) / _this4.options_.tte;
-          var positionPrevItem = playerWidth - percentPrevItem * playerWidth;
-          if (positionPrevItem + prevItemPos.width > position) {
-            top = prevItemPos.top + prevItemPos.height;
-            if (top > 150) {
-              top = 0;
-            }
-          }
-        }
-
-        item.el_.style.left = playerWidth + leftItem + 'px';
-        item.el_.style.top = top + 'px';
-      });
     }
   }]);
 
   return KomentDisplay;
 })(_component2['default']);
 
-KomentDisplay.prototype.showElements = function () {};
-
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,
-  template: 'viki' //'timeline'
+  template: 'viki'
 };
 
 _component2['default'].registerComponent('KomentDisplay', KomentDisplay);

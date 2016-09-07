@@ -5,7 +5,7 @@ import Component from '../component';
 import * as Fn from '../utils/fn.js';
 import * as Dom from '../utils/dom'
 import xhr from 'xhr'
-import { filter, forEach, map, clone, sortBy, slice, difference, uniq, merge } from 'lodash';
+import { filter, forEach, map, clone, sortBy, take, difference, uniq, merge } from 'lodash';
 import KomentItem from './koment-item';
 
 /**
@@ -44,9 +44,8 @@ class KomentDisplay extends Component {
       //forEach(res.body || [], (item)=> {
       //  forEach(res.body || [], ()=> {
       //    let copyItem = clone(item)
-      //    copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
+      //    copyItem.timecode = Math.round(Math.random() * (50 - 0) + 0);
       //    kommentsList.push(copyItem)
-      //    tc += 0.2
       //  })
       //});
       forEach(kommentsList, (item)=> {
@@ -127,27 +126,28 @@ class KomentDisplay extends Component {
       this.addChild(mi);
     }
 
-    switch (this.options_.template) {
-      case 'timeline':
-        this.showElements = this.showElementsTimeline;
-        this.on(this.player_, 'loadedmetadata', this.positionTimeline);
-        this.on(this.player_, 'pause', this.replaceTick);
-        this.on(this.player_, 'play', this.replaceTick);
-        this.on(this.player_, 'seeked', this.requestTick);
-        this.on(this.player_, 'timeupdate', this.requestTick);
-        break;
-      case 'viki':
-        this.showElements = this.showElementsViki;
-        this.on(this.player_, 'timeupdate', this.requestTick);
-        this.on(this.player_, 'pause', this.replaceTick);
-        this.on(this.player_, 'play', this.replaceTick);
-        break;
-    }
+    this.on(this.player_, 'timeupdate', this.requestTick);
+    this.on(this.player_, 'pause', this.timeoutReplace);
+    this.on(this.player_, 'play', this.timeoutReplace);
 
     this.on(this.player_, 'komentsupdated', this.update);
     this.on(this.player_, 'togglemenu', this.requestTick);
 
     this.addClass(this.options_.template);
+  }
+
+  timeoutReplace () {
+    const currentTimecode = Math.round(this.player_.currentTime());
+    const paused = this.player_.paused() && currentTimecode > 0;
+    const visibleItems = filter(this.items, (item)=> item.hasClass('koment-show'));
+
+    forEach(visibleItems, (item)=> {
+      if (!paused) {
+        item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
+      } else {
+        item.clearTimeout(item.timeout);
+      }
+    });
   }
 
   replaceTick () {
@@ -168,110 +168,36 @@ class KomentDisplay extends Component {
     }
   }
 
-  //VIKI MODE
-  showElementsViki () {
+  showElements () {
     let className = 'koment-show';
     const currentTimecode = Math.round(this.player_.currentTime());
-    let paused = this.player_.paused() && currentTimecode > 0;
-    let nbVisible = filter(this.items, (item)=> item.hasClass(className));
+    let visibleItems = filter(this.items, (item)=> item.hasClass(className));
+    let nbVisible = visibleItems.length;
     let filtereds = uniq(this.items, (item)=> Math.round(item.timecode));
 
-    //if (!paused) {
     filtereds = sortBy(filtereds, 'timecode');
     filtereds = filter(filtereds, (item)=> Math.round(item.timecode) === currentTimecode);
-    filtereds = slice(filtereds, Math.min(2, nbVisible.length));
-    //}
+    filtereds = take(filtereds, Math.max(0, 2 - nbVisible));
 
+    console.log('nbVisible', nbVisible)
+    console.log('filtereds', filtereds.length)
     forEach(filtereds, (item)=> {
       if (!item.hasClass(className)) {
-        item.show();
         item.addClass(className);
+        item.show();
         item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
       }
     });
 
-    //forEach(this.items, (item)=> {
-    //  if (item.hasClass(className)) {
-    //    if (!paused) {
-    //      item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
-    //    } else {
-    //      item.clearTimeout(item.timeout);
-    //    }
-    //  }
-    //});
-
     this.ticking = false;
-  }
-
-  //TIMELINE MODE
-  showElementsTimeline () {
-    let className = this.pause ? 'koment-paused' : 'koment-show';
-    const currentTimecode = this.player_.currentTime();
-    const playerWidth = this.player_.width();
-    const positionGap = (this.options_.tte + 5);
-    forEach(this.items, (item)=> {
-      const inTimeCodeRange = (item.timecode <= currentTimecode + positionGap) && (item.timecode >= currentTimecode - positionGap);
-      if (inTimeCodeRange) {
-        let percent = (this.options_.tte - (currentTimecode - item.timecode)) / (this.options_.tte);
-        let position = (percent * playerWidth) - playerWidth;
-        let top = 0;
-        if (!item.hasClass(className)) {
-          item.removeClass('koment-mask');
-          item.removeClass('koment-show');
-          item.removeClass('koment-paused');
-          item.addClass(className);
-        }
-        item.el_.style.webkitTransform = `translate3d(${position}px, ${top}px, 0)`;
-      }
-      else {
-        if (!item.hasClass('koment-mask')) {
-          item.removeClass('koment-paused');
-          item.removeClass('koment-show');
-          item.addClass('koment-mask');
-        }
-      }
-    });
-    this.ticking = false;
-  }
-
-  positionTimeline () {
-    let leftItem = 0;
-    const playerWidth = this.player_.width();
-    forEach(this.items, (item, key)=> {
-      let prevItem = this.items[key - 1];
-      let percent = (this.options_.tte - (item.timecode)) / (this.options_.tte);
-      let position = playerWidth - (percent * playerWidth);
-      let top = 0;
-
-      if (prevItem) {
-        let prevItemPos = Dom.findElPosition(prevItem.el_);
-        prevItemPos.width = prevItem.width();
-        prevItemPos.height = prevItem.height();
-
-        let percentPrevItem = (this.options_.tte - (prevItem.timecode)) / (this.options_.tte);
-        let positionPrevItem = playerWidth - (percentPrevItem * playerWidth);
-        if ((positionPrevItem + prevItemPos.width) > position) {
-          top = prevItemPos.top + prevItemPos.height;
-          if (top > 150) {
-            top = 0;
-          }
-        }
-      }
-
-      item.el_.style.left = playerWidth + leftItem + 'px';
-      item.el_.style.top = top + 'px';
-    });
   }
 
 }
 
-KomentDisplay.prototype.showElements = ()=> {
-};
-
 KomentDisplay.prototype.options_ = {
   url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,
-  template: 'viki'//'timeline'
+  template: 'viki'
 };
 
 Component.registerComponent('KomentDisplay', KomentDisplay);
