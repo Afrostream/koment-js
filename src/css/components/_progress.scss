@@ -13,15 +13,19 @@
 //
 
 .koment .koment-progress-control {
-  @include flex(auto);
-  @include display-flex(center);
+  display: none;
   height: 0.4em;
   min-width: 4em;
   width: 100%;
 }
 
+.koment.koment-toggle-menu .koment-progress-control {
+  @include flex(auto);
+  @include display-flex(center);
+}
+
 .koment-live .koment-progress-control {
-  display: none;
+  //display: none;
 }
 
 // Box containing play and load progresses. Also acts as seek scrubber.
@@ -31,9 +35,13 @@
   height: 0.3em;
 }
 
+.koment .koment-progress-control:hover {
+  height: 3em;
+}
+
 // We need an increased hit area on hover
 .koment .koment-progress-control:hover .koment-progress-holder {
-  //font-size: 1.666666666666666666em
+  font-size: 3em;
 }
 
 /* If we let the font size grow as much as everything else, the current time tooltip ends up
@@ -46,7 +54,7 @@
 .koment .koment-progress-control:hover .koment-play-progress:after {
   font-family: $text-font-family;
   visibility: visible;
-  font-size: 0.6em;
+  font-size: 0.2em;
 }
 
 // Progress Bars
@@ -54,7 +62,7 @@
 .koment .koment-progress-holder .koment-load-progress,
 .koment .koment-progress-holder .koment-timeline-progress,
 .koment .koment-progress-holder .koment-tooltip-progress-bar,
-.koment .koment-progress-holder .koment-timeline-progress div,
+.koment .koment-progress-holder .koment-timeline-progress .kmt-timeline-progress-item,
 .koment .koment-progress-holder .koment-load-progress div {
   position: absolute;
   display: block;
@@ -70,8 +78,15 @@
 
 .koment .koment-progress-holder .koment-timeline-progress {
   width: 100%;
-  div {
-    width: 1px;
+  .kmt-timeline-progress-item {
+    .koment-item-avatar {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+    width: 20px;
     @include background-color-with-alpha($primary-background-color, 0.3);
   }
 }
@@ -103,7 +118,7 @@
   visibility: hidden;
   pointer-events: none;
   position: absolute;
-  top: -3.4em;
+  bottom: -3.4em;
   right: -1.9em;
   font-size: 0.9em;
   color: #000;

@@ -4,6 +4,7 @@
 import Component from '../../component.js';
 import * as Dom from '../../utils/dom.js';
 import { forEach } from 'lodash';
+import TimelineProgressItem from './timeline-progress-item.js'
 /**
  * Shows load progress
  *
@@ -40,7 +41,7 @@ class TimelineProgressBar extends Component {
   update () {
     const items = this.player_.komentsList();
     const duration = this.player_.duration();
-    const children = this.el_.children;
+    const children = this.children();
 
     // get the percent width of a time compared to the total end
     const percentify = function (time, end) {
@@ -50,19 +51,16 @@ class TimelineProgressBar extends Component {
       return ((percent >= 1 ? 1 : percent) * 100) + '%';
     };
 
-
     // add child elements to represent the individual buffered time ranges
     forEach(items, (item, i)=> {
-
 
       let part = children[i];
 
       if (!part) {
-        part = this.el_.appendChild(Dom.createEl());
+        part = this.addChild(new TimelineProgressItem(this.player_, item));
       }
-
       // set the percent based on the width of the progress bar (bufferedEnd)
-      part.style.left = percentify(item.timecode, duration);
+      part.el_.style.left = percentify(item.timecode, duration);
     });
 
   }
