@@ -1,6 +1,7 @@
 /**
  * @file koment-toggle.js
  */
+import toTitleCase from '../../utils/to-title-case'
 import document from 'global/document';
 import Component from '../../component.js';
 import './post-comment-box';
@@ -176,10 +177,8 @@ class PostCommentBox extends Component {
     let length = value.length;
     let totalLength = value.length;
     if (totalLength >= max) {
-      value = value.substring(0, max - length);
       e.preventDefault();
     }
-    //this.value(value);
   }
 
   encodeHtml (html) {
@@ -233,11 +232,12 @@ class PostCommentBox extends Component {
       'max-length': 140,
       'data-placeHolder-default': 'Add your comment here...'
     });
-    //innerHTML: '<div class="kmt-post-box-comments-box"><div class="kmt-post-box-comments-input" contenteditable="true" aria-multiline="true" maxlength="120" data-placeholder-default="Add your comment here..."></div><span className="kmt-message-length">0/120</span></div>'
+
     this.spanEl = super.createEl('div', {
       className: 'kmt-message-length',
       innerHtml: '0 / 140'
     });
+
     el.appendChild(this.inputEl);
     el.appendChild(this.spanEl);
     return el;

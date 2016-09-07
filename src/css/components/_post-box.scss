@@ -104,6 +104,9 @@
       .highlight {
         background: #fcc;
       }
+      &:first-letter {
+        text-transform: uppercase;
+      }
     }
 
     .kmt-message-length {
