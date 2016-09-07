@@ -56,7 +56,7 @@ var KomentItem = (function (_Component) {
   _createClass(KomentItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.user.avatar;
+      var url = this.options_.user.picture;
 
       this.setSrc(url);
 
@@ -105,8 +105,8 @@ var KomentItem = (function (_Component) {
       var userName = '';
 
       var profile = this.options_.user && this.options_.user;
-      if (profile && profile.nickname) {
-        userName = '<div class="koment-item-user">' + profile.nickname + '</div>';
+      if (profile && profile.name) {
+        userName = '<div class="koment-item-user">' + profile.name + '</div>';
       }
       this.contentEl_ = Dom.createEl('div', {
         className: 'koment-item-display',
@@ -151,8 +151,8 @@ KomentItem.prototype.options_ = {
   text: '',
   timecode: 0,
   user: {
-    nickname: '',
-    avatar: ''
+    name: '',
+    picture: ''
   }
 };
 

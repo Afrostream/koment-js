@@ -43,8 +43,8 @@ class KomentDisplay extends Component {
       forEach(kommentsList, (item)=> {
         if (item.user && item.user.facebook) {
           item.user = merge(item.user, {
-            avatar: `//graph.facebook.com/${item.user.facebook.id}/picture`,
-            nickname: item.user.facebook.nickname
+            picture: `//graph.facebook.com/${item.user.facebook.id}/picture`,
+            name: item.user.facebook.nickname
           });
         }
       });

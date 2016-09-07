@@ -42,7 +42,6 @@ var TimelineProgressItem = (function (_Component) {
 
     _get(Object.getPrototypeOf(TimelineProgressItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
-    this.text = this.options_.text;
     this.user = this.options_.user;
     this.update();
   }
@@ -56,7 +55,7 @@ var TimelineProgressItem = (function (_Component) {
   _createClass(TimelineProgressItem, [{
     key: 'update',
     value: function update() {
-      var url = this.user.avatar;
+      var url = this.user.picture;
 
       this.setSrc(url);
 
@@ -135,11 +134,9 @@ var TimelineProgressItem = (function (_Component) {
 
 TimelineProgressItem.prototype.timecode = 0;
 TimelineProgressItem.prototype.options_ = {
-  text: '',
   timecode: 0,
   user: {
-    nickname: '',
-    avatar: ''
+    picture: ''
   }
 };
 

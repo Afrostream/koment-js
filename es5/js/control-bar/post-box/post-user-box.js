@@ -58,7 +58,7 @@ var PostUserBox = (function (_Component) {
   _createClass(PostUserBox, [{
     key: 'update',
     value: function update() {
-      var url = this.player_.options_.user.avatar;
+      var url = this.player_.options_.user.picture;
 
       this.setSrc(url);
 

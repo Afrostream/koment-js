@@ -79,8 +79,8 @@ var KomentDisplay = (function (_Component) {
       (0, _lodash.forEach)(kommentsList, function (item) {
         if (item.user && item.user.facebook) {
           item.user = (0, _lodash.merge)(item.user, {
-            avatar: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
-            nickname: item.user.facebook.nickname
+            picture: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
+            name: item.user.facebook.nickname
           });
         }
       });

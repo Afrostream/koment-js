@@ -21652,8 +21652,8 @@ var KomentDisplay = (function (_Component) {
       (0, _lodash.forEach)(kommentsList, function (item) {
         if (item.user && item.user.facebook) {
           item.user = (0, _lodash.merge)(item.user, {
-            avatar: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
-            nickname: item.user.facebook.nickname
+            picture: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
+            name: item.user.facebook.nickname
           });
         }
       });
@@ -21883,7 +21883,7 @@ var KomentItem = (function (_Component) {
   _createClass(KomentItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.user.avatar;
+      var url = this.options_.user.picture;
 
       this.setSrc(url);
 
@@ -21932,8 +21932,8 @@ var KomentItem = (function (_Component) {
       var userName = '';
 
       var profile = this.options_.user && this.options_.user;
-      if (profile && profile.nickname) {
-        userName = '<div class="koment-item-user">' + profile.nickname + '</div>';
+      if (profile && profile.name) {
+        userName = '<div class="koment-item-user">' + profile.name + '</div>';
       }
       this.contentEl_ = Dom.createEl('div', {
         className: 'koment-item-display',
@@ -21978,8 +21978,8 @@ KomentItem.prototype.options_ = {
   text: '',
   timecode: 0,
   user: {
-    nickname: '',
-    avatar: ''
+    name: '',
+    picture: ''
   }
 };
 
@@ -22893,7 +22893,7 @@ var PostUserBox = (function (_Component) {
   _createClass(PostUserBox, [{
     key: 'update',
     value: function update() {
-      var url = this.player_.options_.user.avatar;
+      var url = this.player_.options_.user.picture;
 
       this.setSrc(url);
 
@@ -23821,7 +23821,6 @@ var TimelineProgressItem = (function (_Component) {
 
     _get(Object.getPrototypeOf(TimelineProgressItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
-    this.text = this.options_.text;
     this.user = this.options_.user;
     this.update();
   }
@@ -23835,7 +23834,7 @@ var TimelineProgressItem = (function (_Component) {
   _createClass(TimelineProgressItem, [{
     key: 'update',
     value: function update() {
-      var url = this.user.avatar;
+      var url = this.user.picture;
 
       this.setSrc(url);
 
@@ -23914,11 +23913,9 @@ var TimelineProgressItem = (function (_Component) {
 
 TimelineProgressItem.prototype.timecode = 0;
 TimelineProgressItem.prototype.options_ = {
-  text: '',
   timecode: 0,
   user: {
-    nickname: '',
-    avatar: ''
+    picture: ''
   }
 };
 

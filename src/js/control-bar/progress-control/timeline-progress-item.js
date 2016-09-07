@@ -14,7 +14,6 @@ class TimelineProgressItem extends Component {
   constructor (player, options) {
     super(player, options);
     this.timecode = this.options_.timecode;
-    this.text = this.options_.text;
     this.user = this.options_.user;
     this.update();
   }
@@ -25,7 +24,7 @@ class TimelineProgressItem extends Component {
    * @method update
    */
   update () {
-    const url = this.user.avatar;
+    const url = this.user.picture;
 
     this.setSrc(url);
 
@@ -95,11 +94,9 @@ class TimelineProgressItem extends Component {
 
 TimelineProgressItem.prototype.timecode = 0;
 TimelineProgressItem.prototype.options_ = {
-  text: '',
   timecode: 0,
   user: {
-    nickname: '',
-    avatar: ''
+    picture: ''
   }
 };
 
