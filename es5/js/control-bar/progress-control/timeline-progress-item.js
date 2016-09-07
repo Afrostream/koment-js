@@ -1,5 +1,5 @@
 /**
- * @file koment-item.js
+ * @file timeline-progress-item.js
  **/
 'use strict';
 
@@ -19,11 +19,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _utilsDom = require('../utils/dom');
+var _utilsDom = require('../../utils/dom');
 
 var Dom = _interopRequireWildcard(_utilsDom);
 
-var _componentJs = require('../component.js');
+var _componentJs = require('../../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
 
@@ -34,13 +34,13 @@ var _componentJs2 = _interopRequireDefault(_componentJs);
  * @class ControlBar
  */
 
-var KomentItem = (function (_Component) {
-  _inherits(KomentItem, _Component);
+var TimelineProgressItem = (function (_Component) {
+  _inherits(TimelineProgressItem, _Component);
 
-  function KomentItem(player, options) {
-    _classCallCheck(this, KomentItem);
+  function TimelineProgressItem(player, options) {
+    _classCallCheck(this, TimelineProgressItem);
 
-    _get(Object.getPrototypeOf(KomentItem.prototype), 'constructor', this).call(this, player, options);
+    _get(Object.getPrototypeOf(TimelineProgressItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
     this.text = this.options_.text;
     this.user = this.options_.user;
@@ -53,10 +53,10 @@ var KomentItem = (function (_Component) {
    * @method update
    */
 
-  _createClass(KomentItem, [{
+  _createClass(TimelineProgressItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.user.avatar;
+      var url = this.user.avatar;
 
       this.setSrc(url);
 
@@ -99,20 +99,8 @@ var KomentItem = (function (_Component) {
     key: 'createEl',
     value: function createEl() {
 
-      var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-item koment-hidden'
-      });
-      var userName = '';
-
-      var profile = this.options_.user && this.options_.user;
-      if (profile && profile.nickname) {
-        userName = '<div class="koment-item-user">' + profile.nickname + '</div>';
-      }
-      this.contentEl_ = Dom.createEl('div', {
-        className: 'koment-item-display',
-        innerHTML: userName + '<div class="koment-item-title">' + this.options_.text + '</div>'
-      }, {
-        'aria-live': 'off'
+      var el = _get(Object.getPrototypeOf(TimelineProgressItem.prototype), 'createEl', this).call(this, 'div', {
+        className: 'kmt-timeline-progress-item'
       });
 
       this.avatarEl_ = Dom.createEl('div', {
@@ -122,7 +110,6 @@ var KomentItem = (function (_Component) {
       });
 
       el.appendChild(this.avatarEl_);
-      el.appendChild(this.contentEl_);
       return el;
     }
   }, {
@@ -143,11 +130,11 @@ var KomentItem = (function (_Component) {
     }
   }]);
 
-  return KomentItem;
+  return TimelineProgressItem;
 })(_componentJs2['default']);
 
-KomentItem.prototype.timecode = 0;
-KomentItem.prototype.options_ = {
+TimelineProgressItem.prototype.timecode = 0;
+TimelineProgressItem.prototype.options_ = {
   text: '',
   timecode: 0,
   user: {
@@ -156,6 +143,6 @@ KomentItem.prototype.options_ = {
   }
 };
 
-_componentJs2['default'].registerComponent('KomentItem', KomentItem);
-exports['default'] = KomentItem;
+_componentJs2['default'].registerComponent('TimelineProgressItem', TimelineProgressItem);
+exports['default'] = TimelineProgressItem;
 module.exports = exports['default'];

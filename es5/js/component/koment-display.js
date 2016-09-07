@@ -27,10 +27,6 @@ var _utilsFnJs = require('../utils/fn.js');
 
 var Fn = _interopRequireWildcard(_utilsFnJs);
 
-var _utilsDom = require('../utils/dom');
-
-var Dom = _interopRequireWildcard(_utilsDom);
-
 var _xhr = require('xhr');
 
 var _xhr2 = _interopRequireDefault(_xhr);
@@ -63,49 +59,32 @@ var KomentDisplay = (function (_Component) {
     this.on('tap', this.handleClick);
     this.on('click', this.handleClick);
 
-    var data = {
+    this.data_ = {
       json: true,
-      uri: this.options_.url,
+      uri: this.player_.options_.api,
       method: 'GET',
       headers: {
+        'Access-Token': this.player_.options_.token,
         'Content-Type': 'application/json'
       }
     };
 
     var kommentsList = [];
-    var tc = 0;
-    (0, _xhr2['default'])(data, function (err, res) {
+    (0, _xhr2['default'])(this.data_, function (err, res) {
       if (err) {
         throw new Error(err.message);
       }
       kommentsList = res.body || [];
 
-      //  forEach(res.body || [], (item)=> {
-      //    forEach(res.body || [], ()=> {
-      //      let copyItem = clone(item)
-      //      copyItem.timecode = tc;//Math.round(Math.random() * (352 - 0) + 0);
-      //      kommentsList.push(copyItem)
-      //      tc += 0.2
-      //    })
-      //  });
       (0, _lodash.forEach)(kommentsList, function (item) {
-        item.avatar = '//graph.facebook.com/10204404008400201/picture';
-        item.username = 'Benjipott';
+        if (item.user && item.user.facebook) {
+          item.user = (0, _lodash.merge)(item.user, {
+            avatar: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
+            nickname: item.user.facebook.nickname
+          });
+        }
       });
 
-      var dummyText = 'totocavamoiouibientotocavtotocavamoiouibientotocavamoiouibientotocavamoiouibientotocavamoiouibienamoiouibien totocavamoiouibien totocavamoiouibien et toi';
-      for (var i = 0; i < 50; i++) {
-        kommentsList.push({
-          text: dummyText.substring(0, Math.random() * (dummyText.length - 0) + 0),
-          timecode: Math.round(Math.random() * (352 - 0) + 0),
-          avatar: '//graph.facebook.com/10204404008400201/picture'
-        });
-      }
-      kommentsList.push({
-        text: 'yes c\'est la fin',
-        timecode: 345,
-        avatar: '//graph.facebook.com/10204404008400201/picture'
-      });
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
 
       _this.player_.komentsList(kommentsList);
@@ -149,6 +128,14 @@ var KomentDisplay = (function (_Component) {
       this.items.unshift(mi);
       this.addChild(mi);
       this.requestTick(true);
+      var json = (0, _lodash.pick)(item, ['timecode', 'text']);
+
+      (0, _xhr2['default'])((0, _lodash.merge)(this.data_, { method: 'POST', json: json }), function (err, res) {
+        if (err) {
+          throw new Error(err.message);
+        }
+        console.log('koment posted', res);
+      });
     }
 
     /**
@@ -169,25 +156,33 @@ var KomentDisplay = (function (_Component) {
         this.addChild(mi);
       }
 
-      switch (this.options_.template) {
-        case 'timeline':
-          this.showElements = this.showElementsTimeline;
-          this.on(this.player_, 'loadedmetadata', this.positionTimeline);
-          this.on(this.player_, 'pause', this.replaceTick);
-          this.on(this.player_, 'play', this.replaceTick);
-          this.on(this.player_, 'seeked', this.requestTick);
-          this.on(this.player_, 'timeupdate', this.requestTick);
-          break;
-        case 'viki':
-          this.showElements = this.showElementsViki;
-          this.on(this.player_, 'timeupdate', this.requestTick);
-          break;
-      }
+      this.on(this.player_, 'timeupdate', this.requestTick);
+      this.on(this.player_, 'pause', this.timeoutReplace);
+      this.on(this.player_, 'play', this.timeoutReplace);
 
       this.on(this.player_, 'komentsupdated', this.update);
       this.on(this.player_, 'togglemenu', this.requestTick);
 
       this.addClass(this.options_.template);
+    }
+  }, {
+    key: 'timeoutReplace',
+    value: function timeoutReplace() {
+      var _this2 = this;
+
+      var currentTimecode = Math.round(this.player_.currentTime());
+      var paused = this.player_.paused() && currentTimecode > 0;
+      var visibleItems = (0, _lodash.filter)(this.items, function (item) {
+        return item.hasClass('koment-show');
+      });
+
+      (0, _lodash.forEach)(visibleItems, function (item) {
+        if (!paused) {
+          item.timeout = item.setTimeout(item.hide, _this2.options_.tte * 1000);
+        } else {
+          item.clearTimeout(item.timeout);
+        }
+      });
     }
   }, {
     key: 'replaceTick',
@@ -210,113 +205,46 @@ var KomentDisplay = (function (_Component) {
         this.ticking = true;
       }
     }
-
-    //VIKI MODE
   }, {
-    key: 'showElementsViki',
-    value: function showElementsViki() {
-      var _this2 = this;
+    key: 'showElements',
+    value: function showElements() {
+      var _this3 = this;
 
       var className = 'koment-show';
       var currentTimecode = Math.round(this.player_.currentTime());
-      var nbVisible = (0, _lodash.filter)(this.items, function (item) {
+      var visibleItems = (0, _lodash.filter)(this.items, function (item) {
         return item.hasClass(className);
       });
+      var nbVisible = visibleItems.length;
       var filtereds = (0, _lodash.uniq)(this.items, function (item) {
         return Math.round(item.timecode);
       });
+
       filtereds = (0, _lodash.sortBy)(filtereds, 'timecode');
       filtereds = (0, _lodash.filter)(filtereds, function (item) {
         return Math.round(item.timecode) === currentTimecode;
       });
-      filtereds = (0, _lodash.slice)(filtereds, Math.min(2, nbVisible.length));
+      filtereds = (0, _lodash.take)(filtereds, Math.max(0, this.options_.max - nbVisible));
+
       (0, _lodash.forEach)(filtereds, function (item) {
         if (!item.hasClass(className)) {
-          item.show();
           item.addClass(className);
-          item.setTimeout(item.hide, _this2.options_.tte * 1000);
+          item.show();
+          item.timeout = item.setTimeout(item.hide, _this3.options_.tte * 1000);
         }
       });
 
       this.ticking = false;
-    }
-
-    //TIMELINE MODE
-  }, {
-    key: 'showElementsTimeline',
-    value: function showElementsTimeline() {
-      var _this3 = this;
-
-      var className = this.pause ? 'koment-paused' : 'koment-show';
-      var currentTimecode = this.player_.currentTime();
-      var playerWidth = this.player_.width();
-      var positionGap = this.options_.tte + 5;
-      (0, _lodash.forEach)(this.items, function (item) {
-        var inTimeCodeRange = item.timecode <= currentTimecode + positionGap && item.timecode >= currentTimecode - positionGap;
-        if (inTimeCodeRange) {
-          var percent = (_this3.options_.tte - (currentTimecode - item.timecode)) / _this3.options_.tte;
-          var position = percent * playerWidth - playerWidth;
-          var _top = 0;
-          if (!item.hasClass(className)) {
-            item.removeClass('koment-mask');
-            item.removeClass('koment-show');
-            item.removeClass('koment-paused');
-            item.addClass(className);
-          }
-          item.el_.style.webkitTransform = 'translate3d(' + position + 'px, ' + _top + 'px, 0)';
-        } else {
-          if (!item.hasClass('koment-mask')) {
-            item.removeClass('koment-paused');
-            item.removeClass('koment-show');
-            item.addClass('koment-mask');
-          }
-        }
-      });
-      this.ticking = false;
-    }
-  }, {
-    key: 'positionTimeline',
-    value: function positionTimeline() {
-      var _this4 = this;
-
-      var leftItem = 0;
-      var playerWidth = this.player_.width();
-      (0, _lodash.forEach)(this.items, function (item, key) {
-        var prevItem = _this4.items[key - 1];
-        var percent = (_this4.options_.tte - item.timecode) / _this4.options_.tte;
-        var position = playerWidth - percent * playerWidth;
-        var top = 0;
-
-        if (prevItem) {
-          var prevItemPos = Dom.findElPosition(prevItem.el_);
-          prevItemPos.width = prevItem.width();
-          prevItemPos.height = prevItem.height();
-
-          var percentPrevItem = (_this4.options_.tte - prevItem.timecode) / _this4.options_.tte;
-          var positionPrevItem = playerWidth - percentPrevItem * playerWidth;
-          if (positionPrevItem + prevItemPos.width > position) {
-            top = prevItemPos.top + prevItemPos.height;
-            if (top > 150) {
-              top = 0;
-            }
-          }
-        }
-
-        item.el_.style.left = playerWidth + leftItem + 'px';
-        item.el_.style.top = top + 'px';
-      });
     }
   }]);
 
   return KomentDisplay;
 })(_component2['default']);
 
-KomentDisplay.prototype.showElements = function () {};
-
 KomentDisplay.prototype.options_ = {
-  url: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
   tte: 5,
-  template: 'viki' //'timeline'
+  max: 3,
+  template: 'viki'
 };
 
 _component2['default'].registerComponent('KomentDisplay', KomentDisplay);

@@ -1,5 +1,5 @@
 /**
- * @file post-toggle.js
+ * @file post-box.js
  */
 
 'use strict';

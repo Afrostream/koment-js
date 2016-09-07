@@ -222,7 +222,9 @@ var SeekBar = (function (_Slider) {
 })(_sliderSliderJs2['default']);
 
 SeekBar.prototype.options_ = {
-  children: ['loadProgressBar', 'timelineProgressBar',
+  children: [
+  //'loadProgressBar',
+  'timelineProgressBar',
   //'mouseTimeDisplay',
   'playProgressBar'],
   barName: 'playProgressBar'

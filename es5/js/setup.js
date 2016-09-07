@@ -33,7 +33,7 @@ var koment = undefined;
 
 // Automatically set up any tags that have a data-setup attribute
 var autoSetup = function autoSetup() {
-  var selectors = ['video', 'iframe[src*="player.vimeo.com"]', 'iframe[src*="youtube.com"]', 'iframe[src*="youtube-nocookie.com"]', 'iframe[src*="kickstarter.com"][src*="video.html"]', 'object', 'embed'];
+  var selectors = ['.video-js', 'video', 'iframe[src*="player.vimeo.com"]', 'iframe[src*="youtube.com"]', 'iframe[src*="youtube-nocookie.com"]', 'iframe[src*="kickstarter.com"][src*="video.html"]', 'object', 'embed'];
 
   var ignoreList = ['object object', '.komentignore'];
 
@@ -60,22 +60,25 @@ var autoSetup = function autoSetup() {
 
     for (var i = 0, e = mediaEls.length; i < e; i++) {
       var mediaEl = mediaEls[i];
-
       // Check if element exists, has getAttribute func.
       // IE seems to consider typeof el.getAttribute == 'object' instead of
       // 'function' like expected, at least when loading the player immediately.
       if (mediaEl && mediaEl.getAttribute) {
-
+        var isVideojs = mediaEl.firstChild && mediaEl.firstChild.tagName === 'VIDEO' && ~'vjs-tech'.indexOf(mediaEl.firstChild.classList);
+        var wrapper = undefined;
+        if (isVideojs) {
+          wrapper = mediaEl;
+          mediaEl = mediaEl.firstChild;
+        }
         // Make sure this player hasn't already been set up.
         if (mediaEl.koment === undefined) {
           var options = mediaEl.getAttribute('data-setup');
-
           // Check if data-setup attr exists.
           // We only auto-setup if they've added the data-setup attr.
-          if (options !== null) {
-            // Create new video.js instance.
-            koment(mediaEl, options);
-          }
+          //if (options !== null) {
+          // Create new video.js instance.
+          koment(mediaEl, options || { controls: 1 });
+          //}
         }
 
         // If getAttribute isn't defined, we need to wait for the DOM.

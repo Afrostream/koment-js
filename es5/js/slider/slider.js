@@ -80,7 +80,7 @@ var Slider = (function (_Component) {
       var attributes = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
       // Add the slider element class to all sub classes
-      props.className = props.className + ' vjs-slider';
+      props.className = props.className + ' kmt-slider';
       props = (0, _objectAssign2['default'])({
         tabIndex: 0
       }, props);
@@ -110,7 +110,7 @@ var Slider = (function (_Component) {
       event.preventDefault();
       Dom.blockTextSelection();
 
-      this.addClass('vjs-sliding');
+      this.addClass('kmt-sliding');
       this.trigger('slideractive');
 
       this.on(doc, 'mousemove', this.handleMouseMove);
@@ -142,7 +142,7 @@ var Slider = (function (_Component) {
 
       Dom.unblockTextSelection();
 
-      this.removeClass('vjs-sliding');
+      this.removeClass('kmt-sliding');
       this.trigger('sliderinactive');
 
       this.off(doc, 'mousemove', this.handleMouseMove);
@@ -285,9 +285,9 @@ var Slider = (function (_Component) {
       this.vertical_ = !!bool;
 
       if (this.vertical_) {
-        this.addClass('vjs-slider-vertical');
+        this.addClass('kmt-slider-vertical');
       } else {
-        this.addClass('vjs-slider-horizontal');
+        this.addClass('kmt-slider-horizontal');
       }
 
       return this;

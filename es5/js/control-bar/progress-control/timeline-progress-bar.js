@@ -29,6 +29,10 @@ var Dom = _interopRequireWildcard(_utilsDomJs);
 
 var _lodash = require('lodash');
 
+var _timelineProgressItemJs = require('./timeline-progress-item.js');
+
+var _timelineProgressItemJs2 = _interopRequireDefault(_timelineProgressItemJs);
+
 /**
  * Shows load progress
  *
@@ -45,7 +49,7 @@ var TimelineProgressBar = (function (_Component) {
     _classCallCheck(this, TimelineProgressBar);
 
     _get(Object.getPrototypeOf(TimelineProgressBar.prototype), 'constructor', this).call(this, player, options);
-    this.on(player, 'komentsupdated', this.update);
+    this.on(player, 'komentsupdated', this.insert);
     this.on(player, 'progress', this.update);
   }
 
@@ -70,21 +74,43 @@ var TimelineProgressBar = (function (_Component) {
      * @method update
      */
   }, {
+    key: 'insert',
+    value: function insert(e) {
+      var duration = this.player_.duration();
+      var item = e.data;
+      var part = this.addChild(new _timelineProgressItemJs2['default'](this.player_, e.data));
+      // set the percent based on the width of the progress bar (bufferedEnd)
+      part.el_.style.left = this.percentify(item.timecode, duration);
+    }
+
+    /**
+     * get percent position in timeline
+     * @param time
+     * @param end
+     * @returns {string}
+     */
+  }, {
+    key: 'percentify',
+    value: function percentify(time, end) {
+      // no NaN
+      var percent = time / end || 0;
+
+      return (percent >= 1 ? 1 : percent) * 100 + '%';
+    }
+
+    /**
+     * Update progress bar
+     *
+     * @method update
+     */
+  }, {
     key: 'update',
     value: function update() {
       var _this = this;
 
       var items = this.player_.komentsList();
       var duration = this.player_.duration();
-      var children = this.el_.children;
-
-      // get the percent width of a time compared to the total end
-      var percentify = function percentify(time, end) {
-        // no NaN
-        var percent = time / end || 0;
-
-        return (percent >= 1 ? 1 : percent) * 100 + '%';
-      };
+      var children = this.children();
 
       // add child elements to represent the individual buffered time ranges
       (0, _lodash.forEach)(items, function (item, i) {
@@ -92,11 +118,10 @@ var TimelineProgressBar = (function (_Component) {
         var part = children[i];
 
         if (!part) {
-          part = _this.el_.appendChild(Dom.createEl());
+          part = _this.addChild(new _timelineProgressItemJs2['default'](_this.player_, item));
         }
-
         // set the percent based on the width of the progress bar (bufferedEnd)
-        part.style.left = percentify(item.timecode, duration);
+        part.el_.style.left = _this.percentify(item.timecode, duration);
       });
     }
   }]);

@@ -17,6 +17,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _utilsToTitleCase = require('../../utils/to-title-case');
+
+var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
+
 var _globalDocument = require('global/document');
 
 var _globalDocument2 = _interopRequireDefault(_globalDocument);
@@ -190,6 +194,7 @@ var PostCommentBox = (function (_Component) {
       switch (e.keyCode) {
         case key['enter']:
           e.preventDefault();
+          this.player_.trigger('submit');
           break;
         case key['escape']:
           e.preventDefault();
@@ -207,10 +212,8 @@ var PostCommentBox = (function (_Component) {
       var length = value.length;
       var totalLength = value.length;
       if (totalLength >= max) {
-        value = value.substring(0, max - length);
         e.preventDefault();
       }
-      //this.value(value);
     }
   }, {
     key: 'encodeHtml',
@@ -246,9 +249,10 @@ var PostCommentBox = (function (_Component) {
     key: 'onSubmit',
     value: function onSubmit() {
       var text = this.value();
-      var timecode = this.player_.currentTime();
+      var timecode = Math.round(this.player_.currentTime());
+      var user = this.player_.options_.user;
       this.clear();
-      this.player_.sendKoment({ text: text, timecode: timecode });
+      this.player_.sendKoment({ text: text, timecode: timecode, user: user });
     }
   }, {
     key: 'createEl',
@@ -266,11 +270,12 @@ var PostCommentBox = (function (_Component) {
         'max-length': 140,
         'data-placeHolder-default': 'Add your comment here...'
       });
-      //innerHTML: '<div class="kmt-post-box-comments-box"><div class="kmt-post-box-comments-input" contenteditable="true" aria-multiline="true" maxlength="120" data-placeholder-default="Add your comment here..."></div><span className="kmt-message-length">0/120</span></div>'
+
       this.spanEl = _get(Object.getPrototypeOf(PostCommentBox.prototype), 'createEl', this).call(this, 'div', {
         className: 'kmt-message-length',
         innerHtml: '0 / 140'
       });
+
       el.appendChild(this.inputEl);
       el.appendChild(this.spanEl);
       return el;

@@ -104,6 +104,8 @@ require('./control-bar/progress-control/progress-control');
 
 require('./component/koment-display');
 
+require('./tech/videojs');
+
 require('./tech/html5');
 
 require('./tech/youtube');
@@ -219,7 +221,7 @@ var Player = (function (_Component) {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !!options.controls;
+    this.controls_ = !this.tag.controls && !!options.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
@@ -328,12 +330,12 @@ var Player = (function (_Component) {
       // Kill reference to this player
       Player.players[this.id_] = null;
 
-      if (this.tag && this.tag.player) {
-        this.tag.player = null;
+      if (this.tag && this.tag.koment) {
+        this.tag.koment = null;
       }
 
-      if (this.el_ && this.el_.player) {
-        this.el_.player = null;
+      if (this.el_ && this.el_.koment) {
+        this.el_.koment = null;
       }
 
       if (this.tech_) {
@@ -381,7 +383,7 @@ var Player = (function (_Component) {
       tag.className = 'koment-tech';
 
       // Make player findable on elements
-      tag.player = el.player = tag.koment = el.koment = this;
+      tag.koment = el.koment = this;
       // Default state of video is paused
       this.addClass('koment');
       this.addClass('koment-paused');
@@ -715,7 +717,7 @@ var Player = (function (_Component) {
 
       // Get rid of the original video tag reference after the first tech is loaded
       if (this.tag) {
-        this.tag.player = null;
+        this.tag.koment = null;
         this.tag = null;
       }
     }
@@ -2434,32 +2436,6 @@ var Player = (function (_Component) {
     key: 'languages',
     value: function languages() {
       return (0, _utilsMergeOptions2['default'])(Player.prototype.options_.languages, this.languages_);
-    }
-
-    /**
-     * Converts track info to JSON
-     *
-     * @return {Object} JSON object of options
-     * @method toJSON
-     */
-  }, {
-    key: 'toJSON',
-    value: function toJSON() {
-      var options = (0, _utilsMergeOptions2['default'])(this.options_);
-      var tracks = options.tracks;
-
-      options.tracks = [];
-
-      for (var i = 0; i < tracks.length; i++) {
-        var track = tracks[i];
-
-        // deep merge tracks and null out player so no circular references
-        track = (0, _utilsMergeOptions2['default'])(track);
-        track.player = undefined;
-        options.tracks[i] = track;
-      }
-
-      return options;
     }
 
     /**
