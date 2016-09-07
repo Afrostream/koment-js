@@ -66,6 +66,10 @@
         height: 100%;
         @include background-color-with-alpha($kmt-primary-foreground-color, 0.6);
 
+        &:first-letter {
+          text-transform: uppercase;
+        }
+
         &:after {
           content: "";
           position: absolute;
