@@ -1,0 +1,69 @@
+.koment-list {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  overflow: hidden;
+  padding: 3em $kmt-padding-global;
+
+  transition: all 0.3s linear;
+  overflow-y: auto;
+  @include background-color-with-alpha($kmt-primary-foreground-color, 0.9);
+
+  animation-name: list-hidden;
+  animation-duration: 0.3s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-Out;
+
+  align-self: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .koment-item {
+    display: inline-flex;
+    opacity: 1;
+    visibility: visible;
+    max-height: 150px;
+    margin-bottom: 10px;
+    width: 100%;
+    .koment-item-display {
+      max-width: 100%;
+    }
+  }
+}
+
+.koment.koment-toggle-list .koment-list {
+  width: 30%;
+  display: flex;
+  animation-name: list-show;
+  animation-duration: 0.3s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-Out;
+}
+
+.koment.koment-toggle-edit .koment-list {
+  display: none;
+}
+
+@keyframes list-show {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes list-hidden {
+  from {
+
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}

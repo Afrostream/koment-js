@@ -1,5 +1,5 @@
 /**
- * @file edit-button.js
+ * @file list-button.js
  */
 
 import Component from '../component.js';
@@ -14,9 +14,9 @@ import Button from '../button.js';
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class EditButton
+ * @class ListButton
  */
-class EditButton extends Button {
+class ListButton extends Button {
 
   constructor (player, options, ready) {
     super(player, options, ready)
@@ -29,14 +29,7 @@ class EditButton extends Button {
    * @method buildCSSClass
    */
   buildCSSClass () {
-    return `edit-button ${super.buildCSSClass()}`
-  }
-
-  createEl () {
-    return super.createEl('button', {
-      innerHTML: '<div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div><div class="line" ></div>'
-    });
-
+    return `list-button ${super.buildCSSClass()}`
   }
 
   /**
@@ -48,7 +41,7 @@ class EditButton extends Button {
     super.handleClick(event);
     this.addClass('active');
     this.setTimeout(this.disable, 300);
-    this.player_.toggleEdit();
+    this.player_.toggleList();
   }
 
   disable () {
@@ -56,7 +49,7 @@ class EditButton extends Button {
   }
 }
 
-EditButton.prototype.controlText_ = 'Edit';
+ListButton.prototype.controlText_ = 'List';
 
-Component.registerComponent('EditButton', EditButton);
-export default EditButton
+Component.registerComponent('ListButton', ListButton);
+export default ListButton

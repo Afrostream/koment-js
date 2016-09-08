@@ -104,6 +104,8 @@ require('./control-bar/progress-control/progress-control');
 
 require('./component/koment-display');
 
+require('./component/koment-list');
+
 require('./tech/videojs');
 
 require('./tech/html5');
@@ -1535,6 +1537,23 @@ var Player = (function (_Component) {
       return this;
     }
   }, {
+    key: 'toggleList',
+    value: function toggleList(toggle) {
+      if (toggle !== undefined) {
+        this.toggleList_ = !!toggle;
+      } else {
+        this.toggleList_ = !this.toggleList_;
+      }
+
+      if (this.toggleList_) {
+        this.addClass('koment-toggle-list');
+      } else {
+        this.removeClass('koment-toggle-list');
+      }
+
+      return this;
+    }
+  }, {
     key: 'sendKoment',
     value: function sendKoment(kmt) {
       if (!kmt || !kmt.text) {
@@ -2553,7 +2572,7 @@ var navigator = _globalWindow2['default'].navigator;
 Player.prototype.options_ = {
   // default inactivity timeout
   inactivityTimeout: 2000,
-  children: ['komentDisplay', 'progressControl', 'controlBar'],
+  children: ['komentDisplay', 'komentList', 'progressControl', 'controlBar'],
 
   user: {},
 
@@ -2568,6 +2587,7 @@ Player.prototype.options_ = {
 
 // The following no-op expressions are here only for purposes of documentation.
 
+Player.prototype.komentsList_ = []; // eslint-disable-line
 /**
  * Fired when the user agent begins looking for media data
  *

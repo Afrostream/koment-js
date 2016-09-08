@@ -1,6 +1,6 @@
 /**
- * @file control-bar.js
- */
+ * @file koment-list.js
+ **/
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -21,61 +21,80 @@ var _component = require('../component');
 
 var _component2 = _interopRequireDefault(_component);
 
-// Required children
+var _komentItem = require('./koment-item');
 
-require('./koment-toggle');
-
-require('./like-button');
-
-require('./edit-button');
-
-require('./list-button');
-
-require('./post-box/post-box');
+var _komentItem2 = _interopRequireDefault(_komentItem);
 
 /**
- * Container of main controls
+ * Container of comment list
  *
  * @extends Component
- * @class ControlBar
+ * @class KomentList
  */
 
-var ControlBar = (function (_Component) {
-  _inherits(ControlBar, _Component);
+var KomentList = (function (_Component) {
+  _inherits(KomentList, _Component);
 
-  function ControlBar() {
-    _classCallCheck(this, ControlBar);
+  function KomentList(player, options) {
+    _classCallCheck(this, KomentList);
 
-    _get(Object.getPrototypeOf(ControlBar.prototype), 'constructor', this).apply(this, arguments);
+    _get(Object.getPrototypeOf(KomentList.prototype), 'constructor', this).call(this, player, options);
+    this.on(this.player_, 'kmtlistfetched', this.createChilds);
   }
 
-  _createClass(ControlBar, [{
-    key: 'createEl',
+  /**
+   * Create the component's DOM element
+   *
+   * @return {Element}
+   * @method createEl
+   */
 
-    /**
-     * Create the component's DOM element
-     *
-     * @return {Element}
-     * @method createEl
-     */
+  _createClass(KomentList, [{
+    key: 'createEl',
     value: function createEl() {
-      return _get(Object.getPrototypeOf(ControlBar.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-control-bar',
+      return _get(Object.getPrototypeOf(KomentList.prototype), 'createEl', this).call(this, 'div', {
+        className: 'koment-list',
         dir: 'ltr'
       }, {
-        // The control bar is a group, so it can contain menuitems
         role: 'group'
       });
     }
+  }, {
+    key: 'update',
+    value: function update(e) {
+      var item = e.data;
+      var mi = new _komentItem2['default'](this.player_, item);
+      this.items.unshift(mi);
+      this.addChild(mi);
+    }
+
+    /**
+     * Create menu from chapter buttons
+     *
+     * @return {Menu} Menu of chapter buttons
+     * @method createMenu
+     */
+  }, {
+    key: 'createChilds',
+    value: function createChilds() {
+      var items = this.player_.komentsList();
+      this.items = [];
+      for (var i = 0, l = items.length; i < l; i++) {
+        var item = items[i];
+        var mi = new _komentItem2['default'](this.player_, item);
+        this.items.push(mi);
+        this.addChild(mi);
+      }
+
+      this.on(this.player_, 'komentsupdated', this.update);
+    }
   }]);
 
-  return ControlBar;
+  return KomentList;
 })(_component2['default']);
 
-ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'editButton', 'listButton', 'postBox']
-};
+KomentList.prototype.options_ = {};
 
-_component2['default'].registerComponent('ControlBar', ControlBar);
-exports['default'] = ControlBar;
+_component2['default'].registerComponent('KomentList', KomentList);
+exports['default'] = KomentList;
 module.exports = exports['default'];

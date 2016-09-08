@@ -64,7 +64,6 @@ var KomentDisplay = (function (_Component) {
       uri: this.player_.options_.api,
       method: 'GET',
       headers: {
-        'Access-Token': this.player_.options_.token,
         'Content-Type': 'application/json'
       }
     };
@@ -80,7 +79,7 @@ var KomentDisplay = (function (_Component) {
         if (item.user && item.user.facebook) {
           item.user = (0, _lodash.merge)(item.user, {
             picture: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
-            name: item.user.facebook.nickname
+            nickname: item.user.facebook.nickname
           });
         }
       });
@@ -88,6 +87,7 @@ var KomentDisplay = (function (_Component) {
       kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
 
       _this.player_.komentsList(kommentsList);
+      _this.player_.trigger('kmtlistfetched');
       _this.createChilds();
     });
   }
@@ -102,6 +102,7 @@ var KomentDisplay = (function (_Component) {
     key: 'handleClick',
     value: function handleClick() {
       this.player_.toggleEdit(false);
+      this.player_.toggleList(false);
     }
 
     /**
@@ -130,7 +131,13 @@ var KomentDisplay = (function (_Component) {
       this.requestTick(true);
       var json = (0, _lodash.pick)(item, ['timecode', 'text']);
 
-      (0, _xhr2['default'])((0, _lodash.merge)(this.data_, { method: 'POST', json: json }), function (err, res) {
+      (0, _xhr2['default'])((0, _lodash.merge)(this.data_, {
+        method: 'POST',
+        json: json,
+        headers: {
+          'Access-Token': this.player_.options_.token
+        }
+      }), function (err, res) {
         if (err) {
           throw new Error(err.message);
         }

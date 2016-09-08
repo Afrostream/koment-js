@@ -1,0 +1,25 @@
+.koment .list-button {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+
+  font-size: 0.7em;
+
+  transition: all 0.2s linear;
+
+  &:before {
+    line-height: 2.3;
+  }
+
+  @extend .koment-icon-list;
+
+}
+
+.koment.koment-toggle-menu .list-button {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+
+  animation: show .3s ease 1;
+}

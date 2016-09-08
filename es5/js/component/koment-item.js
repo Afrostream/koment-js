@@ -23,9 +23,17 @@ var _utilsDom = require('../utils/dom');
 
 var Dom = _interopRequireWildcard(_utilsDom);
 
+var _clickableComponentJs = require('../clickable-component.js');
+
+var _clickableComponentJs2 = _interopRequireDefault(_clickableComponentJs);
+
 var _componentJs = require('../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
+
+var _utilsFormatTimeJs = require('../utils/format-time.js');
+
+var _utilsFormatTimeJs2 = _interopRequireDefault(_utilsFormatTimeJs);
 
 /**
  * Container of main controls
@@ -34,8 +42,8 @@ var _componentJs2 = _interopRequireDefault(_componentJs);
  * @class ControlBar
  */
 
-var KomentItem = (function (_Component) {
-  _inherits(KomentItem, _Component);
+var KomentItem = (function (_ClickableComponent) {
+  _inherits(KomentItem, _ClickableComponent);
 
   function KomentItem(player, options) {
     _classCallCheck(this, KomentItem);
@@ -57,9 +65,9 @@ var KomentItem = (function (_Component) {
     key: 'update',
     value: function update() {
       var url = this.options_.user.picture;
-
+      var timecode = (0, _utilsFormatTimeJs2['default'])(this.timecode, this.player_.duration());
       this.setSrc(url);
-
+      this.tcEl_.innerHTML = timecode + ' ' + (this.user.nickname ? '- ' + this.user.nickname : '');
       // If there's no poster source we should display:none on this component
       // so it's not still clickable or right-clickable
       if (url) {
@@ -109,10 +117,18 @@ var KomentItem = (function (_Component) {
         userName = '<div class="koment-item-user">' + profile.name + '</div>';
       }
       this.contentEl_ = Dom.createEl('div', {
-        className: 'koment-item-display',
-        innerHTML: userName + '<div class="koment-item-title">' + this.options_.text + '</div>'
+        className: 'koment-item-display'
       }, {
         'aria-live': 'off'
+      });
+
+      this.tcEl_ = Dom.createEl('div', {
+        className: 'koment-item-timecode'
+      });
+
+      this.textEl_ = Dom.createEl('div', {
+        className: 'koment-item-title',
+        innerHTML: this.options_.text
       });
 
       this.avatarEl_ = Dom.createEl('div', {
@@ -121,9 +137,16 @@ var KomentItem = (function (_Component) {
         'aria-live': 'off'
       });
 
+      this.contentEl_.appendChild(this.tcEl_);
+      this.contentEl_.appendChild(this.textEl_);
       el.appendChild(this.avatarEl_);
       el.appendChild(this.contentEl_);
       return el;
+    }
+  }, {
+    key: 'handleClick',
+    value: function handleClick() {
+      this.player_.currentTime(this.timecode);
     }
   }, {
     key: 'hide',
@@ -144,7 +167,7 @@ var KomentItem = (function (_Component) {
   }]);
 
   return KomentItem;
-})(_componentJs2['default']);
+})(_clickableComponentJs2['default']);
 
 KomentItem.prototype.timecode = 0;
 KomentItem.prototype.options_ = {

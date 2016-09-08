@@ -1,4 +1,76 @@
-// Emulated tracks
+.koment-item {
+  display: none;
+
+  position: relative;
+  transition: all 0.2s linear;
+  left: 0;
+  font-size: 0.8em;
+
+  opacity: 0;
+  visibility: hidden;
+  max-height: 0;
+  align-self: flex-start;
+
+  cursor: pointer;
+  color: #FFFFFF;
+  transition: transform 1.5s linear, opacity 0.3s linear;
+
+  .koment-item-timecode {
+    color: rgba(#FFFFFF, 0.4);
+    font-size: 0.8em;
+    display: inline-block;
+    &:before {
+      padding-right: 0.4em;
+      line-height: 1.5;
+      @extend .koment-icon-timecode;
+    }
+  }
+
+  .koment-item-display {
+    word-wrap: break-word;
+  }
+
+  .koment-item-avatar {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    clip-path: polygon(30px 0, 100% 10px, 100% 100%, 0 100%, 0 0);
+    -webkit-clip-path: polygon(30px 0, 100% 10px, 100% 100%, 0 100%, 0 0);
+  }
+
+  .koment-item-display {
+    position: relative;
+    padding: 0.5em;
+    color: $kmt-primary-background-color;
+    border-radius: $kmt-primary-border-radius;
+    min-height: 40px;
+    max-width: 350px;
+    height: 100%;
+    @include background-color-with-alpha($kmt-primary-foreground-color, 0.6);
+
+    &:first-letter {
+      text-transform: uppercase;
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -10px;
+      width: 0;
+      height: 0;
+      border: 5px solid rgba($kmt-primary-foreground-color, 0.6);
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+    }
+
+  }
+}
+
 .koment-display {
   pointer-events: none;
   position: absolute;
@@ -11,77 +83,13 @@
 
   transition: all 0.3s linear;
 
-  .koment-item {
-    cursor: pointer;
-    font-size: 10px;
-    color: #FFFFFF;
-    transition: transform 1.5s linear, opacity 0.3s linear;
-    &:hover {
-      z-index: 2;
-    }
-    .koment-item-user {
-      color: #FFFFFF;
-    }
-    .koment-item-display {
-      word-wrap: break-word;
-    }
-  }
-
   //VIKI
   &.viki {
     display: none;
     flex-direction: column;
     .koment-item {
-      display: none;
-
-      position: relative;
-      transition: all 0.2s linear;
-      left: 0;
-      font-size: 0.8em;
-
-      opacity: 0;
-      visibility: hidden;
-      max-height: 0;
-      align-self: flex-start;
-
-      .koment-item-avatar {
-        position: relative;
-        width: 40px;
-        height: 40px;
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-
-        clip-path: polygon(30px 0, 100% 10px, 100% 100%, 0 100%, 0 0);
-        -webkit-clip-path: polygon(30px 0, 100% 10px, 100% 100%, 0 100%, 0 0);
-      }
-
-      .koment-item-display {
-        position: relative;
-        padding: 0.5em;
-        color: $kmt-primary-background-color;
-        border-radius: $kmt-primary-border-radius;
-        min-height: 40px;
-        max-width: 350px;
-        height: 100%;
-        @include background-color-with-alpha($kmt-primary-foreground-color, 0.6);
-
-        &:first-letter {
-          text-transform: uppercase;
-        }
-
-        &:after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: -10px;
-          width: 0;
-          height: 0;
-          border: 5px solid rgba($kmt-primary-foreground-color, 0.6);
-          border-left-color: transparent;
-          border-bottom-color: transparent;
-        }
-
+      &:hover {
+        z-index: 2;
       }
       &.koment-show {
         display: inline-flex;
@@ -112,6 +120,10 @@
 
 .koment.koment-toggle-menu .koment-display {
   display: flex;
+}
+
+.koment.koment-toggle-list .koment-display {
+  pointer-events: all;
 }
 
 .koment.koment-toggle-edit .koment-display {

@@ -28,6 +28,7 @@ import { map } from 'lodash';
 import './control-bar/control-bar';
 import './control-bar/progress-control/progress-control';
 import './component/koment-display';
+import './component/koment-list';
 import './tech/videojs'
 import './tech/html5'
 import './tech/youtube'
@@ -1337,6 +1338,23 @@ class Player extends Component {
     return this;
   }
 
+  toggleList (toggle) {
+    if (toggle !== undefined) {
+      this.toggleList_ = !!toggle;
+    }
+    else {
+      this.toggleList_ = !this.toggleList_
+    }
+
+    if (this.toggleList_) {
+      this.addClass('koment-toggle-list');
+    } else {
+      this.removeClass('koment-toggle-list');
+    }
+
+    return this;
+  }
+
   sendKoment (kmt) {
     if (!kmt || !kmt.text) {
       return;
@@ -2274,6 +2292,7 @@ Player.prototype.options_ = {
   inactivityTimeout: 2000,
   children: [
     'komentDisplay',
+    'komentList',
     'progressControl',
     'controlBar'
   ],
@@ -2291,6 +2310,7 @@ Player.prototype.options_ = {
 
 // The following no-op expressions are here only for purposes of documentation.
 
+Player.prototype.komentsList_ = []; // eslint-disable-line
 /**
  * Fired when the user agent begins looking for media data
  *

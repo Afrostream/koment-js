@@ -7,6 +7,7 @@ import Component from '../component';
 import './koment-toggle';
 import './like-button';
 import './edit-button';
+import './list-button';
 import './post-box/post-box';
 
 /**
@@ -37,8 +38,8 @@ class ControlBar extends Component {
 ControlBar.prototype.options_ = {
   children: [
     'komentToggle',
-    //'likeButton',
     'editButton',
+    'listButton',
     'postBox',
   ]
 };

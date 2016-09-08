@@ -23,6 +23,10 @@ var _utilsDom = require('../../utils/dom');
 
 var Dom = _interopRequireWildcard(_utilsDom);
 
+var _clickableComponentJs = require('../../clickable-component.js');
+
+var _clickableComponentJs2 = _interopRequireDefault(_clickableComponentJs);
+
 var _componentJs = require('../../component.js');
 
 var _componentJs2 = _interopRequireDefault(_componentJs);
@@ -34,8 +38,8 @@ var _componentJs2 = _interopRequireDefault(_componentJs);
  * @class ControlBar
  */
 
-var TimelineProgressItem = (function (_Component) {
-  _inherits(TimelineProgressItem, _Component);
+var TimelineProgressItem = (function (_ClickableComponent) {
+  _inherits(TimelineProgressItem, _ClickableComponent);
 
   function TimelineProgressItem(player, options) {
     _classCallCheck(this, TimelineProgressItem);
@@ -127,10 +131,15 @@ var TimelineProgressItem = (function (_Component) {
         _this.addClass('koment-hidden');
       }, 500);
     }
+  }, {
+    key: 'handleClick',
+    value: function handleClick() {
+      this.player_.currentTime(this.timecode);
+    }
   }]);
 
   return TimelineProgressItem;
-})(_componentJs2['default']);
+})(_clickableComponentJs2['default']);
 
 TimelineProgressItem.prototype.timecode = 0;
 TimelineProgressItem.prototype.options_ = {

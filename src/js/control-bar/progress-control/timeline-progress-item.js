@@ -2,6 +2,7 @@
  * @file timeline-progress-item.js
  **/
 import * as Dom from '../../utils/dom'
+import ClickableComponent from '../../clickable-component.js';
 import Component from '../../component.js';
 /**
  * Container of main controls
@@ -9,7 +10,7 @@ import Component from '../../component.js';
  * @extends Component
  * @class ControlBar
  */
-class TimelineProgressItem extends Component {
+class TimelineProgressItem extends ClickableComponent {
 
   constructor (player, options) {
     super(player, options);
@@ -90,6 +91,12 @@ class TimelineProgressItem extends Component {
       this.addClass('koment-hidden');
     }, 500);
   }
+
+
+  handleClick () {
+    this.player_.currentTime(this.timecode);
+  }
+
 }
 
 TimelineProgressItem.prototype.timecode = 0;

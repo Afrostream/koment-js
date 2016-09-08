@@ -2,14 +2,16 @@
  * @file koment-item.js
  **/
 import * as Dom from '../utils/dom'
+import ClickableComponent from '../clickable-component.js';
 import Component from '../component.js';
+import formatTime from '../utils/format-time.js';
 /**
  * Container of main controls
  *
  * @extends Component
  * @class ControlBar
  */
-class KomentItem extends Component {
+class KomentItem extends ClickableComponent {
 
   constructor (player, options) {
     super(player, options);
@@ -26,9 +28,9 @@ class KomentItem extends Component {
    */
   update () {
     const url = this.options_.user.picture;
-
+    const timecode = formatTime(this.timecode, this.player_.duration());
     this.setSrc(url);
-
+    this.tcEl_.innerHTML = `${timecode} ${this.user.nickname ? '- ' + this.user.nickname : ''}`;
     // If there's no poster source we should display:none on this component
     // so it's not still clickable or right-clickable
     if (url) {
@@ -74,11 +76,20 @@ class KomentItem extends Component {
       userName = `<div class="koment-item-user">${profile.name}</div>`;
     }
     this.contentEl_ = Dom.createEl('div', {
-      className: 'koment-item-display',
-      innerHTML: `${userName}<div class="koment-item-title">${this.options_.text}</div>`
+      className: 'koment-item-display'
     }, {
       'aria-live': 'off'
     });
+
+    this.tcEl_ = Dom.createEl('div', {
+      className: 'koment-item-timecode',
+    });
+
+    this.textEl_ = Dom.createEl('div', {
+      className: 'koment-item-title',
+      innerHTML: this.options_.text
+    });
+
 
     this.avatarEl_ = Dom.createEl('div', {
       className: 'koment-item-avatar',
@@ -86,10 +97,16 @@ class KomentItem extends Component {
       'aria-live': 'off'
     });
 
+    this.contentEl_.appendChild(this.tcEl_);
+    this.contentEl_.appendChild(this.textEl_);
     el.appendChild(this.avatarEl_);
     el.appendChild(this.contentEl_);
     return el;
 
+  }
+
+  handleClick () {
+    this.player_.currentTime(this.timecode);
   }
 
   hide () {

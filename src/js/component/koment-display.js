@@ -28,7 +28,6 @@ class KomentDisplay extends Component {
       uri: this.player_.options_.api,
       method: 'GET',
       headers: {
-        'Access-Token': this.player_.options_.token,
         'Content-Type': 'application/json'
       }
     };
@@ -44,7 +43,7 @@ class KomentDisplay extends Component {
         if (item.user && item.user.facebook) {
           item.user = merge(item.user, {
             picture: `//graph.facebook.com/${item.user.facebook.id}/picture`,
-            name: item.user.facebook.nickname
+            nickname: item.user.facebook.nickname
           });
         }
       });
@@ -52,6 +51,7 @@ class KomentDisplay extends Component {
       kommentsList = sortBy(kommentsList, ['timecode']);
 
       this.player_.komentsList(kommentsList);
+      this.player_.trigger('kmtlistfetched')
       this.createChilds();
     });
   }
@@ -63,6 +63,7 @@ class KomentDisplay extends Component {
    */
   handleClick () {
     this.player_.toggleEdit(false);
+    this.player_.toggleList(false);
   }
 
   /**
@@ -88,7 +89,13 @@ class KomentDisplay extends Component {
     this.requestTick(true);
     const json = pick(item, ['timecode', 'text']);
 
-    xhr(merge(this.data_, {method: 'POST', json}), (err, res) => {
+    xhr(merge(this.data_, {
+      method: 'POST',
+      json,
+      headers: {
+        'Access-Token': this.player_.options_.token
+      }
+    }), (err, res) => {
       if (err) {
         throw new Error(err.message)
       }
