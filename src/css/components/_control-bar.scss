@@ -45,7 +45,7 @@ $ie8screen: "\\0screen";
 .koment-has-started.koment-user-inactive.koment-playing .koment-control-bar {
   // Remain visible for screen reader and keyboard users
   visibility: visible;
-  opacity: 0.3;
+  opacity: 0;
 
   $trans: visibility 1.0s, opacity 1.0s, height 0.4s;
   @include transition($trans);
@@ -54,6 +54,10 @@ $ie8screen: "\\0screen";
   @media #{$ie8screen} {
     visibility: hidden;
   }
+}
+
+.koment-has-started.koment-user-inactive.koment-toggle-menu.koment-playing {
+  opacity: 0.3;
 }
 
 .koment-controls-disabled .koment-control-bar,
