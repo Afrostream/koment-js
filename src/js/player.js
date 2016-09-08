@@ -1310,6 +1310,7 @@ class Player extends Component {
     } else {
       this.removeClass('koment-toggle-menu');
       this.toggleEdit(this.toggleMenu_);
+      this.toggleList(this.toggleMenu_);
     }
 
 

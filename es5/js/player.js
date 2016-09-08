@@ -1510,6 +1510,7 @@ var Player = (function (_Component) {
       } else {
         this.removeClass('koment-toggle-menu');
         this.toggleEdit(this.toggleMenu_);
+        this.toggleList(this.toggleMenu_);
       }
 
       return this;
