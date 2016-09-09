@@ -5,11 +5,10 @@
   bottom: 0;
   top: 0;
   right: 0;
-  left: 2em;
+  left: 0;
 }
 
 .koment .kmt-post-submit-button {
-  flex: 1;
   width: inherit;
   padding: 0.5em;
   height: 3em;
@@ -91,6 +90,11 @@
 
     [contentEditable=true]:empty:not(:focus):before {
       content: attr(data-placeholder-default);
+    }
+
+    [contentEditable=true] {
+      -webkit-user-select: text;
+      user-select: text;
     }
 
     .kmt-post-box-comments-input {
