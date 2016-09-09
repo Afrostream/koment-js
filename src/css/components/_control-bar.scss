@@ -88,10 +88,6 @@ $ie8screen: "\\0screen";
   display: table;
 }
 
-.koment.koment-fullscreen .koment-control-bar {
-  z-index: 9999999991;
-}
-
 .koment .koment-control-bar .koment-control {
   &:hover {
     .koment-control-text {
@@ -123,7 +119,7 @@ $ie8screen: "\\0screen";
   border-radius: 0;
   /* right: 100%; */
   position: absolute;
-  margin-top: -50%;
+  //margin-top: -50%;
   right: 110%;
   transform: translateX(20px);
   text-align: left;

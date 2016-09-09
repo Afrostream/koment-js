@@ -60,6 +60,11 @@ var KomentToggle = (function (_Button) {
     value: function buildCSSClass() {
       return 'koment-toggle ' + _get(Object.getPrototypeOf(KomentToggle.prototype), 'buildCSSClass', this).call(this);
     }
+  }, {
+    key: 'createEl',
+    value: function createEl() {
+      return _get(Object.getPrototypeOf(KomentToggle.prototype), 'createEl', this).call(this, 'button', {}, this.options_.attributes);
+    }
 
     /**
      * Handle click on text track
@@ -85,6 +90,10 @@ var KomentToggle = (function (_Button) {
 
   return KomentToggle;
 })(_buttonJs2['default']);
+
+KomentToggle.prototype.options_ = {
+  attributes: {}
+};
 
 KomentToggle.prototype.controlText_ = 'Koment';
 

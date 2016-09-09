@@ -33,10 +33,11 @@
 <!--crossorigin="true">-->
 <!--<source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">-->
 <!--</video>-->
-<!--<iframe width="640" data-setup='{"controls":1}' height="360"-->
+<!--<iframe width="640" data-setup='{}' height="360"-->
 <!--src="https://www.youtube.com/embed/3YSWbm_lGBs?enablejsapi=1"-->
 <!--frameborder="0"-->
 <!--allowfullscreen></iframe>-->
+
 <div id="video-container"/>
 <ul>
   <li><a href="/test/">Run unit tests in browser.</a></li>
@@ -50,6 +51,14 @@
       nickname: "benjipott",
       provider: "afrostream.tv",
       token: "cab46dacdc415f7fef0166b211afd9dcf7b9ab70",
+    },
+    controlBar: {
+      komentToggle: {
+        attributes: {
+          'data-position': 'right',
+          'data-intro': 'yes'
+        }
+      }
     },
     languages: {
       fr: {

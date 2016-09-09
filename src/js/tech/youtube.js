@@ -302,6 +302,10 @@ class Youtube extends Tech {
     this.ytPlayer = null;
   }
 
+  supportsFullScreen () {
+    return true;
+  }
+
   error () {
     switch (this.errorNumber) {
       case 5:

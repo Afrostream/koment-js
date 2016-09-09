@@ -121,6 +121,12 @@ body.koment-full-window {
   padding-top: 0 !important;
 }
 
+.koment.koment-fullscreen .koment-control-bar,
+.koment.koment-fullscreen .koment-display,
+.koment.koment-fullscreen .koment-list {
+  z-index: 9999999991;
+}
+
 .koment.koment-fullscreen.koment-user-inactive {
   cursor: none;
 }

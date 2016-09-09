@@ -33,6 +33,10 @@ class KomentToggle extends Button {
     return `koment-toggle ${super.buildCSSClass()}`;
   }
 
+  createEl () {
+    return super.createEl('button', {}, this.options_.attributes)
+  }
+
   /**
    * Handle click on text track
    *
@@ -51,6 +55,10 @@ class KomentToggle extends Button {
     }
   }
 }
+
+KomentToggle.prototype.options_ = {
+  attributes: {}
+};
 
 KomentToggle.prototype.controlText_ = 'Koment';
 

@@ -348,6 +348,11 @@ var Youtube = (function (_Tech) {
       this.ytPlayer = null;
     }
   }, {
+    key: 'supportsFullScreen',
+    value: function supportsFullScreen() {
+      return true;
+    }
+  }, {
     key: 'error',
     value: function error() {
       switch (this.errorNumber) {
