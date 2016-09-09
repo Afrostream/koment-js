@@ -19375,7 +19375,7 @@ function extend() {
 module.exports={
   "private": true,
   "name": "koment-js",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Post comments on all video players",
   "repository": "komentio/koment-js",
   "author": "Benjipott",
