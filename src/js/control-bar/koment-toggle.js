@@ -1,8 +1,6 @@
 /**
  * @file koment-toggle.js
  */
-import toTitleCase from '../utils/to-title-case'
-import * as Dom from '../utils/dom'
 
 import Component from '../component.js';
 import Button from '../button.js';
@@ -22,6 +20,7 @@ class KomentToggle extends Button {
 
   constructor (player, options, ready) {
     super(player, options, ready)
+    this.on(player, 'togglemenu', this.handleToggleChange);
   }
 
   /**
@@ -31,7 +30,7 @@ class KomentToggle extends Button {
    * @method buildCSSClass
    */
   buildCSSClass () {
-    return `koment-toggle ${super.buildCSSClass()}`
+    return `koment-toggle ${super.buildCSSClass()}`;
   }
 
   /**
@@ -42,6 +41,14 @@ class KomentToggle extends Button {
   handleClick (event) {
     super.handleClick(event);
     this.player_.toggleMenu();
+  }
+
+  handleToggleChange () {
+    if (this.player_.isKomentOn()) {
+      this.controlText('Non-Koment');
+    } else {
+      this.controlText('Koment');
+    }
   }
 }
 

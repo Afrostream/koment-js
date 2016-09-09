@@ -22,7 +22,7 @@
   </style>
   <script src="//vjs.zencdn.net/5.12.0/video.js"></script>
   <link href="//vjs.zencdn.net/5.12.0/video-js.css" rel="stylesheet">
-
+  <script src="/dist/koment.js"></script>
 </head>
 <body>
 
@@ -43,20 +43,36 @@
 </ul>
 
 <script>
-
+  var komentData = {
+    api: "https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments",
+    token: "cab46dacdc415f7fef0166b211afd9dcf7b9ab70",
+    user: {
+      id: "toto",
+      picture: "//graph.facebook.com/10204404008400201/picture",
+      name: "benjipott"
+    },
+    languages: {
+      fr: {
+        "Send": "Envoyer",
+        "Add your comment here...": "Commenter ce passage de la video...",
+        "Koment": "Ouvrir les commentaires",
+        "Non-Koment": "Fermer les commentaires",
+      }
+    }
+  };
   var container = document.getElementById('video-container');
   var video = document.createElement('video');
   video.id = 'player';
   video.className = 'video-js vjs-afrostream-skin';
   video.crossOrigin = true;
   video.setAttribute('crossorigin', true);
-  video.setAttribute('data-setup', '{"controls":1,"api":"https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments","token":"cab46dacdc415f7fef0166b211afd9dcf7b9ab70","user":{"id":"toto","picture":"//graph.facebook.com/10204404008400201/picture","name":"benjipott"},"languages":{"fr":{"Send":"Envoyer","Add your comment here...":"Commenter"}}}');
+  video.setAttribute('data-setup', JSON.stringify(komentData));
   container.appendChild(video);
 
 
   player = videojs('player', {
     controls: 1,
-//    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
+    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
     sources: [{
       src: 'http://vjs.zencdn.net/v/oceans.mp4',
       type: 'video/mp4'
@@ -66,10 +82,10 @@
       picture: '//graph.facebook.com/10204404008400201/picture',
       name: 'benjipott'
     }
-  }).ready(function () {
   });
 
+
 </script>
-<script src="/dist/koment.js"></script>
+
 </body>
 </html>

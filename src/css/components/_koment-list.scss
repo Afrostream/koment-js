@@ -20,6 +20,7 @@
   align-self: flex-start;
   flex-direction: row;
   flex-wrap: wrap;
+  align-content: flex-start;
 
   .koment-item {
     display: inline-flex;
@@ -43,8 +44,18 @@
   animation-timing-function: ease-Out;
 }
 
+.koment.koment-toggle-list .koment-tech {
+  width: 70%;
+  transition: width 0.3s linear;
+}
+
 .koment.koment-fullscreen.koment-toggle-list .koment-list {
   width: 20%;
+}
+
+.koment.koment-fullscreen.koment-toggle-list .koment-tech {
+  width: 80%;
+  transition: width 0.3s linear;
 }
 
 .koment.koment-toggle-edit .koment-list {

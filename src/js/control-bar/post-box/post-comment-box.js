@@ -1,7 +1,7 @@
 /**
  * @file koment-toggle.js
  */
-import toTitleCase from '../../utils/to-title-case'
+import window from 'global/window';
 import document from 'global/document';
 import Component from '../../component.js';
 import './post-comment-box';
@@ -129,6 +129,16 @@ class PostCommentBox extends Component {
     this.inputEl.innerHTML = '';
   }
 
+  setCursorEnd () {
+    var range = document.createRange();
+    var sel = window.getSelection();
+    range.setStart(this.inputEl, 1);
+    range.selectNodeContents(this.inputEl);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
   /**
    *
    * @param {String} [value]
@@ -155,7 +165,9 @@ class PostCommentBox extends Component {
     e = e || w.event;
     //in Chrome it sends out this event before every regular event, not sure why
     if (e.keyCode === 229) return;
-
+    let exit;
+    let max = this.options_.max;
+    let value = this.value();
     switch (e.keyCode) {
       case key['enter']:
         e.preventDefault();
@@ -166,15 +178,19 @@ class PostCommentBox extends Component {
         break;
       case key['backspace']:
       case key['delete']:
-        return
-        break;
+        e.preventDefault();
+        var sel = window.getSelection();
+        this.value(value.substring(0, Math.min(value.length - 1, sel.focusOffset)));
+        this.setCursorEnd();
+        exit = true;
+        break
+    }
+    if (exit) {
+      return;
     }
 
-    let max = this.options_.max;
-    let value = this.value();
     value = this.encodeHtml(value);
     value = this.parseHtml(value);
-    let length = value.length;
     let totalLength = value.length;
     if (totalLength >= max) {
       e.preventDefault();

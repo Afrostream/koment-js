@@ -223,7 +223,7 @@ var Player = (function (_Component) {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !this.tag.controls && !!options.controls;
+    this.controls_ = !this.tag.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
@@ -707,7 +707,7 @@ var Player = (function (_Component) {
       this.on(this.tech_, 'volumechange', this.handleTechVolumeChange_);
       this.on(this.tech_, 'loadedmetadata', this.updateStyleEl_);
 
-      if (this.controls() && !this.usingNativeControls()) {
+      if (this.controls() && !this.usingNativeControls() && ! ~this.el_.className.indexOf('vjs-tech')) {
         this.addTechControlsListeners_();
       }
 
@@ -1495,6 +1495,11 @@ var Player = (function (_Component) {
       return this.komentsList_;
     }
   }, {
+    key: 'isKomentOn',
+    value: function isKomentOn() {
+      return this.toggleMenu_;
+    }
+  }, {
     key: 'toggleMenu',
     value: function toggleMenu(toggle) {
 
@@ -1506,13 +1511,13 @@ var Player = (function (_Component) {
 
       if (this.toggleMenu_) {
         this.addClass('koment-toggle-menu');
-        this.trigger('togglemenu');
       } else {
         this.removeClass('koment-toggle-menu');
         this.toggleEdit(this.toggleMenu_);
         this.toggleList(this.toggleMenu_);
       }
 
+      this.trigger('togglemenu');
       return this;
     }
   }, {
@@ -2036,7 +2041,6 @@ var Player = (function (_Component) {
             this.removeClass('koment-controls-disabled');
             this.addClass('koment-controls-enabled');
             this.trigger('controlsenabled');
-
             if (!this.usingNativeControls()) {
               this.addTechControlsListeners_();
             }

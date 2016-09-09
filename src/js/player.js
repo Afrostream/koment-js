@@ -134,7 +134,7 @@ class Player extends Component {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !this.tag.controls && !!options.controls;
+    this.controls_ = !this.tag.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
@@ -600,8 +600,7 @@ class Player extends Component {
     this.on(this.tech_, 'volumechange', this.handleTechVolumeChange_);
     this.on(this.tech_, 'loadedmetadata', this.updateStyleEl_);
 
-
-    if (this.controls() && !this.usingNativeControls()) {
+    if (this.controls() && !this.usingNativeControls() && !~this.el_.className.indexOf('vjs-tech')) {
       this.addTechControlsListeners_();
     }
 
@@ -1295,6 +1294,10 @@ class Player extends Component {
     return this.komentsList_;
   }
 
+  isKomentOn () {
+    return this.toggleMenu_;
+  }
+
   toggleMenu (toggle) {
 
     if (toggle !== undefined) {
@@ -1306,7 +1309,6 @@ class Player extends Component {
 
     if (this.toggleMenu_) {
       this.addClass('koment-toggle-menu');
-      this.trigger('togglemenu');
     } else {
       this.removeClass('koment-toggle-menu');
       this.toggleEdit(this.toggleMenu_);
@@ -1314,6 +1316,7 @@ class Player extends Component {
     }
 
 
+    this.trigger('togglemenu');
     return this;
   }
 
@@ -1790,7 +1793,6 @@ class Player extends Component {
           this.removeClass('koment-controls-disabled');
           this.addClass('koment-controls-enabled');
           this.trigger('controlsenabled');
-
           if (!this.usingNativeControls()) {
             this.addTechControlsListeners_();
           }

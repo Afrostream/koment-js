@@ -26,9 +26,45 @@
   //text-shadow: 0em 0em 1em rgba($primary-foreground-color, 1);
 }
 
+.koment .koment-control {
+  &:hover {
+    .koment-control-text {
+      display: block;
+      visiblility: visible;
+      opacity: 1;
+      transform: translateX(0);
+      transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out, transform 0.2s cubic-bezier(0.71, 1.7, 0.77, 1.24);
+    }
+  }
+}
+
 // Hide control text visually, but have it available for screenreaders
 .koment .koment-control-text {
-  @include hide-visually;
+  display: block;
+  visiblility: hidden;
+  opacity: 0;
+  background: rgba($kmt-primary-foreground-color, 0.6);
+  color: #FFFFFF;
+  padding: 10px;
+  border-radius: 0;
+  /* right: 100%; */
+  position: absolute;
+  margin-top: -50%;
+  right: 110%;
+  transform: translateX(20px);
+  text-align: left;
+  font-family: $kmt-text-font-family;
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 0;
+    height: 0;
+    border: 5px solid rgba($kmt-primary-foreground-color, 0.6);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+  }
 }
 
 // IE 8 + 9 Support

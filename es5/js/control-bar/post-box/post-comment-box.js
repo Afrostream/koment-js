@@ -17,9 +17,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _utilsToTitleCase = require('../../utils/to-title-case');
+var _globalWindow = require('global/window');
 
-var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
 
 var _globalDocument = require('global/document');
 
@@ -160,6 +160,17 @@ var PostCommentBox = (function (_Component) {
     value: function clear() {
       this.inputEl.innerHTML = '';
     }
+  }, {
+    key: 'setCursorEnd',
+    value: function setCursorEnd() {
+      var range = _globalDocument2['default'].createRange();
+      var sel = _globalWindow2['default'].getSelection();
+      range.setStart(this.inputEl, 1);
+      range.selectNodeContents(this.inputEl);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
 
     /**
      *
@@ -190,7 +201,9 @@ var PostCommentBox = (function (_Component) {
       e = e || w.event;
       //in Chrome it sends out this event before every regular event, not sure why
       if (e.keyCode === 229) return;
-
+      var exit = undefined;
+      var max = this.options_.max;
+      var value = this.value();
       switch (e.keyCode) {
         case key['enter']:
           e.preventDefault();
@@ -201,15 +214,19 @@ var PostCommentBox = (function (_Component) {
           break;
         case key['backspace']:
         case key['delete']:
-          return;
+          e.preventDefault();
+          var sel = _globalWindow2['default'].getSelection();
+          this.value(value.substring(0, Math.min(value.length - 1, sel.focusOffset)));
+          this.setCursorEnd();
+          exit = true;
           break;
       }
+      if (exit) {
+        return;
+      }
 
-      var max = this.options_.max;
-      var value = this.value();
       value = this.encodeHtml(value);
       value = this.parseHtml(value);
-      var length = value.length;
       var totalLength = value.length;
       if (totalLength >= max) {
         e.preventDefault();

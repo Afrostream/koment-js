@@ -22305,6 +22305,7 @@ module.exports = exports['default'];
 /**
  * @file koment-toggle.js
  */
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -22315,21 +22316,11 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _utilsToTitleCase = require('../utils/to-title-case');
-
-var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
-
-var _utilsDom = require('../utils/dom');
-
-var Dom = _interopRequireWildcard(_utilsDom);
 
 var _componentJs = require('../component.js');
 
@@ -22358,6 +22349,7 @@ var KomentToggle = (function (_Button) {
     _classCallCheck(this, KomentToggle);
 
     _get(Object.getPrototypeOf(KomentToggle.prototype), 'constructor', this).call(this, player, options, ready);
+    this.on(player, 'togglemenu', this.handleToggleChange);
   }
 
   /**
@@ -22384,6 +22376,15 @@ var KomentToggle = (function (_Button) {
       _get(Object.getPrototypeOf(KomentToggle.prototype), 'handleClick', this).call(this, event);
       this.player_.toggleMenu();
     }
+  }, {
+    key: 'handleToggleChange',
+    value: function handleToggleChange() {
+      if (this.player_.isKomentOn()) {
+        this.controlText('Non-Koment');
+      } else {
+        this.controlText('Koment');
+      }
+    }
   }]);
 
   return KomentToggle;
@@ -22395,7 +22396,7 @@ _componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
 exports['default'] = KomentToggle;
 module.exports = exports['default'];
 
-},{"../button.js":64,"../component.js":66,"../utils/dom":100,"../utils/to-title-case":109}],73:[function(require,module,exports){
+},{"../button.js":64,"../component.js":66}],73:[function(require,module,exports){
 /**
  * @file koment-toggle.js
  */
@@ -22686,9 +22687,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _utilsToTitleCase = require('../../utils/to-title-case');
+var _globalWindow = require('global/window');
 
-var _utilsToTitleCase2 = _interopRequireDefault(_utilsToTitleCase);
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
 
 var _globalDocument = require('global/document');
 
@@ -22829,6 +22830,17 @@ var PostCommentBox = (function (_Component) {
     value: function clear() {
       this.inputEl.innerHTML = '';
     }
+  }, {
+    key: 'setCursorEnd',
+    value: function setCursorEnd() {
+      var range = _globalDocument2['default'].createRange();
+      var sel = _globalWindow2['default'].getSelection();
+      range.setStart(this.inputEl, 1);
+      range.selectNodeContents(this.inputEl);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
 
     /**
      *
@@ -22859,7 +22871,9 @@ var PostCommentBox = (function (_Component) {
       e = e || w.event;
       //in Chrome it sends out this event before every regular event, not sure why
       if (e.keyCode === 229) return;
-
+      var exit = undefined;
+      var max = this.options_.max;
+      var value = this.value();
       switch (e.keyCode) {
         case key['enter']:
           e.preventDefault();
@@ -22870,15 +22884,19 @@ var PostCommentBox = (function (_Component) {
           break;
         case key['backspace']:
         case key['delete']:
-          return;
+          e.preventDefault();
+          var sel = _globalWindow2['default'].getSelection();
+          this.value(value.substring(0, Math.min(value.length - 1, sel.focusOffset)));
+          this.setCursorEnd();
+          exit = true;
           break;
       }
+      if (exit) {
+        return;
+      }
 
-      var max = this.options_.max;
-      var value = this.value();
       value = this.encodeHtml(value);
       value = this.parseHtml(value);
-      var length = value.length;
       var totalLength = value.length;
       if (totalLength >= max) {
         e.preventDefault();
@@ -22962,7 +22980,7 @@ _componentJs2['default'].registerComponent('PostCommentBox', PostCommentBox);
 exports['default'] = PostCommentBox;
 module.exports = exports['default'];
 
-},{"../../component.js":66,"../../utils/to-title-case":109,"./post-comment-box":76,"global/document":7}],77:[function(require,module,exports){
+},{"../../component.js":66,"./post-comment-box":76,"global/document":7,"global/window":8}],77:[function(require,module,exports){
 /**
  * @file post-submit-button.js
  */
@@ -25386,7 +25404,7 @@ var Player = (function (_Component) {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !this.tag.controls && !!options.controls;
+    this.controls_ = !this.tag.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
@@ -25870,7 +25888,7 @@ var Player = (function (_Component) {
       this.on(this.tech_, 'volumechange', this.handleTechVolumeChange_);
       this.on(this.tech_, 'loadedmetadata', this.updateStyleEl_);
 
-      if (this.controls() && !this.usingNativeControls()) {
+      if (this.controls() && !this.usingNativeControls() && ! ~this.el_.className.indexOf('vjs-tech')) {
         this.addTechControlsListeners_();
       }
 
@@ -26658,6 +26676,11 @@ var Player = (function (_Component) {
       return this.komentsList_;
     }
   }, {
+    key: 'isKomentOn',
+    value: function isKomentOn() {
+      return this.toggleMenu_;
+    }
+  }, {
     key: 'toggleMenu',
     value: function toggleMenu(toggle) {
 
@@ -26669,13 +26692,13 @@ var Player = (function (_Component) {
 
       if (this.toggleMenu_) {
         this.addClass('koment-toggle-menu');
-        this.trigger('togglemenu');
       } else {
         this.removeClass('koment-toggle-menu');
         this.toggleEdit(this.toggleMenu_);
         this.toggleList(this.toggleMenu_);
       }
 
+      this.trigger('togglemenu');
       return this;
     }
   }, {
@@ -27199,7 +27222,6 @@ var Player = (function (_Component) {
             this.removeClass('koment-controls-disabled');
             this.addClass('koment-controls-enabled');
             this.trigger('controlsenabled');
-
             if (!this.usingNativeControls()) {
               this.addTechControlsListeners_();
             }
