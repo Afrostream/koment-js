@@ -25,8 +25,12 @@ class KomentDisplay extends Component {
     this.on(player, 'loadedmetadata', this.initKoment);
   }
 
+  videoId () {
+    return this.player_.options_.videoId || this.player_.currentSrc();
+  }
+
   initKoment () {
-    let videoId_ = this.player_.currentSrc();
+    const videoId_ = this.videoId();
     this.data_ = {
       json: true,
       uri: `${this.player_.options_.api}?video=${videoId_}`,
@@ -67,7 +71,8 @@ class KomentDisplay extends Component {
     this.addChild(mi);
     this.requestTick(true);
     const json = pick(item, ['timecode', 'message', 'user']);
-    json.video = this.player_.currentSrc();
+    const videoId_ = this.videoId();
+    json.video = videoId_;
     xhr(merge(this.data_, {
       method: 'POST',
       video: this.videoId_,

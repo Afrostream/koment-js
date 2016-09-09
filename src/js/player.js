@@ -746,8 +746,6 @@ class Player extends Component {
     if (this.cache_.volume) {
       this.techCall_('setVolume', this.cache_.volume);
     }
-    this.cache_.src = this.currentSrc();
-
     // Update the duration if available
     this.handleTechDurationChange_();
   }
