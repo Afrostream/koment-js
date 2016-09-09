@@ -27759,6 +27759,8 @@ Player.prototype.options_ = {
   inactivityTimeout: 2000,
   children: ['komentDisplay', 'komentList', 'progressControl', 'controlBar'],
 
+  api: 'https://koment-api.herokuapp.com/api/koments',
+
   user: {},
 
   language: navigator && (navigator.languages && navigator.languages[0] || navigator.userLanguage || navigator.language) || 'en',
