@@ -742,11 +742,11 @@ class Player extends Component {
    */
   handleTechReady_ () {
     this.triggerReady();
-
     // Keep the same volume as before
     if (this.cache_.volume) {
       this.techCall_('setVolume', this.cache_.volume);
     }
+    this.cache_.src = this.currentSrc();
 
     // Update the duration if available
     this.handleTechDurationChange_();
