@@ -479,9 +479,6 @@ var Html5 = (function (_Tech) {
   }, {
     key: 'currentSrc',
     value: function currentSrc() {
-      if (this.currentSource_) {
-        return this.currentSource_.src;
-      }
       return this.el_.currentSrc;
     }
 

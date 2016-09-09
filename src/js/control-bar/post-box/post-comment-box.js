@@ -227,11 +227,11 @@ class PostCommentBox extends Component {
   }
 
   onSubmit () {
-    const text = this.value();
+    const message = this.value();
     const timecode = Math.round(this.player_.currentTime());
     const user = this.player_.options_.user;
     this.clear();
-    this.player_.sendKoment({text, timecode, user})
+    this.player_.sendKoment({message, timecode, user})
   }
 
   createEl () {

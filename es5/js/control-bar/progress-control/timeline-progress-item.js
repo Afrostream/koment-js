@@ -59,7 +59,7 @@ var TimelineProgressItem = (function (_ClickableComponent) {
   _createClass(TimelineProgressItem, [{
     key: 'update',
     value: function update() {
-      var url = this.user.picture;
+      var url = this.user.avatar;
 
       this.setSrc(url);
 
@@ -145,7 +145,7 @@ TimelineProgressItem.prototype.timecode = 0;
 TimelineProgressItem.prototype.options_ = {
   timecode: 0,
   user: {
-    picture: ''
+    avatar: ''
   }
 };
 

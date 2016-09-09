@@ -1360,7 +1360,7 @@ class Player extends Component {
   }
 
   sendKoment (kmt) {
-    if (!kmt || !kmt.text) {
+    if (!kmt || !kmt.message) {
       return;
     }
     console.log('koment send ', kmt);

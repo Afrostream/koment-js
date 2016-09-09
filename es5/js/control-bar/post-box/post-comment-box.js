@@ -265,11 +265,11 @@ var PostCommentBox = (function (_Component) {
   }, {
     key: 'onSubmit',
     value: function onSubmit() {
-      var text = this.value();
+      var message = this.value();
       var timecode = Math.round(this.player_.currentTime());
       var user = this.player_.options_.user;
       this.clear();
-      this.player_.sendKoment({ text: text, timecode: timecode, user: user });
+      this.player_.sendKoment({ message: message, timecode: timecode, user: user });
     }
   }, {
     key: 'createEl',

@@ -16,7 +16,7 @@ class KomentItem extends ClickableComponent {
   constructor (player, options) {
     super(player, options);
     this.timecode = this.options_.timecode;
-    this.text = this.options_.text;
+    this.message = this.options_.message;
     this.user = this.options_.user;
     this.update();
   }
@@ -27,7 +27,7 @@ class KomentItem extends ClickableComponent {
    * @method update
    */
   update () {
-    const url = this.options_.user.picture;
+    const url = this.options_.user.avatar;
     const timecode = formatTime(this.timecode, this.player_.duration());
     this.setSrc(url);
     this.tcEl_.innerHTML = `${timecode} ${this.user.nickname ? '- ' + this.user.nickname : ''}`;
@@ -69,12 +69,7 @@ class KomentItem extends ClickableComponent {
     const el = super.createEl('div', {
       className: 'koment-item koment-hidden'
     });
-    let userName = '';
 
-    let profile = this.options_.user && this.options_.user;
-    if (profile && profile.name) {
-      userName = `<div class="koment-item-user">${profile.name}</div>`;
-    }
     this.contentEl_ = Dom.createEl('div', {
       className: 'koment-item-display'
     }, {
@@ -87,7 +82,7 @@ class KomentItem extends ClickableComponent {
 
     this.textEl_ = Dom.createEl('div', {
       className: 'koment-item-title',
-      innerHTML: this.options_.text
+      innerHTML: this.options_.message
     });
 
 
@@ -125,11 +120,11 @@ class KomentItem extends ClickableComponent {
 
 KomentItem.prototype.timecode = 0;
 KomentItem.prototype.options_ = {
-  text: '',
+  message: '',
   timecode: 0,
   user: {
-    name: '',
-    picture: ''
+    nickname: '',
+    avatar: ''
   }
 };
 

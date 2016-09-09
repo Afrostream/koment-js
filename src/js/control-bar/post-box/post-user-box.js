@@ -30,7 +30,7 @@ class PostUserBox extends Component {
    * @method update
    */
   update () {
-    const url = this.player_.options_.user.picture;
+    const url = this.player_.options_.user.avatar;
 
     this.setSrc(url);
 

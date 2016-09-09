@@ -22,10 +22,14 @@ class KomentDisplay extends Component {
 
     this.on('tap', this.handleClick);
     this.on('click', this.handleClick);
+    this.on(player, 'loadedmetadata', this.initKoment);
+  }
 
+  initKoment () {
+    let videoId_ = this.player_.currentSrc();
     this.data_ = {
       json: true,
-      uri: this.player_.options_.api,
+      uri: `${this.player_.options_.api}?video=${videoId_}`,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -42,7 +46,7 @@ class KomentDisplay extends Component {
       forEach(kommentsList, (item)=> {
         if (item.user && item.user.facebook) {
           item.user = merge(item.user, {
-            picture: `//graph.facebook.com/${item.user.facebook.id}/picture`,
+            avatar: `//graph.facebook.com/${item.user.facebook.id}/picture`,
             nickname: item.user.facebook.nickname
           });
         }
@@ -53,6 +57,27 @@ class KomentDisplay extends Component {
       this.player_.komentsList(kommentsList);
       this.player_.trigger('kmtlistfetched')
       this.createChilds();
+    });
+  }
+
+  update (e) {
+    const item = e.data;
+    const mi = new KomentItem(this.player_, item);
+    this.items.unshift(mi);
+    this.addChild(mi);
+    this.requestTick(true);
+    const json = pick(item, ['timecode', 'message', 'user']);
+    json.video = this.player_.currentSrc();
+    xhr(merge(this.data_, {
+      method: 'POST',
+      video: this.videoId_,
+      uri: `${this.player_.options_.api}`,
+      json,
+    }), (err, res) => {
+      if (err) {
+        throw new Error(err.message)
+      }
+      console.log('koment posted', res);
     });
   }
 
@@ -78,28 +103,6 @@ class KomentDisplay extends Component {
       dir: 'ltr'
     }, {
       role: 'group'
-    });
-  }
-
-  update (e) {
-    const item = e.data;
-    const mi = new KomentItem(this.player_, item);
-    this.items.unshift(mi);
-    this.addChild(mi);
-    this.requestTick(true);
-    const json = pick(item, ['timecode', 'text']);
-
-    xhr(merge(this.data_, {
-      method: 'POST',
-      json,
-      headers: {
-        'Access-Token': this.player_.options_.token
-      }
-    }), (err, res) => {
-      if (err) {
-        throw new Error(err.message)
-      }
-      console.log('koment posted', res);
     });
   }
 

@@ -25,7 +25,7 @@ class TimelineProgressItem extends ClickableComponent {
    * @method update
    */
   update () {
-    const url = this.user.picture;
+    const url = this.user.avatar;
 
     this.setSrc(url);
 
@@ -103,7 +103,7 @@ TimelineProgressItem.prototype.timecode = 0;
 TimelineProgressItem.prototype.options_ = {
   timecode: 0,
   user: {
-    picture: ''
+    avatar: ''
   }
 };
 

@@ -1562,7 +1562,7 @@ var Player = (function (_Component) {
   }, {
     key: 'sendKoment',
     value: function sendKoment(kmt) {
-      if (!kmt || !kmt.text) {
+      if (!kmt || !kmt.message) {
         return;
       }
       console.log('koment send ', kmt);

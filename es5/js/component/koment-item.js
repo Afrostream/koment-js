@@ -50,7 +50,7 @@ var KomentItem = (function (_ClickableComponent) {
 
     _get(Object.getPrototypeOf(KomentItem.prototype), 'constructor', this).call(this, player, options);
     this.timecode = this.options_.timecode;
-    this.text = this.options_.text;
+    this.message = this.options_.message;
     this.user = this.options_.user;
     this.update();
   }
@@ -64,7 +64,7 @@ var KomentItem = (function (_ClickableComponent) {
   _createClass(KomentItem, [{
     key: 'update',
     value: function update() {
-      var url = this.options_.user.picture;
+      var url = this.options_.user.avatar;
       var timecode = (0, _utilsFormatTimeJs2['default'])(this.timecode, this.player_.duration());
       this.setSrc(url);
       this.tcEl_.innerHTML = timecode + ' ' + (this.user.nickname ? '- ' + this.user.nickname : '');
@@ -110,12 +110,7 @@ var KomentItem = (function (_ClickableComponent) {
       var el = _get(Object.getPrototypeOf(KomentItem.prototype), 'createEl', this).call(this, 'div', {
         className: 'koment-item koment-hidden'
       });
-      var userName = '';
 
-      var profile = this.options_.user && this.options_.user;
-      if (profile && profile.name) {
-        userName = '<div class="koment-item-user">' + profile.name + '</div>';
-      }
       this.contentEl_ = Dom.createEl('div', {
         className: 'koment-item-display'
       }, {
@@ -128,7 +123,7 @@ var KomentItem = (function (_ClickableComponent) {
 
       this.textEl_ = Dom.createEl('div', {
         className: 'koment-item-title',
-        innerHTML: this.options_.text
+        innerHTML: this.options_.message
       });
 
       this.avatarEl_ = Dom.createEl('div', {
@@ -171,11 +166,11 @@ var KomentItem = (function (_ClickableComponent) {
 
 KomentItem.prototype.timecode = 0;
 KomentItem.prototype.options_ = {
-  text: '',
+  message: '',
   timecode: 0,
   user: {
-    name: '',
-    picture: ''
+    nickname: '',
+    avatar: ''
   }
 };
 

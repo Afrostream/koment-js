@@ -48,8 +48,6 @@ var KomentDisplay = (function (_Component) {
   _inherits(KomentDisplay, _Component);
 
   function KomentDisplay(player, options) {
-    var _this = this;
-
     _classCallCheck(this, KomentDisplay);
 
     _get(Object.getPrototypeOf(KomentDisplay.prototype), 'constructor', this).call(this, player, options);
@@ -58,47 +56,76 @@ var KomentDisplay = (function (_Component) {
 
     this.on('tap', this.handleClick);
     this.on('click', this.handleClick);
-
-    this.data_ = {
-      json: true,
-      uri: this.player_.options_.api,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-
-    var kommentsList = [];
-    (0, _xhr2['default'])(this.data_, function (err, res) {
-      if (err) {
-        throw new Error(err.message);
-      }
-      kommentsList = res.body || [];
-
-      (0, _lodash.forEach)(kommentsList, function (item) {
-        if (item.user && item.user.facebook) {
-          item.user = (0, _lodash.merge)(item.user, {
-            picture: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
-            nickname: item.user.facebook.nickname
-          });
-        }
-      });
-
-      kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
-
-      _this.player_.komentsList(kommentsList);
-      _this.player_.trigger('kmtlistfetched');
-      _this.createChilds();
-    });
+    this.on(player, 'loadedmetadata', this.initKoment);
   }
 
-  /**
-   * Handle Click - Override with specific functionality for component
-   *
-   * @method handleClick
-   */
-
   _createClass(KomentDisplay, [{
+    key: 'initKoment',
+    value: function initKoment() {
+      var _this = this;
+
+      var videoId_ = this.player_.currentSrc();
+      this.data_ = {
+        json: true,
+        uri: this.player_.options_.api + '?video=' + videoId_,
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      };
+
+      var kommentsList = [];
+      (0, _xhr2['default'])(this.data_, function (err, res) {
+        if (err) {
+          throw new Error(err.message);
+        }
+        kommentsList = res.body || [];
+
+        (0, _lodash.forEach)(kommentsList, function (item) {
+          if (item.user && item.user.facebook) {
+            item.user = (0, _lodash.merge)(item.user, {
+              avatar: '//graph.facebook.com/' + item.user.facebook.id + '/picture',
+              nickname: item.user.facebook.nickname
+            });
+          }
+        });
+
+        kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
+
+        _this.player_.komentsList(kommentsList);
+        _this.player_.trigger('kmtlistfetched');
+        _this.createChilds();
+      });
+    }
+  }, {
+    key: 'update',
+    value: function update(e) {
+      var item = e.data;
+      var mi = new _komentItem2['default'](this.player_, item);
+      this.items.unshift(mi);
+      this.addChild(mi);
+      this.requestTick(true);
+      var json = (0, _lodash.pick)(item, ['timecode', 'message', 'user']);
+      json.video = this.player_.currentSrc();
+      (0, _xhr2['default'])((0, _lodash.merge)(this.data_, {
+        method: 'POST',
+        video: this.videoId_,
+        uri: '' + this.player_.options_.api,
+        json: json
+      }), function (err, res) {
+        if (err) {
+          throw new Error(err.message);
+        }
+        console.log('koment posted', res);
+      });
+    }
+
+    /**
+     * Handle Click - Override with specific functionality for component
+     *
+     * @method handleClick
+     */
+  }, {
     key: 'handleClick',
     value: function handleClick() {
       this.player_.toggleEdit(false);
@@ -119,29 +146,6 @@ var KomentDisplay = (function (_Component) {
         dir: 'ltr'
       }, {
         role: 'group'
-      });
-    }
-  }, {
-    key: 'update',
-    value: function update(e) {
-      var item = e.data;
-      var mi = new _komentItem2['default'](this.player_, item);
-      this.items.unshift(mi);
-      this.addChild(mi);
-      this.requestTick(true);
-      var json = (0, _lodash.pick)(item, ['timecode', 'text']);
-
-      (0, _xhr2['default'])((0, _lodash.merge)(this.data_, {
-        method: 'POST',
-        json: json,
-        headers: {
-          'Access-Token': this.player_.options_.token
-        }
-      }), function (err, res) {
-        if (err) {
-          throw new Error(err.message);
-        }
-        console.log('koment posted', res);
       });
     }
 
