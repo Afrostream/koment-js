@@ -25,8 +25,10 @@ import { map } from 'lodash';
 // The following imports are used only to ensure that the corresponding modules
 // are always included in the video.js package. Importing the modules will
 // execute them and they will register themselves with video.js.
+import './signin-display';
 import './control-bar/control-bar';
 import './control-bar/progress-control/progress-control';
+import './close-button';
 import './component/koment-display';
 import './component/koment-list';
 import './tech/videojs'
@@ -287,6 +289,10 @@ class Player extends Component {
     // Default state of video is paused
     this.addClass('koment');
     this.addClass('koment-paused');
+
+    if (!this.user_ && this.options_.user) {
+      this.addClass('koment-no-user');
+    }
 
     // Add a style element in the player that we'll use to set the width/height
     // of the player in a way that's still overrideable by CSS, just like the
@@ -1357,6 +1363,19 @@ class Player extends Component {
     return this;
   }
 
+  toggleLogin (signin) {
+    if (signin !== undefined) {
+      this.toggleSignin_ = !!signin;
+    }
+    else {
+      this.toggleSignin_ = !this.toggleSignin_
+    }
+
+    this.trigger('signinpopup');
+
+    return this;
+  }
+
   sendKoment (kmt) {
     if (!kmt || !kmt.message) {
       return;
@@ -2295,7 +2314,8 @@ Player.prototype.options_ = {
     'komentDisplay',
     'komentList',
     'progressControl',
-    'controlBar'
+    'controlBar',
+    'signinDisplay'
   ],
 
   api: 'https://koment-api.herokuapp.com/api/koments',

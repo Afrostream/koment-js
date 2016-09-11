@@ -1,6 +1,7 @@
 /**
- * @file control-bar.js
+ * @file user-button.js
  */
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17,67 +18,73 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _component = require('../component');
+var _componentJs = require('../component.js');
 
-var _component2 = _interopRequireDefault(_component);
+var _componentJs2 = _interopRequireDefault(_componentJs);
 
-// Required children
+var _buttonJs = require('../button.js');
 
-require('./koment-toggle');
-
-require('./user-button');
-
-require('./like-button');
-
-require('./edit-button');
-
-require('./list-button');
-
-require('./post-box/post-box');
+var _buttonJs2 = _interopRequireDefault(_buttonJs);
 
 /**
- * Container of main controls
+ * The button component for toggling and selecting koment
+ * Chapters act much differently than other text tracks
+ * Cues are navigation vs. other tracks of alternative languages
  *
- * @extends Component
- * @class ControlBar
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends Button
+ * @class UserButton
  */
 
-var ControlBar = (function (_Component) {
-  _inherits(ControlBar, _Component);
+var UserButton = (function (_Button) {
+  _inherits(UserButton, _Button);
 
-  function ControlBar() {
-    _classCallCheck(this, ControlBar);
+  function UserButton(player, options, ready) {
+    _classCallCheck(this, UserButton);
 
-    _get(Object.getPrototypeOf(ControlBar.prototype), 'constructor', this).apply(this, arguments);
+    _get(Object.getPrototypeOf(UserButton.prototype), 'constructor', this).call(this, player, options, ready);
   }
 
-  _createClass(ControlBar, [{
-    key: 'createEl',
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
+
+  _createClass(UserButton, [{
+    key: 'buildCSSClass',
+    value: function buildCSSClass() {
+      return 'user-button ' + _get(Object.getPrototypeOf(UserButton.prototype), 'buildCSSClass', this).call(this);
+    }
 
     /**
-     * Create the component's DOM element
+     * Handle click on text track
      *
-     * @return {Element}
-     * @method createEl
+     * @method handleClick
      */
-    value: function createEl() {
-      return _get(Object.getPrototypeOf(ControlBar.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-control-bar',
-        dir: 'ltr'
-      }, {
-        // The control bar is a group, so it can contain menuitems
-        role: 'group'
-      });
+  }, {
+    key: 'handleClick',
+    value: function handleClick(event) {
+      _get(Object.getPrototypeOf(UserButton.prototype), 'handleClick', this).call(this, event);
+      this.addClass('active');
+      this.setTimeout(this.disable, 300);
+      this.player_.toggleLogin();
+    }
+  }, {
+    key: 'disable',
+    value: function disable() {
+      this.removeClass('active');
     }
   }]);
 
-  return ControlBar;
-})(_component2['default']);
+  return UserButton;
+})(_buttonJs2['default']);
 
-ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'userButton', 'editButton', 'listButton', 'postBox']
-};
+UserButton.prototype.controlText_ = 'User';
 
-_component2['default'].registerComponent('ControlBar', ControlBar);
-exports['default'] = ControlBar;
+_componentJs2['default'].registerComponent('UserButton', UserButton);
+exports['default'] = UserButton;
 module.exports = exports['default'];
