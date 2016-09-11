@@ -1,6 +1,6 @@
 .koment .koment-modal-dialog {
   @extend %fill-parent;
-  @include background-color-with-alpha($kmt-primary-foreground-color, $kmt-primary-background-transparency);
+  @include background-color-with-alpha($kmt-primary-foreground-color, $kmt-primary-background-transparency - 0.2);
 }
 
 .koment-modal-dialog .koment-modal-dialog-content {

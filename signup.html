@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
   <title>koment.io Signup</title>
   <style>
-    @import url(https://fonts.googleapis.com/css?family=Roboto:400,300,500);
+    @import url(//fonts.googleapis.com/css?family=Roboto:400,300,500);
 
     *:focus {
       outline: none;
@@ -14,7 +14,7 @@
     body {
       margin: 0;
       padding: 0;
-      background: #000;
+      background: transparent;
       font-size: 16px;
       color: #222;
       font-family: 'Roboto', sans-serif;
@@ -43,8 +43,9 @@
       background: #FFF;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       width: 100%;
+      height: 100%;
       max-width: 600px;
-      height: 400px;
+      max-height: 90vh;
     }
 
     .left {
@@ -86,7 +87,7 @@
     }
 
     input[type="submit"] {
-      margin-top: 28px;
+      margin-top: 8px;
       width: 120px;
       height: 32px;
       background: #16a085;
@@ -113,6 +114,19 @@
       transition: 0.1s ease;
     }
 
+    .tos {
+      clear: both;
+      text-align: center;
+      font-size: 8pt;
+    }
+
+    .already-account, .flat-signup .lost {
+      text-align: center;
+      color: #fff;
+      opacity: .4;
+      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+    }
+
     .or {
       position: absolute;
       top: 180px;
@@ -120,7 +134,8 @@
       width: 40px;
       margin-left: -20px;
       height: 40px;
-      background: #DDD;
+      background: #000;
+      color: #fff;
       border-radius: 50%;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       line-height: 40px;
@@ -134,7 +149,8 @@
       padding: 40px;
       width: 40%;
       height: 100%;
-      background: url('https://goo.gl/YbktSj');
+      /*background: url('https://goo.gl/YbktSj');*/
+      background: url('http://farm8.staticflickr.com/7395/8892417152_c86b705b30_b.jpg');
       background-size: cover;
       background-position: center;
       border-radius: 0 2px 2px 0;
@@ -199,6 +215,14 @@
       <input type="password" name="password2" placeholder="Retype password"/>
 
       <input type="submit" name="signup_submit" value="Sign me up"/>
+
+      <p class="tos">
+        <a href="/legal" target="_self"><span>En vous inscrivant vous acceptez les conditions d'utilisation.</span></a>
+      </p>
+
+      <p class="already-account">
+        <a href="/auth/signin"><span>Vous avez déjà un compte ?</span> <span class="sign-in">Connexion</span></a>
+      </p>
     </div>
 
     <div class="right">

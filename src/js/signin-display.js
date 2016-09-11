@@ -46,7 +46,8 @@ class SigninDisplay extends ModalDialog {
   content () {
     return Dom.createEl('iframe', {
       src: 'signup.html',
-      frameBorder: 0
+      frameBorder: 0,
+      allowTransparency: true
     });
   }
 }
