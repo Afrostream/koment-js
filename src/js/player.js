@@ -21,7 +21,7 @@ import mergeOptions from './utils/merge-options';
 import { createTimeRange } from './utils/time-ranges.js';
 import ModalDialog from './modal-dialog';
 import Tech from './tech/tech';
-import { map } from 'lodash';
+import { map, mapKeys } from 'lodash';
 // The following imports are used only to ensure that the corresponding modules
 // are always included in the video.js package. Importing the modules will
 // execute them and they will register themselves with video.js.
@@ -136,7 +136,7 @@ class Player extends Component {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !this.tag.controls;
+    this.controls_ = this.tag.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.

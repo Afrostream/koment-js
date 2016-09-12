@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -43,16 +43,16 @@
       background: #FFF;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       width: 100%;
-      height: 100%;
+      height: 90%;
       max-width: 600px;
-      max-height: 90vh;
+      max-height: 400px;
     }
 
     .left {
       position: relative;
       float: left;
       box-sizing: border-box;
-      padding: 40px;
+      padding: 20px;
       width: 60%;
       height: 100%;
     }
@@ -68,6 +68,7 @@
       display: block;
       box-sizing: border-box;
       margin-bottom: 20px;
+      margin-left: 30px;
       padding: 4px;
       width: 220px;
       height: 32px;
@@ -117,14 +118,23 @@
     .tos {
       clear: both;
       text-align: center;
-      font-size: 8pt;
+      font-size: 0.6em;
+
     }
 
-    .already-account, .flat-signup .lost {
+    .tos a {
+      color: #565656;
+    }
+
+    .already-account {
+      margin: 5px;
+    }
+
+    .already-account a {
       text-align: center;
-      color: #fff;
+      color: #565656;
       opacity: .4;
-      -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+      font-size: 0.8em;
     }
 
     .or {
@@ -146,7 +156,7 @@
       position: relative;
       float: right;
       box-sizing: border-box;
-      padding: 40px;
+      padding: 20px;
       width: 40%;
       height: 100%;
       /*background: url('https://goo.gl/YbktSj');*/
@@ -200,6 +210,12 @@
       background: #DD4B39;
     }
   </style>
+  <script>
+    var signup = function () {
+      e.preventDefault();
+
+    }
+  </script>
 </head>
 <body>
 
@@ -208,21 +224,18 @@
   <div class="content">
     <div class="left">
       <h1>Sign up to Koment.io</h1>
+      <form id="ajax-upload" action="http://localhost:4141/api/users" method="post"
+            enctype="application/json">
+        <input type="text" name="username" placeholder="Name"/>
+        <input type="text" name="email" placeholder="E-mail"/>
+        <input type="password" name="password" placeholder="Password"/>
 
-      <input type="text" name="username" placeholder="Username"/>
-      <input type="text" name="email" placeholder="E-mail"/>
-      <input type="password" name="password" placeholder="Password"/>
-      <input type="password" name="password2" placeholder="Retype password"/>
+        <input type="submit" name="signup_submit" value="Sign me up"/>
 
-      <input type="submit" name="signup_submit" value="Sign me up"/>
+        <p class="tos">
+          <a href="/legal" target="_self"><span>By signing up, you agree to Koment' Basic Rules, Terms of Service, and Privacy Policy.</span></a>
+        </p>
 
-      <p class="tos">
-        <a href="/legal" target="_self"><span>En vous inscrivant vous acceptez les conditions d'utilisation.</span></a>
-      </p>
-
-      <p class="already-account">
-        <a href="/auth/signin"><span>Vous avez déjà un compte ?</span> <span class="sign-in">Connexion</span></a>
-      </p>
     </div>
 
     <div class="right">
@@ -233,8 +246,26 @@
       <button class="social-signin google">Log in with Google+</button>
     </div>
     <div class="or">OR</div>
+    <div id="result"/>
   </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('ajax-upload').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var data = new FormData(form);
 
+      var request = new XMLHttpRequest();
+
+      request.onreadystatechange = function () {
+        document.getElementById('result').innerText = request.responseText;
+      };
+
+      request.open(form.method, form.action);
+      request.send(data);
+    })
+  })
+</script>
 </body>
 </html>

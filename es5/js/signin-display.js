@@ -1,7 +1,6 @@
 /**
- * @file user-button.js
+ * @file signin-display.js
  */
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -14,77 +13,93 @@ var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_ag
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../component.js');
+var _utilsDomJs = require('./utils/dom.js');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var Dom = _interopRequireWildcard(_utilsDomJs);
 
-var _buttonJs = require('../button.js');
+var _component = require('./component');
 
-var _buttonJs2 = _interopRequireDefault(_buttonJs);
+var _component2 = _interopRequireDefault(_component);
+
+var _modalDialog = require('./modal-dialog');
+
+var _modalDialog2 = _interopRequireDefault(_modalDialog);
+
+var _utilsMergeOptions = require('./utils/merge-options');
+
+var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
 
 /**
- * The button component for toggling and selecting koment
- * Chapters act much differently than other text tracks
- * Cues are navigation vs. other tracks of alternative languages
+ * Display that an error has occurred making the video unplayable.
  *
- * @param {Object} player  Player object
- * @param {Object=} options Object of option names and values
- * @param {Function=} ready    Ready callback function
- * @extends Button
- * @class UserButton
+ * @extends ModalDialog
+ * @class SigninDisplay
  */
 
-var UserButton = (function (_Button) {
-  _inherits(UserButton, _Button);
+var SigninDisplay = (function (_ModalDialog) {
+  _inherits(SigninDisplay, _ModalDialog);
 
-  function UserButton(player, options, ready) {
-    _classCallCheck(this, UserButton);
+  /**
+   * Constructor for error display modal.
+   *
+   * @param  {Player} player
+   * @param  {Object} [options]
+   */
 
-    _get(Object.getPrototypeOf(UserButton.prototype), 'constructor', this).call(this, player, options, ready);
+  function SigninDisplay(player, options) {
+    _classCallCheck(this, SigninDisplay);
+
+    _get(Object.getPrototypeOf(SigninDisplay.prototype), 'constructor', this).call(this, player, options);
+    this.on(player, 'signinpopup', this.open);
   }
 
   /**
-   * Allow sub components to stack CSS class names
+   * Include the old class for backward-compatibility.
    *
-   * @return {String} The constructed class name
+   * This can be removed in 6.0.
+   *
    * @method buildCSSClass
+   * @deprecated
+   * @return {String}
    */
 
-  _createClass(UserButton, [{
+  _createClass(SigninDisplay, [{
     key: 'buildCSSClass',
     value: function buildCSSClass() {
-      return 'user-button ' + _get(Object.getPrototypeOf(UserButton.prototype), 'buildCSSClass', this).call(this);
+      return 'koment-signin-display ' + _get(Object.getPrototypeOf(SigninDisplay.prototype), 'buildCSSClass', this).call(this);
     }
 
     /**
-     * Handle click on text track
+     * Generates the modal content based on the player error.
      *
-     * @method handleClick
+     * @return {String|Null}
      */
   }, {
-    key: 'handleClick',
-    value: function handleClick(event) {
-      _get(Object.getPrototypeOf(UserButton.prototype), 'handleClick', this).call(this, event);
-      this.addClass('active');
-      this.setTimeout(this.disable, 300);
-      this.player_.toggleLogin();
-    }
-  }, {
-    key: 'disable',
-    value: function disable() {
-      this.removeClass('active');
+    key: 'content',
+    value: function content() {
+      return Dom.createEl('iframe', {
+        src: 'signup.html',
+        frameBorder: 0,
+        allowTransparency: true
+      });
     }
   }]);
 
-  return UserButton;
-})(_buttonJs2['default']);
+  return SigninDisplay;
+})(_modalDialog2['default']);
 
-UserButton.prototype.controlText_ = 'Signin/Signup';
+SigninDisplay.prototype.options_ = (0, _utilsMergeOptions2['default'])(_modalDialog2['default'].prototype.options_, {
+  fillAlways: true,
+  temporary: false,
+  uncloseable: false
+});
 
-_componentJs2['default'].registerComponent('UserButton', UserButton);
-exports['default'] = UserButton;
+_component2['default'].registerComponent('SigninDisplay', SigninDisplay);
+exports['default'] = SigninDisplay;
 module.exports = exports['default'];
