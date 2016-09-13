@@ -707,7 +707,7 @@ var Player = (function (_Component) {
       this.on(this.tech_, 'volumechange', this.handleTechVolumeChange_);
       this.on(this.tech_, 'loadedmetadata', this.updateStyleEl_);
 
-      if (this.controls() && !this.usingNativeControls() && ! ~this.el_.className.indexOf('vjs-tech')) {
+      if (this.controls() && !this.usingNativeControls() && (! ~this.el_.className.indexOf('vjs-tech') || browser.TOUCH_ENABLED)) {
         this.addTechControlsListeners_();
       }
 
