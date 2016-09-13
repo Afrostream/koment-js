@@ -746,8 +746,8 @@ var Player = (function (_Component) {
     value: function selectSource() {
       var _this2 = this;
 
-      var techs = (0, _lodash.map)(_techTech2['default'].techs_, function (tech) {
-        return [tech.name, _techTech2['default'].getTech(tech.name) || _component2['default'].getComponent(tech.name)];
+      var techs = (0, _lodash.map)(_techTech2['default'].techs_, function (tech, key) {
+        return [key, _techTech2['default'].getTech(key) || _component2['default'].getComponent(key)];
       }).filter(function (_ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 

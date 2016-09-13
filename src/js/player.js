@@ -634,8 +634,8 @@ class Player extends Component {
   }
 
   selectSource () {
-    const techs = map(Tech.techs_, (tech)=> {
-      return [tech.name, Tech.getTech(tech.name) || Component.getComponent(tech.name)];
+    const techs = map(Tech.techs_, (tech, key)=> {
+      return [key, Tech.getTech(key) || Component.getComponent(key)];
     }).filter(([techName, tech]) => {
       // Check if the current tech is defined before continuing
       if (tech) {
