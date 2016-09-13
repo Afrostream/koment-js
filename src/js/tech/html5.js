@@ -60,55 +60,7 @@ class Html5 extends Tech {
    * @method createEl
    */
   createEl () {
-    let el = this.options_.tag;
-
-    // Check if this browser supports moving the element into the box.
-    // On the iPhone video will break if you move the element,
-    // So we have to create a brand new element.
-    if (!el || this.movingMediaElementInDOM === false) {
-
-      // If the original tag is still there, clone and remove it.
-      if (el) {
-        const clone = el.cloneNode(true);
-
-        el.parentNode.insertBefore(clone, el);
-        Html5.disposeMediaElement(el);
-        el = clone;
-      } else {
-        el = document.createElement('video');
-
-        // determine if native controls should be used
-        const tagAttributes = this.options_.tag && Dom.getElAttributes(this.options_.tag);
-        const attributes = mergeOptions({}, tagAttributes);
-
-        if (!browser.TOUCH_ENABLED || this.options_.nativeControlsForTouch !== true) {
-          delete attributes.controls;
-        }
-
-        Dom.setElAttributes(el,
-          assign(attributes, {
-            id: this.options_.techId,
-            class: 'koment-tech'
-          })
-        );
-      }
-    }
-
-    // Update specific tag settings, in case they were overridden
-    const settingsAttrs = ['autoplay', 'preload', 'loop', 'muted'];
-
-    for (let i = settingsAttrs.length - 1; i >= 0; i--) {
-      const attr = settingsAttrs[i];
-      const overwriteAttrs = {};
-
-      if (typeof this.options_[attr] !== 'undefined') {
-        overwriteAttrs[attr] = this.options_[attr];
-      }
-      Dom.setElAttributes(el, overwriteAttrs);
-    }
-
-    return el;
-    // jenniisawesome = true;
+    return this.options_.tag;
   }
 
 

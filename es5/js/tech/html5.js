@@ -134,53 +134,7 @@ var Html5 = (function (_Tech) {
   }, {
     key: 'createEl',
     value: function createEl() {
-      var el = this.options_.tag;
-
-      // Check if this browser supports moving the element into the box.
-      // On the iPhone video will break if you move the element,
-      // So we have to create a brand new element.
-      if (!el || this.movingMediaElementInDOM === false) {
-
-        // If the original tag is still there, clone and remove it.
-        if (el) {
-          var clone = el.cloneNode(true);
-
-          el.parentNode.insertBefore(clone, el);
-          Html5.disposeMediaElement(el);
-          el = clone;
-        } else {
-          el = _globalDocument2['default'].createElement('video');
-
-          // determine if native controls should be used
-          var tagAttributes = this.options_.tag && Dom.getElAttributes(this.options_.tag);
-          var attributes = (0, _utilsMergeOptionsJs2['default'])({}, tagAttributes);
-
-          if (!browser.TOUCH_ENABLED || this.options_.nativeControlsForTouch !== true) {
-            delete attributes.controls;
-          }
-
-          Dom.setElAttributes(el, (0, _objectAssign2['default'])(attributes, {
-            id: this.options_.techId,
-            'class': 'koment-tech'
-          }));
-        }
-      }
-
-      // Update specific tag settings, in case they were overridden
-      var settingsAttrs = ['autoplay', 'preload', 'loop', 'muted'];
-
-      for (var i = settingsAttrs.length - 1; i >= 0; i--) {
-        var attr = settingsAttrs[i];
-        var overwriteAttrs = {};
-
-        if (typeof this.options_[attr] !== 'undefined') {
-          overwriteAttrs[attr] = this.options_[attr];
-        }
-        Dom.setElAttributes(el, overwriteAttrs);
-      }
-
-      return el;
-      // jenniisawesome = true;
+      return this.options_.tag;
     }
 
     /**
