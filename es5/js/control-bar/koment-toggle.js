@@ -46,6 +46,9 @@ var KomentToggle = (function (_Button) {
 
     _get(Object.getPrototypeOf(KomentToggle.prototype), 'constructor', this).call(this, player, options, ready);
     this.on(player, 'togglemenu', this.handleToggleChange);
+    if (player.options_.open) {
+      player.toggleMenu(player.options_.open);
+    }
   }
 
   /**

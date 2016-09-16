@@ -21,6 +21,10 @@ class KomentToggle extends Button {
   constructor (player, options, ready) {
     super(player, options, ready)
     this.on(player, 'togglemenu', this.handleToggleChange);
+    if (player.options_.open) {
+      player.toggleMenu(player.options_.open);
+    }
+
   }
 
   /**
