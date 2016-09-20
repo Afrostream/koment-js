@@ -1,7 +1,3 @@
-/**
- * @file list-button.js
- */
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -18,90 +14,47 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../component.js');
+var _button = require('./button');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _button2 = _interopRequireDefault(_button);
 
-var _buttonJs = require('../button.js');
+var _component = require('./component');
 
-var _buttonJs2 = _interopRequireDefault(_buttonJs);
+var _component2 = _interopRequireDefault(_component);
 
 /**
- * The button component for toggling and selecting koment
- * Chapters act much differently than other text tracks
- * Cues are navigation vs. other tracks of alternative languages
+ * The `CloseButton` component is a button which fires a "close" event
+ * when it is activated.
  *
- * @param {Object} player  Player object
- * @param {Object=} options Object of option names and values
- * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class ListButton
+ * @class CloseButton
  */
 
-var ListButton = (function (_Button) {
-  _inherits(ListButton, _Button);
+var CloseButton = (function (_Button) {
+  _inherits(CloseButton, _Button);
 
-  function ListButton(player, options, ready) {
-    _classCallCheck(this, ListButton);
+  function CloseButton(player, options) {
+    _classCallCheck(this, CloseButton);
 
-    _get(Object.getPrototypeOf(ListButton.prototype), 'constructor', this).call(this, player, options, ready);
-    this.on(player, 'komentsupdated', this.update);
+    _get(Object.getPrototypeOf(CloseButton.prototype), 'constructor', this).call(this, player, options);
+    this.controlText(options && options.controlText || this.localize('Close'));
   }
 
-  /**
-   * Allow sub components to stack CSS class names
-   *
-   * @return {String} The constructed class name
-   * @method buildCSSClass
-   */
-
-  _createClass(ListButton, [{
+  _createClass(CloseButton, [{
     key: 'buildCSSClass',
     value: function buildCSSClass() {
-      return 'list-button koment-hidden ' + _get(Object.getPrototypeOf(ListButton.prototype), 'buildCSSClass', this).call(this);
+      return 'koment-close-button ' + _get(Object.getPrototypeOf(CloseButton.prototype), 'buildCSSClass', this).call(this);
     }
-
-    /**
-     * Update progress bar
-     *
-     * @method update
-     */
-  }, {
-    key: 'update',
-    value: function update() {
-      var items = this.player_.komentsList();
-      if (items && items.length) {
-        this.show();
-      } else {
-        this.hide();
-      }
-    }
-
-    /**
-     * Handle click on text track
-     *
-     * @method handleClick
-     */
   }, {
     key: 'handleClick',
-    value: function handleClick(event) {
-      _get(Object.getPrototypeOf(ListButton.prototype), 'handleClick', this).call(this, event);
-      this.addClass('active');
-      this.setTimeout(this.disable, 300);
-      this.player_.toggleList();
-    }
-  }, {
-    key: 'disable',
-    value: function disable() {
-      this.removeClass('active');
+    value: function handleClick() {
+      this.trigger({ type: 'close', bubbles: false });
     }
   }]);
 
-  return ListButton;
-})(_buttonJs2['default']);
+  return CloseButton;
+})(_button2['default']);
 
-ListButton.prototype.controlText_ = 'List';
-
-_componentJs2['default'].registerComponent('ListButton', ListButton);
-exports['default'] = ListButton;
+_component2['default'].registerComponent('CloseButton', CloseButton);
+exports['default'] = CloseButton;
 module.exports = exports['default'];

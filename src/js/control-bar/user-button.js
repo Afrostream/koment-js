@@ -1,5 +1,5 @@
 /**
- * @file list-button.js
+ * @file user-button.js
  */
 
 import Component from '../component.js';
@@ -14,13 +14,12 @@ import Button from '../button.js';
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class ListButton
+ * @class UserButton
  */
-class ListButton extends Button {
+class UserButton extends Button {
 
   constructor (player, options, ready) {
     super(player, options, ready)
-    this.on(player, 'komentsupdated', this.update);
   }
 
   /**
@@ -30,21 +29,7 @@ class ListButton extends Button {
    * @method buildCSSClass
    */
   buildCSSClass () {
-    return `list-button koment-hidden ${super.buildCSSClass()}`
-  }
-
-  /**
-   * Update progress bar
-   *
-   * @method update
-   */
-  update () {
-    const items = this.player_.komentsList();
-    if (items && items.length) {
-      this.show();
-    } else {
-      this.hide();
-    }
+    return `user-button ${super.buildCSSClass()}`
   }
 
   /**
@@ -56,7 +41,7 @@ class ListButton extends Button {
     super.handleClick(event);
     this.addClass('active');
     this.setTimeout(this.disable, 300);
-    this.player_.toggleList();
+    this.player_.toggleLogin();
   }
 
   disable () {
@@ -64,7 +49,7 @@ class ListButton extends Button {
   }
 }
 
-ListButton.prototype.controlText_ = 'List';
+UserButton.prototype.controlText_ = 'Signin/Signup';
 
-Component.registerComponent('ListButton', ListButton);
-export default ListButton
+Component.registerComponent('UserButton', UserButton);
+export default UserButton

@@ -352,7 +352,6 @@ var Tech = (function (_Component) {
       if (!Tech.isTech(tech)) {
         throw new Error('Tech ' + name + ' must be a Tech');
       }
-
       Tech.techs_[name] = tech;
       return tech;
     }
@@ -376,6 +375,20 @@ var Tech = (function (_Component) {
         _utilsLogJs2['default'].warn('The ' + name + ' tech was added to the koment object when it should be registered using koment.registerTech(name, tech)');
         return _globalWindow2['default'].koment[name];
       }
+    }
+
+    /**
+     * Gets all techs
+     *
+     * @param {String} name Name of the component to get
+     * @return {Component}
+     * @static
+     * @method getTechList
+     */
+  }, {
+    key: 'getTechList',
+    value: function getTechList() {
+      return Tech.techs_;
     }
   }, {
     key: 'isSupported',

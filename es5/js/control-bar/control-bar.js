@@ -25,6 +25,8 @@ var _component2 = _interopRequireDefault(_component);
 
 require('./koment-toggle');
 
+require('./user-button');
+
 require('./like-button');
 
 require('./edit-button');
@@ -73,7 +75,7 @@ var ControlBar = (function (_Component) {
 })(_component2['default']);
 
 ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'editButton', 'listButton', 'postBox']
+  children: ['komentToggle', 'userButton', 'editButton', 'listButton', 'postBox']
 };
 
 _component2['default'].registerComponent('ControlBar', ControlBar);

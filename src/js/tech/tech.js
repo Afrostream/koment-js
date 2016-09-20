@@ -281,7 +281,6 @@ class Tech extends Component {
     if (!Tech.isTech(tech)) {
       throw new Error(`Tech ${name} must be a Tech`);
     }
-
     Tech.techs_[name] = tech;
     return tech;
   }
@@ -303,6 +302,18 @@ class Tech extends Component {
       log.warn(`The ${name} tech was added to the koment object when it should be registered using koment.registerTech(name, tech)`);
       return window.koment[name];
     }
+  }
+
+  /**
+   * Gets all techs
+   *
+   * @param {String} name Name of the component to get
+   * @return {Component}
+   * @static
+   * @method getTechList
+   */
+  static getTechList () {
+    return Tech.techs_;
   }
 
   static isSupported (tag) {

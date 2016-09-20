@@ -1,0 +1,10 @@
+.koment .koment-control.koment-close-button {
+  @extend .koment-icon-cancel;
+  cursor: pointer;
+  height: 3em;
+  position: absolute;
+  right: 0;
+  top: 0.5em;
+  z-index: 2;
+  color: #FFF;
+}

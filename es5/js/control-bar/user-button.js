@@ -1,5 +1,5 @@
 /**
- * @file list-button.js
+ * @file user-button.js
  */
 
 'use strict';
@@ -35,17 +35,16 @@ var _buttonJs2 = _interopRequireDefault(_buttonJs);
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class ListButton
+ * @class UserButton
  */
 
-var ListButton = (function (_Button) {
-  _inherits(ListButton, _Button);
+var UserButton = (function (_Button) {
+  _inherits(UserButton, _Button);
 
-  function ListButton(player, options, ready) {
-    _classCallCheck(this, ListButton);
+  function UserButton(player, options, ready) {
+    _classCallCheck(this, UserButton);
 
-    _get(Object.getPrototypeOf(ListButton.prototype), 'constructor', this).call(this, player, options, ready);
-    this.on(player, 'komentsupdated', this.update);
+    _get(Object.getPrototypeOf(UserButton.prototype), 'constructor', this).call(this, player, options, ready);
   }
 
   /**
@@ -55,26 +54,10 @@ var ListButton = (function (_Button) {
    * @method buildCSSClass
    */
 
-  _createClass(ListButton, [{
+  _createClass(UserButton, [{
     key: 'buildCSSClass',
     value: function buildCSSClass() {
-      return 'list-button koment-hidden ' + _get(Object.getPrototypeOf(ListButton.prototype), 'buildCSSClass', this).call(this);
-    }
-
-    /**
-     * Update progress bar
-     *
-     * @method update
-     */
-  }, {
-    key: 'update',
-    value: function update() {
-      var items = this.player_.komentsList();
-      if (items && items.length) {
-        this.show();
-      } else {
-        this.hide();
-      }
+      return 'user-button ' + _get(Object.getPrototypeOf(UserButton.prototype), 'buildCSSClass', this).call(this);
     }
 
     /**
@@ -85,10 +68,10 @@ var ListButton = (function (_Button) {
   }, {
     key: 'handleClick',
     value: function handleClick(event) {
-      _get(Object.getPrototypeOf(ListButton.prototype), 'handleClick', this).call(this, event);
+      _get(Object.getPrototypeOf(UserButton.prototype), 'handleClick', this).call(this, event);
       this.addClass('active');
       this.setTimeout(this.disable, 300);
-      this.player_.toggleList();
+      this.player_.toggleLogin();
     }
   }, {
     key: 'disable',
@@ -97,11 +80,11 @@ var ListButton = (function (_Button) {
     }
   }]);
 
-  return ListButton;
+  return UserButton;
 })(_buttonJs2['default']);
 
-ListButton.prototype.controlText_ = 'List';
+UserButton.prototype.controlText_ = 'Signin/Signup';
 
-_componentJs2['default'].registerComponent('ListButton', ListButton);
-exports['default'] = ListButton;
+_componentJs2['default'].registerComponent('UserButton', UserButton);
+exports['default'] = UserButton;
 module.exports = exports['default'];

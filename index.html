@@ -20,23 +20,23 @@
       margin: 10px;
     }
   </style>
-  <script src="//vjs.zencdn.net/5.12.0/video.js"></script>
-  <link href="//vjs.zencdn.net/5.12.0/video-js.css" rel="stylesheet">
-  <script src="/dist/koment.js"></script>
+  <!--<script src="//vjs.zencdn.net/5.12.0/video.js"></script>-->
+  <!--<link href="//vjs.zencdn.net/5.12.0/video-js.css" rel="stylesheet">-->
+  <script src="/dist/koment.min.js"></script>
 </head>
 <body>
 
-<!--<video-->
-<!--data-setup='{"controls":1,"user":{"id":"toto","picture":"//graph.facebook.com/10204404008400201/picture","name":"benjipott"}}'-->
-<!--class="video-js vjs-default-skin"-->
-<!--controls width="640px" height="360px"-->
-<!--crossorigin="true">-->
-<!--<source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">-->
-<!--</video>-->
-<!--<iframe width="640" data-setup='{}' height="360"-->
-<!--src="https://www.youtube.com/embed/3YSWbm_lGBs?enablejsapi=1"-->
-<!--frameborder="0"-->
-<!--allowfullscreen></iframe>-->
+<video
+  data-setup='{"user":{"id":"toto","picture":"//graph.facebook.com/10204404008400201/picture","name":"benjipott"}}'
+  controls width="640px" height="360px"
+  crossorigin="true">
+  <source src="http://vjs.zencdn.net/v/oceans.mp4" type="video/mp4">
+</video>
+
+<iframe width="640" data-setup='{}' height="360"
+        src="https://www.youtube.com/embed/3YSWbm_lGBs?enablejsapi=1"
+        frameborder="0"
+        allowfullscreen></iframe>
 
 <div id="video-container"/>
 <ul>
@@ -79,20 +79,20 @@
   video.setAttribute('data-setup', JSON.stringify(komentData));
   container.appendChild(video);
 
-
-  player = videojs('player', {
-    controls: 1,
-    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
-    sources: [{
-      src: 'http://vjs.zencdn.net/v/oceans.mp4',
-      type: 'video/mp4'
-    }],
-    user: {
-      id: 'toto',
-      picture: '//graph.facebook.com/10204404008400201/picture',
-      name: 'benjipott'
-    }
-  });
+  //
+  //  player = videojs('player', {
+  //    controls: 1,
+  //    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
+  //    sources: [{
+  //      src: 'http://vjs.zencdn.net/v/oceans.mp4',
+  //      type: 'video/mp4'
+  //    }],
+  //    user: {
+  //      id: 'toto',
+  //      picture: '//graph.facebook.com/10204404008400201/picture',
+  //      name: 'benjipott'
+  //    }
+  //  });
 
 
 </script>

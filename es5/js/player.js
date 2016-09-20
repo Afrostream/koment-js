@@ -98,9 +98,13 @@ var _lodash = require('lodash');
 // are always included in the video.js package. Importing the modules will
 // execute them and they will register themselves with video.js.
 
+require('./signin-display');
+
 require('./control-bar/control-bar');
 
 require('./control-bar/progress-control/progress-control');
+
+require('./close-button');
 
 require('./component/koment-display');
 
@@ -223,7 +227,7 @@ var Player = (function (_Component) {
     this.cache_ = {};
 
     // Set controls
-    this.controls_ = !this.tag.controls;
+    this.controls_ = this.tag.controls;
 
     // Original tag settings stored in options
     // now remove immediately so native controls don't flash.
@@ -389,6 +393,10 @@ var Player = (function (_Component) {
       // Default state of video is paused
       this.addClass('koment');
       this.addClass('koment-paused');
+
+      if (!this.user_ && this.options_.user) {
+        this.addClass('koment-no-user');
+      }
 
       // Add a style element in the player that we'll use to set the width/height
       // of the player in a way that's still overrideable by CSS, just like the
@@ -1558,6 +1566,19 @@ var Player = (function (_Component) {
       return this;
     }
   }, {
+    key: 'toggleLogin',
+    value: function toggleLogin(signin) {
+      if (signin !== undefined) {
+        this.toggleSignin_ = !!signin;
+      } else {
+        this.toggleSignin_ = !this.toggleSignin_;
+      }
+
+      this.trigger('signinpopup');
+
+      return this;
+    }
+  }, {
     key: 'sendKoment',
     value: function sendKoment(kmt) {
       if (!kmt || !kmt.message) {
@@ -2575,7 +2596,7 @@ var navigator = _globalWindow2['default'].navigator;
 Player.prototype.options_ = {
   // default inactivity timeout
   inactivityTimeout: 2000,
-  children: ['komentDisplay', 'komentList', 'progressControl', 'controlBar'],
+  children: ['komentDisplay', 'komentList', 'progressControl', 'controlBar', 'signinDisplay'],
 
   api: 'https://koment-api.herokuapp.com/api/koments',
 

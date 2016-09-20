@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>koment.io Signup</title>
+  <style>
+    @import url(//fonts.googleapis.com/css?family=Roboto:400,300,500);
+
+    *:focus {
+      outline: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-size: 16px;
+      color: #222;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 300;
+    }
+
+    #login-box {
+      position: relative;
+      width: 100%;
+      text-align: center;
+      height: 100vh;
+    }
+
+    #login-box:before {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      vertical-align: middle;
+    }
+
+    #login-box .content {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 2px;
+      background: #FFF;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      height: 90%;
+      max-width: 600px;
+      max-height: 400px;
+    }
+
+    .left {
+      position: relative;
+      float: left;
+      box-sizing: border-box;
+      padding: 20px;
+      width: 60%;
+      height: 100%;
+    }
+
+    h1 {
+      margin: 0 0 20px 0;
+      font-weight: 300;
+      font-size: 28px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      display: block;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      margin-left: 30px;
+      padding: 4px;
+      width: 220px;
+      height: 32px;
+      border: none;
+      border-bottom: 1px solid #AAA;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 400;
+      font-size: 15px;
+      transition: 0.2s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-bottom: 2px solid #16a085;
+      color: #16a085;
+      transition: 0.2s ease;
+    }
+
+    input[type="submit"] {
+      margin-top: 8px;
+      width: 120px;
+      height: 32px;
+      background: #16a085;
+      border: none;
+      border-radius: 2px;
+      color: #FFF;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      transition: 0.1s ease;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover,
+    input[type="submit"]:focus {
+      opacity: 0.8;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      transition: 0.1s ease;
+    }
+
+    input[type="submit"]:active {
+      opacity: 1;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      transition: 0.1s ease;
+    }
+
+    .tos {
+      clear: both;
+      text-align: center;
+      font-size: 0.6em;
+
+    }
+
+    .tos a {
+      color: #565656;
+    }
+
+    .already-account {
+      margin: 5px;
+    }
+
+    .already-account a {
+      text-align: center;
+      color: #565656;
+      opacity: .4;
+      font-size: 0.8em;
+    }
+
+    .or {
+      position: absolute;
+      top: 180px;
+      left: 60%;
+      width: 40px;
+      margin-left: -20px;
+      height: 40px;
+      background: #000;
+      color: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      line-height: 40px;
+      text-align: center;
+    }
+
+    .right {
+      position: relative;
+      float: right;
+      box-sizing: border-box;
+      padding: 20px;
+      width: 40%;
+      height: 100%;
+      /*background: url('https://goo.gl/YbktSj');*/
+      background: url('http://farm8.staticflickr.com/7395/8892417152_c86b705b30_b.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .right .loginwith {
+      display: block;
+      margin-bottom: 40px;
+      font-size: 28px;
+      color: #FFF;
+      text-align: center;
+    }
+
+    button.social-signin {
+      margin-bottom: 20px;
+      width: 80%;
+      height: 36px;
+      border: none;
+      border-radius: 2px;
+      color: #FFF;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 500;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    button.social-signin:hover,
+    button.social-signin:focus {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      transition: 0.2s ease;
+    }
+
+    button.social-signin:active {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+      transition: 0.2s ease;
+    }
+
+    button.social-signin.facebook {
+      background: #32508E;
+    }
+
+    button.social-signin.twitter {
+      background: #55ACEE;
+    }
+
+    button.social-signin.google {
+      background: #DD4B39;
+    }
+  </style>
+</head>
+<body>
+
+<div id="login-box">
+
+  <div class="content">
+    <div class="left">
+      <h1>Sign up to Koment.io</h1>
+      <form id="ajax-upload" action="#" method="post"
+            enctype="application/json">
+        <input type="text" name="username" placeholder="Name"/>
+        <input type="text" name="email" placeholder="E-mail"/>
+        <input type="password" name="password" placeholder="Password"/>
+
+        <input type="submit" name="signup_submit" value="Sign me up"/>
+
+        <p class="tos">
+          <a href="/legal" target="_self"><span>By signing up, you agree to Koment' Basic Rules, Terms of Service, and Privacy Policy.</span></a>
+        </p>
+
+    </div>
+
+    <div class="right">
+      <span class="loginwith">Sign in with<br/>social network</span>
+
+      <button class="social-signin facebook">Log in with facebook</button>
+      <button class="social-signin twitter">Log in with Twitter</button>
+      <button class="social-signin google">Log in with Google+</button>
+    </div>
+    <div class="or">OR</div>
+    <div id="result"/>
+  </div>
+</div>
+<script>
+
+  var qs = (function (a) {
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i) {
+      var p = a[i].split('=', 2);
+      if (p.length == 1)
+        b[p[0]] = "";
+      else
+        b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+  })(window.location.search.substr(1).split('&'));
+
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('ajax-upload').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var data = new FormData(form);
+
+      var request = new XMLHttpRequest();
+
+      request.onreadystatechange = function () {
+        try {
+          if (this.readyState == 4 && this.status == 200) {
+            window.focus();
+            window.postMessage(JSON.parse(request.response), '*'); //send the message and target URI
+          }
+        } catch (e) { /* Blocked a frame with origin X from accessing a frame with origin Y */
+          console.log(e);
+        }
+      };
+      request.open(form.method, qs['host'] || form.action);
+      request.send(data);
+    })
+  })
+</script>
+</body>
+</html>
