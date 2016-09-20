@@ -45,6 +45,7 @@ var ListButton = (function (_Button) {
     _classCallCheck(this, ListButton);
 
     _get(Object.getPrototypeOf(ListButton.prototype), 'constructor', this).call(this, player, options, ready);
+    this.on(player, 'komentsupdated', this.update);
   }
 
   /**
@@ -57,7 +58,23 @@ var ListButton = (function (_Button) {
   _createClass(ListButton, [{
     key: 'buildCSSClass',
     value: function buildCSSClass() {
-      return 'list-button ' + _get(Object.getPrototypeOf(ListButton.prototype), 'buildCSSClass', this).call(this);
+      return 'list-button koment-hidden ' + _get(Object.getPrototypeOf(ListButton.prototype), 'buildCSSClass', this).call(this);
+    }
+
+    /**
+     * Update progress bar
+     *
+     * @method update
+     */
+  }, {
+    key: 'update',
+    value: function update() {
+      var items = this.player_.komentsList();
+      if (items && items.length) {
+        this.show();
+      } else {
+        this.hide();
+      }
     }
 
     /**

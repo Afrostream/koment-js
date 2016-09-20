@@ -3,6 +3,7 @@
  */
 import * as Dom from './utils/dom.js';
 import Component from './component';
+import window from 'global/window';
 import ModalDialog from './modal-dialog';
 import mergeOptions from './utils/merge-options';
 
@@ -23,6 +24,13 @@ class SigninDisplay extends ModalDialog {
   constructor (player, options) {
     super(player, options);
     this.on(player, 'signinpopup', this.open);
+    this.on(window, 'message', this.onPostMessageHandler.bind(this));
+  }
+
+  onPostMessageHandler (event) {
+    console.log('received response:  ', event.data, event.origin);
+    if (!~event.origin.indexOf(this.options_.host)) return;
+    this.close();
   }
 
   /**
@@ -45,7 +53,7 @@ class SigninDisplay extends ModalDialog {
    */
   content () {
     return Dom.createEl('iframe', {
-      src: 'signup.html',
+      src: `signup.html?host=${this.options_.host + this.options_.path}`,
       frameBorder: 0,
       allowTransparency: true
     });
@@ -55,7 +63,9 @@ class SigninDisplay extends ModalDialog {
 SigninDisplay.prototype.options_ = mergeOptions(ModalDialog.prototype.options_, {
   fillAlways: true,
   temporary: false,
-  uncloseable: false
+  uncloseable: false,
+  host: 'http://localhost:4141',
+  path: '/api/users'
 });
 
 Component.registerComponent('SigninDisplay', SigninDisplay);

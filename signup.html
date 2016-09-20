@@ -210,12 +210,6 @@
       background: #DD4B39;
     }
   </style>
-  <script>
-    var signup = function () {
-      e.preventDefault();
-
-    }
-  </script>
 </head>
 <body>
 
@@ -224,7 +218,7 @@
   <div class="content">
     <div class="left">
       <h1>Sign up to Koment.io</h1>
-      <form id="ajax-upload" action="http://localhost:4141/api/users" method="post"
+      <form id="ajax-upload" action="#" method="post"
             enctype="application/json">
         <input type="text" name="username" placeholder="Name"/>
         <input type="text" name="email" placeholder="E-mail"/>
@@ -250,6 +244,20 @@
   </div>
 </div>
 <script>
+
+  var qs = (function (a) {
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i) {
+      var p = a[i].split('=', 2);
+      if (p.length == 1)
+        b[p[0]] = "";
+      else
+        b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+  })(window.location.search.substr(1).split('&'));
+
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('ajax-upload').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -259,10 +267,16 @@
       var request = new XMLHttpRequest();
 
       request.onreadystatechange = function () {
-        document.getElementById('result').innerText = request.responseText;
+        try {
+          if (this.readyState == 4 && this.status == 200) {
+            window.focus();
+            window.postMessage(JSON.parse(request.response), '*'); //send the message and target URI
+          }
+        } catch (e) { /* Blocked a frame with origin X from accessing a frame with origin Y */
+          console.log(e);
+        }
       };
-
-      request.open(form.method, form.action);
+      request.open(form.method, qs['host'] || form.action);
       request.send(data);
     })
   })

@@ -27,6 +27,10 @@ var _component = require('./component');
 
 var _component2 = _interopRequireDefault(_component);
 
+var _globalWindow = require('global/window');
+
+var _globalWindow2 = _interopRequireDefault(_globalWindow);
+
 var _modalDialog = require('./modal-dialog');
 
 var _modalDialog2 = _interopRequireDefault(_modalDialog);
@@ -57,19 +61,27 @@ var SigninDisplay = (function (_ModalDialog) {
 
     _get(Object.getPrototypeOf(SigninDisplay.prototype), 'constructor', this).call(this, player, options);
     this.on(player, 'signinpopup', this.open);
+    this.on('message', this.onPostMessageHandler);
   }
 
-  /**
-   * Include the old class for backward-compatibility.
-   *
-   * This can be removed in 6.0.
-   *
-   * @method buildCSSClass
-   * @deprecated
-   * @return {String}
-   */
-
   _createClass(SigninDisplay, [{
+    key: 'onPostMessageHandler',
+    value: function onPostMessageHandler(event) {
+      console.log('received response:  ', event.data, event.origin);
+      if (! ~event.origin.indexOf(this.options_.host)) return;
+      this.close();
+    }
+
+    /**
+     * Include the old class for backward-compatibility.
+     *
+     * This can be removed in 6.0.
+     *
+     * @method buildCSSClass
+     * @deprecated
+     * @return {String}
+     */
+  }, {
     key: 'buildCSSClass',
     value: function buildCSSClass() {
       return 'koment-signin-display ' + _get(Object.getPrototypeOf(SigninDisplay.prototype), 'buildCSSClass', this).call(this);
@@ -84,7 +96,7 @@ var SigninDisplay = (function (_ModalDialog) {
     key: 'content',
     value: function content() {
       return Dom.createEl('iframe', {
-        src: 'signup.html',
+        src: 'signup.html?host=' + (this.options_.host + this.options_.path),
         frameBorder: 0,
         allowTransparency: true
       });
@@ -97,7 +109,9 @@ var SigninDisplay = (function (_ModalDialog) {
 SigninDisplay.prototype.options_ = (0, _utilsMergeOptions2['default'])(_modalDialog2['default'].prototype.options_, {
   fillAlways: true,
   temporary: false,
-  uncloseable: false
+  uncloseable: false,
+  host: 'http://localhost:4141',
+  path: '/api/users'
 });
 
 _component2['default'].registerComponent('SigninDisplay', SigninDisplay);
