@@ -113,7 +113,7 @@ $ie8screen: "\\0screen";
   display: block;
   visibility: hidden;
   opacity: 0;
-  background: rgba($kmt-primary-box-color, 0.6);
+  background: rgba($kmt-primary-box-color, $kmt-primary-box-transparency);
   color: #FFFFFF;
   padding: 10px;
   border-radius: 0;
@@ -131,7 +131,7 @@ $ie8screen: "\\0screen";
     right: -10px;
     width: 0;
     height: 0;
-    border: 5px solid rgba($kmt-primary-box-color, 0.6);
+    border: 5px solid rgba($kmt-primary-box-color, $kmt-primary-box-transparency);
     border-right-color: transparent;
     border-bottom-color: transparent;
   }
