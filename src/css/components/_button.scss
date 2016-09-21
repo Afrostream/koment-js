@@ -26,4 +26,8 @@
   &:before {
     line-height: 2.3;
   }
+
+  &:hover {
+    color: $kmt-primary-box-color;
+  }
 }

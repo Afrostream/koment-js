@@ -352,7 +352,6 @@ var Tech = (function (_Component) {
       if (!Tech.isTech(tech)) {
         throw new Error('Tech ' + name + ' must be a Tech');
       }
-
       Tech.techs_[name] = tech;
       return tech;
     }

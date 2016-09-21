@@ -19,7 +19,9 @@ import Button from '../button.js';
 class ListButton extends Button {
 
   constructor (player, options, ready) {
-    super(player, options, ready)
+    super(player, options, ready);
+    this.on(player, 'kmtlistfetched', this.update);
+    this.on(player, 'komentsupdated', this.update);
   }
 
   /**
@@ -29,7 +31,21 @@ class ListButton extends Button {
    * @method buildCSSClass
    */
   buildCSSClass () {
-    return `list-button ${super.buildCSSClass()}`
+    return `list-button koment-hidden ${super.buildCSSClass()}`
+  }
+
+  /**
+   * Update progress bar
+   *
+   * @method update
+   */
+  update () {
+    const items = this.player_.komentsList();
+    if (items && items.length) {
+      this.show();
+    } else {
+      this.hide();
+    }
   }
 
   /**
