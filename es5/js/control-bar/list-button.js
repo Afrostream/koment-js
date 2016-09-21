@@ -45,6 +45,7 @@ var ListButton = (function (_Button) {
     _classCallCheck(this, ListButton);
 
     _get(Object.getPrototypeOf(ListButton.prototype), 'constructor', this).call(this, player, options, ready);
+    this.on(player, 'kmtlistfetched', this.update);
     this.on(player, 'komentsupdated', this.update);
   }
 
