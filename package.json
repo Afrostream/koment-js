@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "koment-js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Post comments on all video players",
   "repository": "komentio/koment-js",
   "author": "Benjipott",
@@ -118,6 +118,7 @@
     "sinon": "1.14.1",
     "tsml": "^1.0.1",
     "uglify-js": "^2.5.0",
+    "videojs-externals": "^1.0.3",
     "watchify": "^3.6.0",
     "xhr": "^2.2.2"
   }

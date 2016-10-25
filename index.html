@@ -22,6 +22,7 @@
   </style>
   <script src="//vjs.zencdn.net/5.12.0/video.js"></script>
   <link href="//vjs.zencdn.net/5.12.0/video-js.css" rel="stylesheet">
+  <script src="/node_modules/videojs-externals/dist/videojs-externals.js"></script>
   <script src="/dist/koment.js"></script>
 </head>
 <body>
@@ -83,10 +84,10 @@
   player = videojs('player', {
     controls: 1,
     api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
-    sources: [{
-      src: 'http://vjs.zencdn.net/v/oceans.mp4',
-      type: 'video/mp4'
-    }],
+    sources: [
+      {"type": "video/youtube", "src": "https://www.youtube.com/watch?v=Si0ZHJdlu9M"}
+    ],
+    techOrder: ['youtube'],
     user: {
       id: 'toto',
       picture: '//graph.facebook.com/10204404008400201/picture',

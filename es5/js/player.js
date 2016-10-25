@@ -110,8 +110,7 @@ require('./tech/videojs');
 
 require('./tech/html5');
 
-require('./tech/youtube');
-
+//import './tech/youtube'
 /**
  * An instance of the `Player` class is created when any of the Video.js setup methods are used to initialize a video.
  * ```js

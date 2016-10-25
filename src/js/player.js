@@ -31,7 +31,7 @@ import './component/koment-display';
 import './component/koment-list';
 import './tech/videojs'
 import './tech/html5'
-import './tech/youtube'
+//import './tech/youtube'
 /**
  * An instance of the `Player` class is created when any of the Video.js setup methods are used to initialize a video.
  * ```js
