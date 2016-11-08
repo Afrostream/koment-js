@@ -64,7 +64,7 @@ var autoSetup = function autoSetup() {
       // IE seems to consider typeof el.getAttribute == 'object' instead of
       // 'function' like expected, at least when loading the player immediately.
       if (mediaEl && mediaEl.getAttribute) {
-        var isVideojs = mediaEl.firstChild && mediaEl.firstChild.tagName === 'VIDEO' || Boolean(~mediaEl.firstChild.classList.value.indexOf('vjs-tech'));
+        var isVideojs = mediaEl.firstChild && mediaEl.firstChild.tagName === 'VIDEO' && ~'vjs-tech'.indexOf(mediaEl.firstChild.classList);
         var wrapper = undefined;
         if (isVideojs) {
           wrapper = mediaEl;

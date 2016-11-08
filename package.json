@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "koment-js",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Post comments on all video players",
   "repository": "komentio/koment-js",
   "author": "Benjipott",
@@ -30,7 +30,7 @@
     "mkdirs": "mkdir -p dist dist-test es5",
     "prepublish": "npm run build",
     "prestart": "npm-run-all -p docs build",
-    "dev": "echo 'requiring node v4.5.0' && . ~/.nvm/nvm.sh && nvm use 4.5.0 && npm-run-all -p start watch",
+    "dev": "echo 'requiring node v6.9.1' && . ~/.nvm/nvm.sh && nvm use 6.9.1 && npm-run-all -p start watch",
     "start": "npm-run-all -p start:serve",
     "start:serve": "babel-node scripts/server.js",
     "pretest": "npm-run-all build:test",
