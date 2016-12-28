@@ -1,11 +1,13 @@
 /**
  * @file koment-toggle.js
  */
+
+import videojs from'video.js';
 import toTitleCase from '../utils/to-title-case'
 import * as Dom from '../utils/dom'
 
-import Component from '../component.js';
-import Button from '../button.js';
+let Component = videojs.getComponent('Component');
+import KomentButton from'./koment-button';
 
 /**
  * The button component for toggling and selecting koment
@@ -18,7 +20,7 @@ import Button from '../button.js';
  * @extends Button
  * @class LikeButton
  */
-class LikeButton extends Button {
+class LikeButton extends KomentButton {
 
   constructor (player, options, ready) {
     super(player, options, ready)

@@ -19,14 +19,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../../component.js');
+var _videoJs = require('video.js');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
 var _utilsDomJs = require('../../utils/dom.js');
 
 var Dom = _interopRequireWildcard(_utilsDomJs);
 
+var Component = _videoJs2['default'].getComponent('Component');
 /**
  * Shows load progress
  *
@@ -109,8 +110,8 @@ var TimelineBar = (function (_Component) {
   }]);
 
   return TimelineBar;
-})(_componentJs2['default']);
+})(Component);
 
-_componentJs2['default'].registerComponent('TimelineBar', TimelineBar);
+Component.registerComponent('TimelineBar', TimelineBar);
 exports['default'] = TimelineBar;
 module.exports = exports['default'];

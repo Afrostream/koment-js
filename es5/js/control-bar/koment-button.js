@@ -1,6 +1,7 @@
 /**
- * @file control-bar.js
+ * @file koment-toggle.js
  */
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -17,65 +18,61 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _component = require('../component');
+var _videoJs = require('video.js');
 
-var _component2 = _interopRequireDefault(_component);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
-// Required children
-
-require('./koment-toggle');
-
-require('./like-button');
-
-require('./edit-button');
-
-require('./list-button');
-
-require('./post-box/post-box');
-
+var Component = _videoJs2['default'].getComponent('Component');
+var Button = _videoJs2['default'].getComponent('Button');
 /**
- * Container of main controls
+ * The button component for toggling and selecting koment
+ * Chapters act much differently than other text tracks
+ * Cues are navigation vs. other tracks of alternative languages
  *
- * @extends Component
- * @class ControlBar
+ * @param {Object} player  Player object
+ * @param {Object=} options Object of option names and values
+ * @param {Function=} ready    Ready callback function
+ * @extends Button
+ * @class KomentToggle
  */
 
-var ControlBar = (function (_Component) {
-  _inherits(ControlBar, _Component);
+var KomentButton = (function (_Button) {
+  _inherits(KomentButton, _Button);
 
-  function ControlBar() {
-    _classCallCheck(this, ControlBar);
+  function KomentButton(player, options, ready) {
+    _classCallCheck(this, KomentButton);
 
-    _get(Object.getPrototypeOf(ControlBar.prototype), 'constructor', this).apply(this, arguments);
+    _get(Object.getPrototypeOf(KomentButton.prototype), 'constructor', this).call(this, player, options, ready);
   }
 
-  _createClass(ControlBar, [{
-    key: 'createEl',
+  /**
+   * Allow sub components to stack CSS class names
+   *
+   * @return {String} The constructed class name
+   * @method buildCSSClass
+   */
 
-    /**
-     * Create the component's DOM element
-     *
-     * @return {Element}
-     * @method createEl
-     */
+  _createClass(KomentButton, [{
+    key: 'buildCSSClass',
+    value: function buildCSSClass() {
+      return 'koment-control koment-button';
+    }
+  }, {
+    key: 'createEl',
     value: function createEl() {
-      return _get(Object.getPrototypeOf(ControlBar.prototype), 'createEl', this).call(this, 'div', {
-        className: 'koment-control-bar',
-        dir: 'ltr'
-      }, {
-        // The control bar is a group, so it can contain menuitems
-        role: 'group'
-      });
+      return _get(Object.getPrototypeOf(KomentButton.prototype), 'createEl', this).call(this, 'button', {}, this.options_.attributes);
     }
   }]);
 
-  return ControlBar;
-})(_component2['default']);
+  return KomentButton;
+})(Button);
 
-ControlBar.prototype.options_ = {
-  children: ['komentToggle', 'editButton', 'listButton', 'postBox']
+KomentButton.prototype.options_ = {
+  attributes: {}
 };
 
-_component2['default'].registerComponent('ControlBar', ControlBar);
-exports['default'] = ControlBar;
+KomentButton.prototype.controlText_ = 'KomentButton';
+
+Component.registerComponent('KomentButton', KomentButton);
+exports['default'] = KomentButton;
 module.exports = exports['default'];

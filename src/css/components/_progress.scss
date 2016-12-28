@@ -187,16 +187,16 @@
   display: block;
 }
 
-.koment.koment-user-inactive .koment-progress-control .koment-mouse-display,
-.koment.koment-user-inactive .koment-progress-control .koment-mouse-display:after {
+.koment.vjs-user-inactive .koment-progress-control .koment-mouse-display,
+.koment.vjs-user-inactive .koment-progress-control .koment-mouse-display:after {
   visibility: hidden;
   opacity: 0;
   $trans: visibility 1.0s, opacity 1.0s;
   @include transition($trans);
 }
 
-.koment.koment-user-inactive.koment-no-flex .koment-progress-control .koment-mouse-display,
-.koment.koment-user-inactive.koment-no-flex .koment-progress-control .koment-mouse-display:after {
+.koment.vjs-user-inactive.koment-no-flex .koment-progress-control .koment-mouse-display,
+.koment.vjs-user-inactive.koment-no-flex .koment-progress-control .koment-mouse-display:after {
   display: none;
 }
 

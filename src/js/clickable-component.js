@@ -1,9 +1,9 @@
 /**
  * @file button.js
  */
-import Component from './component';
+import videojs from'video.js';
+let Component = videojs.getComponent('Component');
 import * as Dom from './utils/dom.js';
-import * as Events from './utils/events.js';
 import * as Fn from './utils/fn.js';
 import log from './utils/log.js';
 import document from 'global/document';
@@ -19,7 +19,7 @@ import assign from 'object.assign';
  */
 class ClickableComponent extends Component {
 
-  constructor(player, options) {
+  constructor (player, options) {
     super(player, options);
 
     this.emitTapEvents();
@@ -39,7 +39,7 @@ class ClickableComponent extends Component {
    * @return {Element}
    * @method createEl
    */
-  createEl(tag = 'div', props = {}, attributes = {}) {
+  createEl (tag = 'div', props = {}, attributes = {}) {
     props = assign({
       className: this.buildCSSClass(),
       tabIndex: 0
@@ -71,7 +71,7 @@ class ClickableComponent extends Component {
    * @return {Element}
    * @method controlText
    */
-  createControlTextEl(el) {
+  createControlTextEl (el) {
     this.controlTextEl_ = Dom.createEl('span', {
       className: 'koment-control-text'
     });
@@ -93,7 +93,7 @@ class ClickableComponent extends Component {
    * @return {String}
    * @method controlText
    */
-  controlText(text, el = this.el()) {
+  controlText (text, el = this.el()) {
     if (!text) {
       return this.controlText_ || 'Need Text';
     }
@@ -113,7 +113,7 @@ class ClickableComponent extends Component {
    * @return {String}
    * @method buildCSSClass
    */
-  buildCSSClass() {
+  buildCSSClass () {
     return `koment-control koment-button ${super.buildCSSClass()}`;
   }
 
@@ -125,7 +125,7 @@ class ClickableComponent extends Component {
    * @return {Component} The child component (created by this process if a string was used)
    * @method addChild
    */
-  addChild(child, options = {}) {
+  addChild (child, options = {}) {
     // TODO: Fix adding an actionable child to a ClickableComponent; currently
     // it will cause issues with assistive technology (e.g. screen readers)
     // which support ARIA, since an element with role="button" cannot have
@@ -143,7 +143,7 @@ class ClickableComponent extends Component {
    * @return {Component}
    * @method enable
    */
-  enable() {
+  enable () {
     this.removeClass('koment-disabled');
     this.el_.setAttribute('aria-disabled', 'false');
     return this;
@@ -155,7 +155,7 @@ class ClickableComponent extends Component {
    * @return {Component}
    * @method disable
    */
-  disable() {
+  disable () {
     this.addClass('koment-disabled');
     this.el_.setAttribute('aria-disabled', 'true');
     return this;
@@ -166,14 +166,15 @@ class ClickableComponent extends Component {
    *
    * @method handleClick
    */
-  handleClick() {}
+  handleClick () {
+  }
 
   /**
    * Handle Focus - Add keyboard functionality to element
    *
    * @method handleFocus
    */
-  handleFocus() {
+  handleFocus () {
     Events.on(document, 'keydown', Fn.bind(this, this.handleKeyPress));
   }
 
@@ -182,7 +183,7 @@ class ClickableComponent extends Component {
    *
    * @method handleKeyPress
    */
-  handleKeyPress(event) {
+  handleKeyPress (event) {
 
     // Support Space (32) or Enter (13) key operation to fire a click event
     if (event.which === 32 || event.which === 13) {
@@ -200,7 +201,7 @@ class ClickableComponent extends Component {
    *
    * @method handleBlur
    */
-  handleBlur() {
+  handleBlur () {
     Events.off(document, 'keydown', Fn.bind(this, this.handleKeyPress));
   }
 }

@@ -19,9 +19,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _component = require('../component');
+var _videoJs = require('video.js');
 
-var _component2 = _interopRequireDefault(_component);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
 var _utilsFnJs = require('../utils/fn.js');
 
@@ -43,6 +43,8 @@ var _komentItem2 = _interopRequireDefault(_komentItem);
  * @extends Component
  * @class KomentDisplay
  */
+
+var Component = _videoJs2['default'].getComponent('Component');
 
 var KomentDisplay = (function (_Component) {
   _inherits(KomentDisplay, _Component);
@@ -72,7 +74,7 @@ var KomentDisplay = (function (_Component) {
       var videoId_ = this.videoId();
       this.data_ = {
         json: true,
-        uri: this.player_.options_.api + '?video=' + videoId_,
+        uri: this.player_.koment.options_.api + '?video=' + encodeURIComponent(videoId_),
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -97,7 +99,7 @@ var KomentDisplay = (function (_Component) {
 
         kommentsList = (0, _lodash.sortBy)(kommentsList, ['timecode']);
 
-        _this.player_.komentsList(kommentsList);
+        _this.player_.koment.komentsList(kommentsList);
         _this.player_.trigger('kmtlistfetched');
         _this.createChilds();
       });
@@ -116,7 +118,7 @@ var KomentDisplay = (function (_Component) {
       (0, _xhr2['default'])((0, _lodash.merge)(this.data_, {
         method: 'POST',
         video: this.videoId_,
-        uri: '' + this.player_.options_.api,
+        uri: '' + this.player_.koment.options_.api,
         json: json
       }), function (err, res) {
         if (err) {
@@ -134,8 +136,8 @@ var KomentDisplay = (function (_Component) {
   }, {
     key: 'handleClick',
     value: function handleClick() {
-      this.player_.toggleEdit(false);
-      this.player_.toggleList(false);
+      this.player_.koment.toggleEdit(false);
+      this.player_.koment.toggleList(false);
     }
 
     /**
@@ -164,7 +166,7 @@ var KomentDisplay = (function (_Component) {
   }, {
     key: 'createChilds',
     value: function createChilds() {
-      var items = this.player_.komentsList();
+      var items = this.player_.koment.komentsList();
       this.items = [];
       for (var i = 0, l = items.length; i < l; i++) {
         var item = items[i];
@@ -256,7 +258,7 @@ var KomentDisplay = (function (_Component) {
   }]);
 
   return KomentDisplay;
-})(_component2['default']);
+})(Component);
 
 KomentDisplay.prototype.options_ = {
   tte: 5,
@@ -264,6 +266,6 @@ KomentDisplay.prototype.options_ = {
   template: 'viki'
 };
 
-_component2['default'].registerComponent('KomentDisplay', KomentDisplay);
+Component.registerComponent('KomentDisplay', KomentDisplay);
 exports['default'] = KomentDisplay;
 module.exports = exports['default'];

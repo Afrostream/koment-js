@@ -2,9 +2,9 @@
  * @file list-button.js
  */
 
-import Component from '../component.js';
-import Button from '../button.js';
-
+import videojs from'video.js';
+let Component = videojs.getComponent('Component');
+import KomentButton from'./koment-button';
 /**
  * The button component for toggling and selecting koment
  * Chapters act much differently than other text tracks
@@ -16,12 +16,12 @@ import Button from '../button.js';
  * @extends Button
  * @class ListButton
  */
-class ListButton extends Button {
+class ListButton extends KomentButton {
 
   constructor (player, options, ready) {
     super(player, options, ready);
-    this.on(player, 'kmtlistfetched', this.update);
-    this.on(player, 'komentsupdated', this.update);
+    this.on(this.player_, 'kmtlistfetched', this.update);
+    this.on(this.player_, 'komentsupdated', this.update);
   }
 
   /**
@@ -31,7 +31,7 @@ class ListButton extends Button {
    * @method buildCSSClass
    */
   buildCSSClass () {
-    return `list-button koment-hidden ${super.buildCSSClass()}`
+    return `list-button vjs-hidden ${super.buildCSSClass()}`
   }
 
   /**
@@ -40,7 +40,7 @@ class ListButton extends Button {
    * @method update
    */
   update () {
-    const items = this.player_.komentsList();
+    const items = this.player_.koment.komentsList();
     if (items && items.length) {
       this.show();
     } else {
@@ -57,7 +57,7 @@ class ListButton extends Button {
     super.handleClick(event);
     this.addClass('active');
     this.setTimeout(this.disable, 300);
-    this.player_.toggleList();
+    this.player_.koment.toggleList();
   }
 
   disable () {

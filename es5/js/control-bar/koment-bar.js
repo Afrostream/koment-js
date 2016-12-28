@@ -1,5 +1,5 @@
 /**
- * @file error-display.js
+ * @file control-bar.js
  */
 'use strict';
 
@@ -17,81 +17,67 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _component = require('./component');
+var _videoJs = require('video.js');
 
-var _component2 = _interopRequireDefault(_component);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
-var _modalDialog = require('./modal-dialog');
+// Required children
 
-var _modalDialog2 = _interopRequireDefault(_modalDialog);
+require('./koment-toggle');
 
-var _utilsMergeOptions = require('./utils/merge-options');
+require('./like-button');
 
-var _utilsMergeOptions2 = _interopRequireDefault(_utilsMergeOptions);
+require('./edit-button');
+
+require('./list-button');
+
+require('./post-box/post-box');
 
 /**
- * Display that an error has occurred making the video unplayable.
+ * Container of main controls
  *
- * @extends ModalDialog
- * @class ErrorDisplay
+ * @extends Component
+ * @class KomentBar
  */
 
-var ErrorDisplay = (function (_ModalDialog) {
-  _inherits(ErrorDisplay, _ModalDialog);
+var Component = _videoJs2['default'].getComponent('Component');
+var ControlBar = _videoJs2['default'].getComponent('ControlBar');
+var KomentBar = (function (_ControlBar) {
+  _inherits(KomentBar, _ControlBar);
 
-  /**
-   * Constructor for error display modal.
-   *
-   * @param  {Player} player
-   * @param  {Object} [options]
-   */
+  function KomentBar() {
+    _classCallCheck(this, KomentBar);
 
-  function ErrorDisplay(player, options) {
-    _classCallCheck(this, ErrorDisplay);
-
-    _get(Object.getPrototypeOf(ErrorDisplay.prototype), 'constructor', this).call(this, player, options);
-    this.on(player, 'error', this.open);
+    _get(Object.getPrototypeOf(KomentBar.prototype), 'constructor', this).apply(this, arguments);
   }
 
-  /**
-   * Include the old class for backward-compatibility.
-   *
-   * This can be removed in 6.0.
-   *
-   * @method buildCSSClass
-   * @deprecated
-   * @return {String}
-   */
-
-  _createClass(ErrorDisplay, [{
-    key: 'buildCSSClass',
-    value: function buildCSSClass() {
-      return 'koment-error-display ' + _get(Object.getPrototypeOf(ErrorDisplay.prototype), 'buildCSSClass', this).call(this);
-    }
+  _createClass(KomentBar, [{
+    key: 'createEl',
 
     /**
-     * Generates the modal content based on the player error.
+     * Create the component's DOM element
      *
-     * @return {String|Null}
+     * @return {Element}
+     * @method createEl
      */
-  }, {
-    key: 'content',
-    value: function content() {
-      var error = this.player().error();
-
-      return error ? this.localize(error.message) : '';
+    value: function createEl() {
+      return _videoJs2['default'].createEl('div', {
+        className: 'koment-control-bar',
+        dir: 'ltr'
+      }, {
+        // The control bar is a group, so it can contain menuitems
+        role: 'group'
+      });
     }
   }]);
 
-  return ErrorDisplay;
-})(_modalDialog2['default']);
+  return KomentBar;
+})(ControlBar);
 
-ErrorDisplay.prototype.options_ = (0, _utilsMergeOptions2['default'])(_modalDialog2['default'].prototype.options_, {
-  fillAlways: true,
-  temporary: false,
-  uncloseable: true
-});
+KomentBar.prototype.options_ = {
+  children: ['komentToggle', 'editButton', 'listButton', 'postBox']
+};
 
-_component2['default'].registerComponent('ErrorDisplay', ErrorDisplay);
-exports['default'] = ErrorDisplay;
+Component.registerComponent('KomentBar', KomentBar);
+exports['default'] = KomentBar;
 module.exports = exports['default'];

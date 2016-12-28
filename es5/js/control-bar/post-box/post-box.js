@@ -18,9 +18,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../../component.js');
+var _videoJs = require('video.js');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
 require('./post-comment-box');
 
@@ -39,6 +39,8 @@ require('./post-user-box');
  * @extends Component
  * @class PostBox
  */
+
+var Component = _videoJs2['default'].getComponent('Component');
 
 var PostBox = (function (_Component) {
   _inherits(PostBox, _Component);
@@ -59,12 +61,12 @@ var PostBox = (function (_Component) {
   }]);
 
   return PostBox;
-})(_componentJs2['default']);
+})(Component);
 
 PostBox.prototype.options_ = {
   children: ['postUserBox', 'postCommentBox', 'postlimitBox', 'postSubmitButton']
 };
 
-_componentJs2['default'].registerComponent('PostBox', PostBox);
+Component.registerComponent('PostBox', PostBox);
 exports['default'] = PostBox;
 module.exports = exports['default'];

@@ -18,13 +18,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../component.js');
+var _videoJs = require('video.js');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
-var _buttonJs = require('../button.js');
+var _komentButton = require('./koment-button');
 
-var _buttonJs2 = _interopRequireDefault(_buttonJs);
+var _komentButton2 = _interopRequireDefault(_komentButton);
 
 /**
  * The button component for toggling and selecting koment
@@ -38,8 +38,10 @@ var _buttonJs2 = _interopRequireDefault(_buttonJs);
  * @class EditButton
  */
 
-var EditButton = (function (_Button) {
-  _inherits(EditButton, _Button);
+var Component = _videoJs2['default'].getComponent('Component');
+
+var EditButton = (function (_KomentButton) {
+  _inherits(EditButton, _KomentButton);
 
   function EditButton(player, options, ready) {
     _classCallCheck(this, EditButton);
@@ -78,7 +80,7 @@ var EditButton = (function (_Button) {
       _get(Object.getPrototypeOf(EditButton.prototype), 'handleClick', this).call(this, event);
       this.addClass('active');
       this.setTimeout(this.disable, 300);
-      this.player_.toggleEdit();
+      this.player_.koment.toggleEdit();
     }
   }, {
     key: 'disable',
@@ -88,10 +90,10 @@ var EditButton = (function (_Button) {
   }]);
 
   return EditButton;
-})(_buttonJs2['default']);
+})(_komentButton2['default']);
 
 EditButton.prototype.controlText_ = 'Edit';
 
-_componentJs2['default'].registerComponent('EditButton', EditButton);
+Component.registerComponent('EditButton', EditButton);
 exports['default'] = EditButton;
 module.exports = exports['default'];

@@ -25,12 +25,14 @@ var _globalDocument = require('global/document');
 
 var _globalDocument2 = _interopRequireDefault(_globalDocument);
 
-var _componentJs = require('../../component.js');
+var _videoJs = require('video.js');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
 require('./post-comment-box');
 
+var Component = _videoJs2['default'].getComponent('Component');
+var Button = _videoJs2['default'].getComponent('Button');
 var key = {
   'backspace': 8,
   'tab': 9,
@@ -267,9 +269,9 @@ var PostCommentBox = (function (_Component) {
     value: function onSubmit() {
       var message = this.value();
       var timecode = Math.round(this.player_.currentTime());
-      var user = this.player_.options_.user;
+      var user = this.player_.koment.options_.user;
       this.clear();
-      this.player_.sendKoment({ message: message, timecode: timecode, user: user });
+      this.player_.koment.sendKoment({ message: message, timecode: timecode, user: user });
     }
   }, {
     key: 'createEl',
@@ -300,12 +302,12 @@ var PostCommentBox = (function (_Component) {
   }]);
 
   return PostCommentBox;
-})(_componentJs2['default']);
+})(Component);
 
 PostCommentBox.prototype.options_ = {
   max: 140
 };
 
-_componentJs2['default'].registerComponent('PostCommentBox', PostCommentBox);
+Component.registerComponent('PostCommentBox', PostCommentBox);
 exports['default'] = PostCommentBox;
 module.exports = exports['default'];

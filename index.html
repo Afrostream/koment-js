@@ -20,10 +20,10 @@
       margin: 10px;
     }
   </style>
-  <script src="//vjs.zencdn.net/5.12.0/video.js"></script>
   <link href="//vjs.zencdn.net/5.12.0/video-js.css" rel="stylesheet">
-  <script src="/node_modules/videojs-externals/dist/videojs-externals.js"></script>
+  <script src="//vjs.zencdn.net/5.12.0/video.js"></script>
   <script src="/dist/koment.js"></script>
+  <!--<script src="/node_modules/videojs-externals/dist/videojs-externals.js"></script>-->
 </head>
 <body>
 
@@ -46,7 +46,6 @@
 
 <script>
   var komentData = {
-    open: true,
     user: {
       id: "toto",
       avatar: "//graph.facebook.com/10204404008400201/picture",
@@ -54,12 +53,12 @@
       provider: "afrostream.tv",
       token: "cab46dacdc415f7fef0166b211afd9dcf7b9ab70",
     },
-    controlBar: {
-      komentToggle: {
-        attributes: {
-          'data-position': 'right',
-          'data-intro': 'yes'
-        }
+    koment: {
+      open: true,
+      user: {
+        id: 'toto',
+        avatar: '//graph.facebook.com/10204404008400201/picture',
+        nickname: 'benjipott'
       }
     },
     languages: {
@@ -74,24 +73,26 @@
   var container = document.getElementById('video-container');
   var video = document.createElement('video');
   video.id = 'player';
-  video.className = 'video-js vjs-afrostream-skin';
+  video.className = 'koment vjs-afrostream-skin';
   video.crossOrigin = true;
   video.setAttribute('crossorigin', true);
-  video.setAttribute('data-setup', JSON.stringify(komentData));
+  //  video.setAttribute('data-setup', JSON.stringify(komentData));
   container.appendChild(video);
 
 
   player = videojs('player', {
     controls: 1,
-    api: 'https://afr-api-v1-staging.herokuapp.com/api/videos/c1ee3b32-0bf8-4873-b173-09dc055b7bfe/comments',
     sources: [
+//            {"type": "video/mp4", "src": "http://vjs.zencdn.net/v/oceans.mp4"}
       {"type": "video/youtube", "src": "https://www.youtube.com/watch?v=Si0ZHJdlu9M"}
     ],
-    techOrder: ['youtube'],
-    user: {
-      id: 'toto',
-      picture: '//graph.facebook.com/10204404008400201/picture',
-      name: 'benjipott'
+    techOrder: ['html5', 'youtube'],
+    koment: {
+      user: {
+        id: 'toto',
+        avatar: '//graph.facebook.com/10204404008400201/picture',
+        nickname: 'benjipott'
+      }
     }
   });
 

@@ -1,7 +1,9 @@
 /**
  * @file control-bar.js
  */
-import Component from '../component';
+import videojs from'video.js';
+let Component = videojs.getComponent('Component');
+let ControlBar = videojs.getComponent('ControlBar');
 
 // Required children
 import './koment-toggle';
@@ -14,10 +16,9 @@ import './post-box/post-box';
  * Container of main controls
  *
  * @extends Component
- * @class ControlBar
+ * @class KomentBar
  */
-class ControlBar extends Component {
-
+class KomentBar extends ControlBar {
   /**
    * Create the component's DOM element
    *
@@ -25,7 +26,7 @@ class ControlBar extends Component {
    * @method createEl
    */
   createEl () {
-    return super.createEl('div', {
+    return videojs.createEl('div', {
       className: 'koment-control-bar',
       dir: 'ltr'
     }, {
@@ -35,7 +36,7 @@ class ControlBar extends Component {
   }
 }
 
-ControlBar.prototype.options_ = {
+KomentBar.prototype.options_ = {
   children: [
     'komentToggle',
     'editButton',
@@ -44,5 +45,5 @@ ControlBar.prototype.options_ = {
   ]
 };
 
-Component.registerComponent('ControlBar', ControlBar);
-export default ControlBar;
+Component.registerComponent('KomentBar', KomentBar);
+export default KomentBar;

@@ -1,10 +1,11 @@
 /**
  * @file koment-toggle.js
  */
+import videojs from'video.js';
 import toTitleCase from '../../utils/to-title-case'
-
-import Component from '../../component.js';
 import './post-comment-box';
+let Component = videojs.getComponent('Component');
+let Button = videojs.getComponent('Button');
 
 /**
  * The button component for toggling and selecting koment
@@ -30,8 +31,7 @@ class PostUserBox extends Component {
    * @method update
    */
   update () {
-    const url = this.player_.options_.user.avatar;
-
+    const url = this.player_.koment.options_.user.avatar;
     this.setSrc(url);
 
     // If there's no poster source we should display:none on this component

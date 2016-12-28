@@ -1,10 +1,10 @@
 /**
- * @file post-submit-button.js
+ * @file koment-toggle.js
  */
 
 import videojs from'video.js';
-import KomentButton from'../koment-button';
 let Component = videojs.getComponent('Component');
+let Button = videojs.getComponent('Button');
 /**
  * The button component for toggling and selecting koment
  * Chapters act much differently than other text tracks
@@ -14,9 +14,9 @@ let Component = videojs.getComponent('Component');
  * @param {Object=} options Object of option names and values
  * @param {Function=} ready    Ready callback function
  * @extends Button
- * @class PostSubmitButton
+ * @class KomentToggle
  */
-class PostSubmitButton extends KomentButton {
+class KomentButton extends Button {
 
   constructor (player, options, ready) {
     super(player, options, ready)
@@ -29,21 +29,19 @@ class PostSubmitButton extends KomentButton {
    * @method buildCSSClass
    */
   buildCSSClass () {
-    return `kmt-post-submit-button ${super.buildCSSClass()}`
+    return `koment-control koment-button`;
   }
 
-  /**
-   * Handle click on text track
-   *
-   * @method handleClick
-   */
-  handleClick (event) {
-    super.handleClick(event);
-    this.player_.trigger('submit');
+  createEl () {
+    return super.createEl('button', {}, this.options_.attributes)
   }
 }
 
-PostSubmitButton.prototype.controlText_ = 'Send';
+KomentButton.prototype.options_ = {
+  attributes: {}
+};
 
-Component.registerComponent('PostSubmitButton', PostSubmitButton);
-export default PostSubmitButton
+KomentButton.prototype.controlText_ = 'KomentButton';
+
+Component.registerComponent('KomentButton', KomentButton);
+export default KomentButton

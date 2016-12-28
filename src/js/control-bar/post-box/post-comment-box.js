@@ -3,8 +3,11 @@
  */
 import window from 'global/window';
 import document from 'global/document';
-import Component from '../../component.js';
+import videojs from'video.js';
 import './post-comment-box';
+
+let Component = videojs.getComponent('Component');
+let Button = videojs.getComponent('Button');
 const key = {
   'backspace': 8,
   'tab': 9,
@@ -229,9 +232,9 @@ class PostCommentBox extends Component {
   onSubmit () {
     const message = this.value();
     const timecode = Math.round(this.player_.currentTime());
-    const user = this.player_.options_.user;
+    const user = this.player_.koment.options_.user;
     this.clear();
-    this.player_.sendKoment({message, timecode, user})
+    this.player_.koment.sendKoment({message, timecode, user})
   }
 
   createEl () {

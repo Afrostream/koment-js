@@ -17,14 +17,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _component = require('../component');
+var _videoJs = require('video.js');
 
-var _component2 = _interopRequireDefault(_component);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
 var _komentItem = require('./koment-item');
 
 var _komentItem2 = _interopRequireDefault(_komentItem);
 
+var Component = _videoJs2['default'].getComponent('Component');
 /**
  * Container of comment list
  *
@@ -77,7 +78,7 @@ var KomentList = (function (_Component) {
   }, {
     key: 'createChilds',
     value: function createChilds() {
-      var items = this.player_.komentsList();
+      var items = this.player_.koment.komentsList();
       this.items = [];
       for (var i = 0, l = items.length; i < l; i++) {
         var item = items[i];
@@ -91,10 +92,10 @@ var KomentList = (function (_Component) {
   }]);
 
   return KomentList;
-})(_component2['default']);
+})(Component);
 
 KomentList.prototype.options_ = {};
 
-_component2['default'].registerComponent('KomentList', KomentList);
+Component.registerComponent('KomentList', KomentList);
 exports['default'] = KomentList;
 module.exports = exports['default'];

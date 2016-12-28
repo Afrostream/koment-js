@@ -1,7 +1,8 @@
 /**
  * @file koment-display.js
  **/
-import Component from '../component';
+import videojs from'video.js';
+let Component = videojs.getComponent('Component');
 import * as Fn from '../utils/fn.js';
 import xhr from 'xhr'
 import { filter, forEach, map, sortBy, take, uniq, merge, pick } from 'lodash';
@@ -33,7 +34,7 @@ class KomentDisplay extends Component {
     const videoId_ = this.videoId();
     this.data_ = {
       json: true,
-      uri: `${this.player_.options_.api}?video=${videoId_}`,
+      uri: `${this.player_.koment.options_.api}?video=${encodeURIComponent(videoId_)}`,
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -47,7 +48,7 @@ class KomentDisplay extends Component {
       }
       kommentsList = res.body || [];
 
-      forEach(kommentsList, (item)=> {
+      forEach(kommentsList, (item) => {
         if (item.user && item.user.facebook) {
           item.user = merge(item.user, {
             avatar: `//graph.facebook.com/${item.user.facebook.id}/picture`,
@@ -58,8 +59,8 @@ class KomentDisplay extends Component {
 
       kommentsList = sortBy(kommentsList, ['timecode']);
 
-      this.player_.komentsList(kommentsList);
-      this.player_.trigger('kmtlistfetched')
+      this.player_.koment.komentsList(kommentsList);
+      this.player_.trigger('kmtlistfetched');
       this.createChilds();
     });
   }
@@ -76,7 +77,7 @@ class KomentDisplay extends Component {
     xhr(merge(this.data_, {
       method: 'POST',
       video: this.videoId_,
-      uri: `${this.player_.options_.api}`,
+      uri: `${this.player_.koment.options_.api}`,
       json,
     }), (err, res) => {
       if (err) {
@@ -92,8 +93,8 @@ class KomentDisplay extends Component {
    * @method handleClick
    */
   handleClick () {
-    this.player_.toggleEdit(false);
-    this.player_.toggleList(false);
+    this.player_.koment.toggleEdit(false);
+    this.player_.koment.toggleList(false);
   }
 
   /**
@@ -118,7 +119,7 @@ class KomentDisplay extends Component {
    * @method createMenu
    */
   createChilds () {
-    let items = this.player_.komentsList();
+    let items = this.player_.koment.komentsList();
     this.items = [];
     for (let i = 0, l = items.length; i < l; i++) {
       const item = items[i]
@@ -140,9 +141,9 @@ class KomentDisplay extends Component {
   timeoutReplace () {
     const currentTimecode = Math.round(this.player_.currentTime());
     const paused = this.player_.paused() && currentTimecode > 0;
-    const visibleItems = filter(this.items, (item)=> item.hasClass('koment-show'));
+    const visibleItems = filter(this.items, (item) => item.hasClass('koment-show'));
 
-    forEach(visibleItems, (item)=> {
+    forEach(visibleItems, (item) => {
       if (!paused) {
         item.timeout = item.setTimeout(item.hide, this.options_.tte * 1000);
       } else {
@@ -172,15 +173,15 @@ class KomentDisplay extends Component {
   showElements () {
     let className = 'koment-show';
     const currentTimecode = Math.round(this.player_.currentTime());
-    let visibleItems = filter(this.items, (item)=> item.hasClass(className));
+    let visibleItems = filter(this.items, (item) => item.hasClass(className));
     let nbVisible = visibleItems.length;
-    let filtereds = uniq(this.items, (item)=> Math.round(item.timecode));
+    let filtereds = uniq(this.items, (item) => Math.round(item.timecode));
 
     filtereds = sortBy(filtereds, 'timecode');
-    filtereds = filter(filtereds, (item)=> Math.round(item.timecode) === currentTimecode);
+    filtereds = filter(filtereds, (item) => Math.round(item.timecode) === currentTimecode);
     filtereds = take(filtereds, Math.max(0, this.options_.max - nbVisible));
 
-    forEach(filtereds, (item)=> {
+    forEach(filtereds, (item) => {
       if (!item.hasClass(className)) {
         item.addClass(className);
         item.show();

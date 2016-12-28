@@ -1,9 +1,11 @@
 /**
  * @file koment-item.js
  **/
+import videojs from'video.js';
+
 import * as Dom from '../utils/dom'
 import ClickableComponent from '../clickable-component.js';
-import Component from '../component.js';
+let Component = videojs.getComponent('Component');
 import formatTime from '../utils/format-time.js';
 /**
  * Container of main controls
@@ -67,7 +69,7 @@ class KomentItem extends ClickableComponent {
   createEl () {
 
     const el = super.createEl('div', {
-      className: 'koment-item koment-hidden'
+      className: 'koment-item vjs-hidden'
     });
 
     this.contentEl_ = Dom.createEl('div', {
@@ -109,11 +111,11 @@ class KomentItem extends ClickableComponent {
       this.removeClass('koment-show');
     }
     this.addClass('koment-mask');
-    this.setTimeout(()=> {
+    this.setTimeout(() => {
       if (this.hasClass('koment-mask')) {
         this.removeClass('koment-mask');
       }
-      this.addClass('koment-hidden');
+      this.addClass('vjs-hidden');
     }, 500);
   }
 }

@@ -2,9 +2,9 @@
  * @file koment-toggle.js
  */
 
-import Component from '../component.js';
-import Button from '../button.js';
-
+import videojs from'video.js';
+import KomentButton from'./koment-button';
+let Component = videojs.getComponent('Component');
 /**
  * The button component for toggling and selecting koment
  * Chapters act much differently than other text tracks
@@ -16,13 +16,13 @@ import Button from '../button.js';
  * @extends Button
  * @class KomentToggle
  */
-class KomentToggle extends Button {
+class KomentToggle extends KomentButton {
 
   constructor (player, options, ready) {
     super(player, options, ready)
     this.on(player, 'togglemenu', this.handleToggleChange);
-    if (player.options_.open) {
-      player.toggleMenu(player.options_.open);
+    if (player.koment.options_.open) {
+      player.koment.toggleMenu(player.koment.options_.open);
     }
 
   }
@@ -37,10 +37,6 @@ class KomentToggle extends Button {
     return `koment-toggle ${super.buildCSSClass()}`;
   }
 
-  createEl () {
-    return super.createEl('button', {}, this.options_.attributes)
-  }
-
   /**
    * Handle click on text track
    *
@@ -48,11 +44,11 @@ class KomentToggle extends Button {
    */
   handleClick (event) {
     super.handleClick(event);
-    this.player_.toggleMenu();
+    this.player_.koment.toggleMenu();
   }
 
   handleToggleChange () {
-    if (this.player_.isKomentOn()) {
+    if (this.player_.koment.isKomentOn()) {
       this.controlText('Non-Koment');
     } else {
       this.controlText('Koment');

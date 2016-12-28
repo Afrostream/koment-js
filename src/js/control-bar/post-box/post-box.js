@@ -2,7 +2,8 @@
  * @file post-box.js
  */
 
-import Component from '../../component.js';
+import videojs from'video.js';
+let Component = videojs.getComponent('Component');
 import './post-comment-box';
 import './post-submit-button';
 import './post-user-box';

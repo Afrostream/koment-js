@@ -1,9 +1,9 @@
 /**
  * @file koment-list.js
  **/
-import Component from '../component';
+import videojs from'video.js';
 import KomentItem from './koment-item';
-
+let Component = videojs.getComponent('Component');
 /**
  * Container of comment list
  *
@@ -46,7 +46,7 @@ class KomentList extends Component {
    * @method createMenu
    */
   createChilds () {
-    let items = this.player_.komentsList();
+    let items = this.player_.koment.komentsList();
     this.items = [];
     for (let i = 0, l = items.length; i < l; i++) {
       const item = items[i]

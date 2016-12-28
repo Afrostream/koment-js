@@ -19,17 +19,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _component = require('./component');
+var _videoJs = require('video.js');
 
-var _component2 = _interopRequireDefault(_component);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
 var _utilsDomJs = require('./utils/dom.js');
 
 var Dom = _interopRequireWildcard(_utilsDomJs);
-
-var _utilsEventsJs = require('./utils/events.js');
-
-var Events = _interopRequireWildcard(_utilsEventsJs);
 
 var _utilsFnJs = require('./utils/fn.js');
 
@@ -55,6 +51,8 @@ var _objectAssign2 = _interopRequireDefault(_objectAssign);
  * @extends Component
  * @class ClickableComponent
  */
+
+var Component = _videoJs2['default'].getComponent('Component');
 
 var ClickableComponent = (function (_Component) {
   _inherits(ClickableComponent, _Component);
@@ -279,8 +277,8 @@ var ClickableComponent = (function (_Component) {
   }]);
 
   return ClickableComponent;
-})(_component2['default']);
+})(Component);
 
-_component2['default'].registerComponent('ClickableComponent', ClickableComponent);
+Component.registerComponent('ClickableComponent', ClickableComponent);
 exports['default'] = ClickableComponent;
 module.exports = exports['default'];

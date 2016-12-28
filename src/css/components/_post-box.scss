@@ -13,8 +13,11 @@
   padding: 0.5em;
   height: 3em;
   font-size: 1.5em;
-  .koment-control-text {
+  .vjs-control-text {
+    opacity: 1;
+    visibility: visible;
     position: relative;
+    color: $kmt-primary-box-color;
   }
   &:hover {
     background-color: rgba(0, 0, 0, 0);
@@ -22,6 +25,10 @@
     &:before {
       width: 100%;
       background-color: $kmt-primary-box-color;
+    }
+    .vjs-control-text {
+      position: relative;
+      color: #FFFFFF;
     }
   }
 
@@ -76,7 +83,7 @@
       position: absolute;
       border-style: solid;
       left: 10px + $kmt-primary-border-radius;
-      bottom: -17px;
+      bottom: -15px;
       width: 0;
       height: 0;
       border-width: 10px 6px 0 6px;

@@ -27,7 +27,7 @@
 }
 
 // Video has started playing
-.koment-has-started .koment-control-bar {
+.vjs-has-started .koment-control-bar {
   @include display-flex;
   visibility: visible;
   opacity: 1;
@@ -42,7 +42,7 @@
 $ie8screen: "\\0screen";
 
 // Video has started playing AND user is inactive
-.koment-has-started.koment-user-inactive.koment-playing .koment-control-bar {
+.vjs-has-started.vjs-user-inactive.vjs-playing .koment-control-bar {
   // Remain visible for screen reader and keyboard users
   visibility: visible;
   opacity: 0;
@@ -56,7 +56,7 @@ $ie8screen: "\\0screen";
   }
 }
 
-.koment-has-started.koment-user-inactive.koment-toggle-menu.koment-playing .koment-control-bar {
+.vjs-has-started.vjs-user-inactive.koment-toggle-menu.vjs-playing .koment-control-bar {
   opacity: 0.3;
 }
 
@@ -68,7 +68,7 @@ $ie8screen: "\\0screen";
 }
 
 // Don't hide the control bar if it's audio
-.koment-audio.koment-has-started.koment-user-inactive.koment-playing .koment-control-bar {
+.koment-audio.vjs-has-started.vjs-user-inactive.vjs-playing .koment-control-bar {
   opacity: 1;
   visibility: visible;
 }
@@ -77,20 +77,20 @@ $ie8screen: "\\0screen";
 // fonts to show/hide properly.
 // - "\9" IE8 hack didn't work for this
 // Found in XP IE8 from http://modern.ie. Does not show up in "IE8 mode" in IE9
-.koment-user-inactive.koment-playing .koment-control-bar :before {
+.vjs-user-inactive.vjs-playing .koment-control-bar :before {
   @media #{$ie8screen} {
     content: "";
   }
 }
 
 // IE 8 + 9 Support
-.koment-has-started.koment-no-flex .koment-control-bar {
+.vjs-has-started.koment-no-flex .koment-control-bar {
   display: table;
 }
 
 .koment .koment-control-bar .koment-control {
   &:hover {
-    .koment-control-text {
+    .vjs-control-text {
       display: block;
       visibility: visible;
       opacity: 1;
@@ -101,15 +101,17 @@ $ie8screen: "\\0screen";
 }
 
 // Hide control text visually, but have it available for screenreaders
-.koment .koment-control-bar .koment-control-text {
+.koment .koment-control-bar .vjs-control-text {
   clip: inherit;
   width: auto;
   height: auto;
   overflow: inherit;
+  opacity: 0;
+  visibility: hidden;
 }
 
 //
-.koment .koment-control-bar > .koment-button .koment-control-text {
+.koment .koment-control-bar > .koment-button .vjs-control-text {
   display: block;
   visibility: hidden;
   opacity: 0;

@@ -1,9 +1,10 @@
 /**
  * @file timeline-bar.js
  */
-import Component from '../../component.js';
+import videojs from'video.js';
 import * as Dom from '../../utils/dom.js';
 
+let Component = videojs.getComponent('Component');
 /**
  * Shows load progress
  *

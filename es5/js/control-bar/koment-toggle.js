@@ -18,14 +18,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var _componentJs = require('../component.js');
+var _videoJs = require('video.js');
 
-var _componentJs2 = _interopRequireDefault(_componentJs);
+var _videoJs2 = _interopRequireDefault(_videoJs);
 
-var _buttonJs = require('../button.js');
+var _komentButton = require('./koment-button');
 
-var _buttonJs2 = _interopRequireDefault(_buttonJs);
+var _komentButton2 = _interopRequireDefault(_komentButton);
 
+var Component = _videoJs2['default'].getComponent('Component');
 /**
  * The button component for toggling and selecting koment
  * Chapters act much differently than other text tracks
@@ -38,16 +39,16 @@ var _buttonJs2 = _interopRequireDefault(_buttonJs);
  * @class KomentToggle
  */
 
-var KomentToggle = (function (_Button) {
-  _inherits(KomentToggle, _Button);
+var KomentToggle = (function (_KomentButton) {
+  _inherits(KomentToggle, _KomentButton);
 
   function KomentToggle(player, options, ready) {
     _classCallCheck(this, KomentToggle);
 
     _get(Object.getPrototypeOf(KomentToggle.prototype), 'constructor', this).call(this, player, options, ready);
     this.on(player, 'togglemenu', this.handleToggleChange);
-    if (player.options_.open) {
-      player.toggleMenu(player.options_.open);
+    if (player.koment.options_.open) {
+      player.koment.toggleMenu(player.koment.options_.open);
     }
   }
 
@@ -63,11 +64,6 @@ var KomentToggle = (function (_Button) {
     value: function buildCSSClass() {
       return 'koment-toggle ' + _get(Object.getPrototypeOf(KomentToggle.prototype), 'buildCSSClass', this).call(this);
     }
-  }, {
-    key: 'createEl',
-    value: function createEl() {
-      return _get(Object.getPrototypeOf(KomentToggle.prototype), 'createEl', this).call(this, 'button', {}, this.options_.attributes);
-    }
 
     /**
      * Handle click on text track
@@ -78,12 +74,12 @@ var KomentToggle = (function (_Button) {
     key: 'handleClick',
     value: function handleClick(event) {
       _get(Object.getPrototypeOf(KomentToggle.prototype), 'handleClick', this).call(this, event);
-      this.player_.toggleMenu();
+      this.player_.koment.toggleMenu();
     }
   }, {
     key: 'handleToggleChange',
     value: function handleToggleChange() {
-      if (this.player_.isKomentOn()) {
+      if (this.player_.koment.isKomentOn()) {
         this.controlText('Non-Koment');
       } else {
         this.controlText('Koment');
@@ -92,7 +88,7 @@ var KomentToggle = (function (_Button) {
   }]);
 
   return KomentToggle;
-})(_buttonJs2['default']);
+})(_komentButton2['default']);
 
 KomentToggle.prototype.options_ = {
   attributes: {}
@@ -100,6 +96,6 @@ KomentToggle.prototype.options_ = {
 
 KomentToggle.prototype.controlText_ = 'Koment';
 
-_componentJs2['default'].registerComponent('KomentToggle', KomentToggle);
+Component.registerComponent('KomentToggle', KomentToggle);
 exports['default'] = KomentToggle;
 module.exports = exports['default'];
