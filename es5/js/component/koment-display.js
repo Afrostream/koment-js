@@ -64,7 +64,7 @@ var KomentDisplay = (function (_Component) {
   _createClass(KomentDisplay, [{
     key: 'videoId',
     value: function videoId() {
-      return this.player_.options_.videoId || this.player_.currentSrc();
+      return this.player_.koment.options_.videoId || this.player_.currentSrc();
     }
   }, {
     key: 'initKoment',

@@ -27,7 +27,7 @@ class KomentDisplay extends Component {
   }
 
   videoId () {
-    return this.player_.options_.videoId || this.player_.currentSrc();
+    return this.player_.koment.options_.videoId || this.player_.currentSrc();
   }
 
   initKoment () {

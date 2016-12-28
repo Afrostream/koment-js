@@ -73,7 +73,7 @@
   var container = document.getElementById('video-container');
   var video = document.createElement('video');
   video.id = 'player';
-  video.className = 'koment vjs-afrostream-skin';
+  video.className = 'vjs-afrostream-skin';
   video.crossOrigin = true;
   video.setAttribute('crossorigin', true);
   //  video.setAttribute('data-setup', JSON.stringify(komentData));
@@ -84,7 +84,11 @@
     controls: 1,
     sources: [
 //            {"type": "video/mp4", "src": "http://vjs.zencdn.net/v/oceans.mp4"}
-      {"type": "video/youtube", "src": "https://www.youtube.com/watch?v=Si0ZHJdlu9M"}
+//      {"type": "video/youtube", "src": "https://www.youtube.com/watch?v=Si0ZHJdlu9M"}
+      {
+        src: 'https://www.youtube.com/watch?v=kOkQ4T5WO9E',
+        type: 'video/youtube'
+      }
     ],
     techOrder: ['html5', 'youtube'],
     koment: {
