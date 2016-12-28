@@ -34,6 +34,7 @@ class Koment extends Component {
   komentsList (list) {
     if (list !== undefined) {
       this.komentsList_ = list;
+      this.player_.addClass('koment');
     }
     return this.komentsList_;
   }
@@ -120,10 +121,7 @@ Koment.prototype.komentsList_ = []; // eslint-disable-line
 
 Koment.prototype.options_ = {
   api: 'https://koment-api.herokuapp.com/api/koments',
-  user: {
-    avatar: '',
-    nickname: ''
-  }
+  user: {}
 };
 
 // Add default styles

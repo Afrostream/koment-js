@@ -31,7 +31,7 @@ class PostUserBox extends Component {
    * @method update
    */
   update () {
-    const url = this.player_.koment.options_.user.avatar;
+    const url = this.player_.koment.options_.user && this.player_.koment.options_.user.avatar;
     this.setSrc(url);
 
     // If there's no poster source we should display:none on this component

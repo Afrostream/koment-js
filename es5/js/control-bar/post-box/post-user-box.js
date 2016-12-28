@@ -61,7 +61,7 @@ var PostUserBox = (function (_Component) {
   _createClass(PostUserBox, [{
     key: 'update',
     value: function update() {
-      var url = this.player_.koment.options_.user.avatar;
+      var url = this.player_.koment.options_.user && this.player_.koment.options_.user.avatar;
       this.setSrc(url);
 
       // If there's no poster source we should display:none on this component
