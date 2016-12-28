@@ -119,7 +119,11 @@ class Koment extends Component {
 Koment.prototype.komentsList_ = []; // eslint-disable-line
 
 Koment.prototype.options_ = {
-  api: 'https://koment-api.herokuapp.com/api/koments'
+  api: 'https://koment-api.herokuapp.com/api/koments',
+  user: {
+    avatar: '',
+    nickname: ''
+  }
 };
 
 // Add default styles
